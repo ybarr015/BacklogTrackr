@@ -56,6 +56,14 @@ kotlin {
 
             //navigation
             implementation(libs.navigation.compose)
+
+            //todo: add koin view model setup, add in room, add in ktor/coil
+
+            //di
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+            implementation(libs.koin.compose.viewmodel.navigation)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
