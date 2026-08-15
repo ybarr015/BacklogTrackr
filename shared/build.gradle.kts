@@ -63,8 +63,6 @@ kotlin {
             //navigation
             implementation(libs.navigation.compose)
 
-            //todo: add in room
-
             //di
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.compose)
@@ -73,6 +71,8 @@ kotlin {
 
             //ktor
             implementation(libs.ktor.client.core)
+
+            //coroutines
             implementation(libs.kotlinx.coroutines.core)
 
             //coil

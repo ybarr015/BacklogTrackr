@@ -1,4 +1,4 @@
-package com.x3vo.backlogtrackr
+package com.x3vo.backlogtrackr.utils
 
 import androidx.compose.ui.unit.dp
 

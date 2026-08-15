@@ -12,10 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import backlogtrackr.shared.generated.resources.Home
 import backlogtrackr.shared.generated.resources.Res
-import com.x3vo.backlogtrackr.AppDimensions
+import com.x3vo.backlogtrackr.utils.AppDimensions
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 

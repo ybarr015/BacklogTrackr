@@ -13,9 +13,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import backlogtrackr.shared.generated.resources.Home
 import backlogtrackr.shared.generated.resources.Res
-import com.x3vo.backlogtrackr.AppDimensions
 import com.x3vo.backlogtrackr.navigation.NavigationScreen
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithScaffold
+import com.x3vo.backlogtrackr.utils.AppDimensions
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
