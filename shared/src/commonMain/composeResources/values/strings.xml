@@ -1,0 +1,5 @@
+<resources>
+    <!--Screens-->
+    <string name="Home">Home</string>
+    <string name="Back">Back</string>
+</resources>
