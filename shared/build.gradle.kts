@@ -61,7 +61,7 @@ kotlin {
             //navigation
             implementation(libs.navigation.compose)
 
-            //todo: add koin view model setup, add in room, add in ktor/coil
+            //todo: add in room
 
             //di
             implementation(project.dependencies.platform(libs.koin.bom))
@@ -72,6 +72,11 @@ kotlin {
             //ktor
             implementation(libs.ktor.client.core)
             implementation(libs.kotlinx.coroutines.core)
+
+            //coil
+            implementation("io.coil-kt.coil3:coil-compose:3.5.0")
+            implementation("io.coil-kt.coil3:coil-network-ktor3:3.5.0")
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
