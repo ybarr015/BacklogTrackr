@@ -71,6 +71,8 @@ kotlin {
 
             //ktor
             implementation(libs.ktor.client.core)
+            implementation("io.ktor:ktor-client-content-negotiation:3.5.2")
+            implementation("io.ktor:ktor-serialization-kotlinx-json:3.5.2")
 
             //coroutines
             implementation(libs.kotlinx.coroutines.core)
