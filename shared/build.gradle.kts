@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.androidx.room3)
+    kotlin("plugin.serialization") version "2.3.20"
 }
 
 kotlin {
@@ -62,12 +63,6 @@ kotlin {
 
             //navigation
             implementation(libs.navigation.compose)
-
-            //di
-            implementation(project.dependencies.platform(libs.koin.bom))
-            implementation(libs.koin.compose)
-            implementation(libs.koin.compose.viewmodel)
-            implementation(libs.koin.compose.viewmodel.navigation)
 
             //ktor
             implementation(libs.ktor.client.core)
