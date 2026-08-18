@@ -13,22 +13,13 @@ interface  ApiService {
     suspend fun getAuthData(): AuthResponse
 }
 
-class BacklogApi: ApiService {
+class BacklogApi(private val httpClient: HttpClient): ApiService {
 
     private companion object {
         const val TOKEN_URL = "https://id.twitch.tv/oauth2/token"
     }
 
-    private val httpClient = HttpClient {
-        install(ContentNegotiation) {
-            json(
-                Json {
-                    ignoreUnknownKeys = true
-                }
-            )
 
-        }
-    }
 
 
     override suspend fun getAuthData(): AuthResponse {
