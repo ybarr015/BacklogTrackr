@@ -5,13 +5,12 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import backlogtrackr.shared.generated.resources.Home
-import backlogtrackr.shared.generated.resources.Res
+import com.x3vo.backlogtrackr.ui.auth.AuthScreen
 import com.x3vo.backlogtrackr.ui.home.HomeScreen
-import org.jetbrains.compose.resources.StringResource
 
-enum class NavigationScreen(val title: StringResource) {
-    Home(title = Res.string.Home)
+enum class NavigationScreen(val screenName: String, val cardName: String) {
+    Home(screenName = "Home", cardName = "Home"),
+    Auth(screenName = "Authentication", cardName = "Auth")
 }
 
 @Composable
@@ -29,6 +28,12 @@ fun BackLogTrackrNavHost (
                 canNavBack = false,
                 handleCardClick = { navController.navigate(it.name)},
                 cards = NavigationScreen.entries
+            )
+        }
+
+        composable(route = NavigationScreen.Auth.name) {
+            AuthScreen(
+                handleBackNavigation = { navController.navigateUp() }
             )
         }
 

@@ -8,15 +8,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Devices.TABLET
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
-import backlogtrackr.shared.generated.resources.Home
-import backlogtrackr.shared.generated.resources.Res
 import com.x3vo.backlogtrackr.navigation.NavigationScreen
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithScaffold
 import com.x3vo.backlogtrackr.utils.AppDimensions
-import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun HomeScreen(
@@ -43,7 +39,7 @@ fun HomeScreenContent(
 ) {
 
     ScreenWithScaffold(
-        title = stringResource(Res.string.Home),
+        title = NavigationScreen.Home.screenName,
         canNavBack = canNavBack,
         navButtonEnabled = canNavBack,
         modifier = modifier
@@ -57,11 +53,11 @@ fun HomeScreenContent(
             items(
                 items = cards,
                 key = { item ->
-                    item.title.key
+                    item.screenName
                 }
             ) { item ->
                 HomeScreenCard(
-                    item.title,
+                    item.cardName,
                     onCardClick = { handleCardClick(item) },
                     modifier = Modifier.width(150.dp)
                 )
@@ -76,11 +72,11 @@ fun FakeHomeScreenContent() {
     HomeScreenContent(
         canNavBack = false,
         handleCardClick = {},
-        cards = List<NavigationScreen>(1) { NavigationScreen.Home }
+        cards = NavigationScreen.entries
     )
 }
 
-@Preview(device = TABLET)
+@PreviewScreenSizes
 @Composable
 fun HomeScreenContentPreview() {
     FakeHomeScreenContent()

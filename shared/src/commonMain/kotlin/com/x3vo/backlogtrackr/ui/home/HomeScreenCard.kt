@@ -12,15 +12,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import backlogtrackr.shared.generated.resources.Home
-import backlogtrackr.shared.generated.resources.Res
 import com.x3vo.backlogtrackr.utils.AppDimensions
-import org.jetbrains.compose.resources.StringResource
-import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun HomeScreenCard(
-    cardText: StringResource,
+    cardText: String,
     onCardClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -38,7 +34,7 @@ fun HomeScreenCard(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = stringResource(cardText),
+                text = cardText,
                 textAlign = TextAlign.Center
             )
         }
@@ -48,7 +44,7 @@ fun HomeScreenCard(
 
 @Composable
 fun FakeHomeScreenCard() {
-    HomeScreenCard(Res.string.Home, onCardClick = {})
+    HomeScreenCard("Home", onCardClick = {})
 }
 
 @Preview
