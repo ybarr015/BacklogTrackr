@@ -1,7 +1,7 @@
 package com.x3vo.backlogtrackr
 
 import android.app.Application
-import com.x3vo.backlogtrackr.network.initKoin
+import com.x3vo.backlogtrackr.koin.initKoin
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.KoinConfiguration
 
