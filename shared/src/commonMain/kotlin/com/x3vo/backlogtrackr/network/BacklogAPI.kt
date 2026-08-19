@@ -17,6 +17,16 @@ class BacklogApi(private val httpClient: HttpClient): ApiService {
     }
 
 
+    /*
+    TODO
+
+    generate responses from the api from protobuf file to json files
+    add in auth plugin and the retry one into ktor
+    create ui objects
+    add in safe api call to handle certain errors
+    make requests with manual pagination
+
+     */
 
 
     override suspend fun getAuthData(): AuthResponse {
