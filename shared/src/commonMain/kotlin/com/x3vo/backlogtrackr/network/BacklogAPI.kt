@@ -1,5 +1,6 @@
 package com.x3vo.backlogtrackr.ui
 
+import com.x3vo.backlogtrackr.SharedBuildConfig
 import com.x3vo.backlogtrackr.network.AuthResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -32,8 +33,8 @@ class BacklogApi(private val httpClient: HttpClient): ApiService {
     override suspend fun getAuthData(): AuthResponse {
         return httpClient.post(TOKEN_URL) {
             url {
-                parameters.append("client_id", "")
-                parameters.append("client_secret", "")
+                parameters.append("client_id", SharedBuildConfig.CLIENT_ID)
+                parameters.append("client_secret", SharedBuildConfig.CLIENT_SECRET)
                 parameters.append("grant_type", "client_credentials")
             }
         }.body() as AuthResponse
