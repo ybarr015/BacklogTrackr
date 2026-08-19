@@ -19,7 +19,14 @@ class AuthViewModel(
             initialValue = null
         )
 
-    fun authenticate(token: String) {
+
+    fun handleAuthenticationRequest() {
+        viewModelScope.launch {
+            authRepository.makeAuthRequest()
+        }
+    }
+
+    fun storeFakeAuthenticationData(token: String) {
         viewModelScope.launch {
             authRepository.saveAuthToken(token)
         }

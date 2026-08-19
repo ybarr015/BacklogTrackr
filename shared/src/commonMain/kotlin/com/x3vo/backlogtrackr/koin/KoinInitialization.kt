@@ -38,7 +38,7 @@ val appModule = module{
         )
     }
 
-    single { AuthRepository(get()) }
+    single { AuthRepository(dataStore = get(), apiRepository = get()) }
     viewModelOf(::AuthViewModel)
 }
 
