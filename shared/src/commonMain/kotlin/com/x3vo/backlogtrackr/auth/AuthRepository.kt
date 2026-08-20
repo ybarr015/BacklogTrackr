@@ -4,13 +4,14 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.x3vo.backlogtrackr.network.BacklogAPIRepository
+import com.x3vo.backlogtrackr.network.AuthResponse
+import com.x3vo.backlogtrackr.network.BackLogAuthAPIService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class AuthRepository(
     private val dataStore: DataStore<Preferences>,
-    private val apiRepository: BacklogAPIRepository
+    private val backLogAuthAPIService: BackLogAuthAPIService
 ) {
     private val AUTH_TOKEN = stringPreferencesKey("auth_token")
 
@@ -31,12 +32,16 @@ class AuthRepository(
     }
 
     suspend fun makeAuthRequest() {
-        val response = apiRepository.getAuthData()
-        if (response.access_token.isNotEmpty()) {
-            saveAuthToken(response.access_token)
-        } else {
-            clearAuthToken()
+        try {
+            val response = backLogAuthAPIService.getAuthData()
+            if (response.access_token.isNotEmpty()) {
+                saveAuthToken(response.access_token)
+            } else {
+                clearAuthToken()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            AuthResponse("", -1, "")
         }
-
     }
 }
