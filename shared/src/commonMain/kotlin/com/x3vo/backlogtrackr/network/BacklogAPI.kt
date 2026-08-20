@@ -40,7 +40,7 @@ class BacklogApi(private val httpClient: HttpClient, private val authRepository:
                 append(HttpHeaders.Authorization, "Bearer $accessToken")
             }
 
-            setBody("search \"$gameName\";where game_type = 0;fields name, summary, id;limit 10;")
+            setBody("search \"$gameName\";where game_type = 0;fields name, summary, id, cover.id, cover.width, cover.height, cover.url ;limit 10;")
         }.body() as List<Game>
         println("BacklogApi: Received ${result.size} games")
         return result

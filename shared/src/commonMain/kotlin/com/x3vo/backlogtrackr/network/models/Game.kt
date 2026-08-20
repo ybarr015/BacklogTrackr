@@ -18,7 +18,7 @@ data class Game(
 //    val category: GameCategoryEnum,
 //    @Deprecated("Deprecated by proto definition")
 //    val collection: CollectionDto? = null,
-//    val cover: Cover? = null,
+    val cover: Cover? = null,
 //    val createdAt: Long? = null,
 //    val dlcs: List<Game>,
 //    val expansions: List<Game>,

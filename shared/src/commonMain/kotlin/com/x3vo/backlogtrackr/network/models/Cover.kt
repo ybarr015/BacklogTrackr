@@ -5,14 +5,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Cover(
     val id: ULong,
-    val alphaChannel: Boolean,
-    val animated: Boolean,
-    val game: Game? = null,
+//    val alphaChannel: Boolean,
+//    val animated: Boolean,
+//    val game: Game? = null,
     val height: Int,
-    val imageId: String,
+//    val imageId: String,
     val url: String,
     val width: Int,
-    val checksum: String,
-    val gameLocalization: GameLocalization? = null,
-    val imageType: ImageType? = null
+//    val checksum: String,
+//    val gameLocalization: GameLocalization? = null,
+//    val imageType: ImageType? = null
 )

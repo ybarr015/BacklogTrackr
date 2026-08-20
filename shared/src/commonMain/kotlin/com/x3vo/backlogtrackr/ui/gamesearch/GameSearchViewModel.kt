@@ -37,7 +37,16 @@ class GameSearchViewModel(
                 when(response) {
                     is Resource.Success -> {
                         println("GameSearchViewModel: Success with ${response.data.size} items")
-                        GameSearchUIState(isLoading = false, gameData = response.data)
+                        val formattedData = response.data.map { game ->
+                            val rawURL = game.cover?.url
+                            val formattedURL = if (!rawURL.isNullOrEmpty()) {
+                                "https:${rawURL.replace("t_thumb", "t_cover_big")}"
+                            } else {
+                                ""
+                            }
+                            game.copy(cover = game.cover?.copy(url = formattedURL ))
+                        }
+                        GameSearchUIState(isLoading = false, gameData = formattedData)
                     }
                     is Resource.Error ->  {
                         println("GameSearchViewModel: Error: ${response.message}")
