@@ -20,7 +20,6 @@ fun HomeScreen(
     handleCardClick: (NavigationScreen) -> Unit,
     cards: List<NavigationScreen>,
     modifier: Modifier = Modifier
-    //todo: add view model
 ) {
     HomeScreenContent(
         canNavBack = canNavBack,

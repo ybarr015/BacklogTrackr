@@ -38,7 +38,6 @@ class GameSearchViewModel(
             _uiState.update { it.copy(isLoading = true) }
 
             val response = backlogAPIRepository.gameSearch(gameName)
-            println("GameSearchViewModel: Search response received: $response")
 
             _uiState.update {
                 when(response) {

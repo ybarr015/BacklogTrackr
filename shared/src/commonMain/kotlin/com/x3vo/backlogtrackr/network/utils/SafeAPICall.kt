@@ -25,9 +25,9 @@ suspend fun <T> safeApiCall(apiRequest: suspend () -> T): Resource<T> {
     } catch (e: ClientRequestException) { //otherwise catch some exception and use error message for Api Resource
         val responseCode = e.response.status.value
         val message = when(responseCode) {
-            401 -> "Expired Token" //todo: if here then the token is expired on the server, so need to actually do login again
-            403 -> "Bad Oauth request" //todo: something very wrong
-            429 -> "Rate Limit" //todo: maybe add a way to retry call on a rate limit error
+            401 -> "Expired Token"
+            403 -> "Bad Oauth request"
+            429 -> "Rate Limit"
             else -> "Other" // json error or some kind of other error
         }
         return Resource.Error(message)

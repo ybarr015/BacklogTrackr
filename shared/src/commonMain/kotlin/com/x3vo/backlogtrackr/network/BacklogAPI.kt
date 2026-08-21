@@ -22,8 +22,6 @@ class BacklogApi(private val httpClient: HttpClient, private val authRepository:
 
     /*
     TODO
-
-    add in auth plugin and the retry one into ktor
     make requests with manual pagination
 
      */
@@ -37,7 +35,6 @@ class BacklogApi(private val httpClient: HttpClient, private val authRepository:
             }
             headers{
                 append("Client-ID", SharedBuildConfig.CLIENT_ID)
-                append(HttpHeaders.Authorization, "Bearer $accessToken")
             }
 
             setBody("search \"$gameName\";where game_type = 0;fields name, summary, id, cover.id, cover.width, cover.height, cover.url ;limit 10;")
