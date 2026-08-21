@@ -59,7 +59,7 @@ class GameSearchViewModel(
                                     id = it.id,
                                     name =  it.name,
                                     coverURL = it.cover?.url ?: "",
-                                    summary = it.summary
+                                    summary = it.summary?: "No Summary Available"
                                 )
                             }
                         )

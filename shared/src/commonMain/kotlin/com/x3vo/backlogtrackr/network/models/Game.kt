@@ -49,7 +49,7 @@ data class Game(
 //    @Deprecated("Deprecated by proto definition")
 //    val status: GameStatusEnum,
 //    val storyline: String,
-    val summary: String,
+    val summary: String? = null,
 //    val tags: List<Int>,
 //    val themes: List<Theme>,
 //    val totalRating: Double,

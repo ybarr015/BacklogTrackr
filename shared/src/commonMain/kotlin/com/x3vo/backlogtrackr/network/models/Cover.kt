@@ -8,10 +8,10 @@ data class Cover(
 //    val alphaChannel: Boolean,
 //    val animated: Boolean,
 //    val game: Game? = null,
-    val height: Int,
+    val height: Int? = null,
 //    val imageId: String,
-    val url: String,
-    val width: Int,
+    val url: String? = null,
+    val width: Int? = null,
 //    val checksum: String,
 //    val gameLocalization: GameLocalization? = null,
 //    val imageType: ImageType? = null
