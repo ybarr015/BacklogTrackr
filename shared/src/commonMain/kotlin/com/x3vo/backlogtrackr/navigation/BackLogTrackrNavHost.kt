@@ -29,7 +29,9 @@ fun BackLogTrackrNavHost (
             HomeScreen(
                 canNavBack = false,
                 handleCardClick = { navController.navigate(it.name)},
-                cards = NavigationScreen.entries
+                cards = NavigationScreen.entries.filter {
+                    it != NavigationScreen.Home
+                }
             )
         }
 

@@ -71,7 +71,7 @@ fun FakeHomeScreenContent() {
     HomeScreenContent(
         canNavBack = false,
         handleCardClick = {},
-        cards = NavigationScreen.entries
+        cards = NavigationScreen.entries.filter { it != NavigationScreen.Home }
     )
 }
 
