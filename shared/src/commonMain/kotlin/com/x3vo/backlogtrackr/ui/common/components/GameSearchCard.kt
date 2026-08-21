@@ -33,7 +33,10 @@ fun GameSearchCard(
 ){
     Card(modifier = modifier) {
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(AppDimensions.paddingSmall)
+        ) {
 
             Card {
                 AsyncImage(

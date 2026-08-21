@@ -19,18 +19,25 @@ class GameSearchViewModel(
     val uiState: StateFlow<GameSearchUIState> = _uiState.asStateFlow()
 
 
-    init {
-        handleGameSearchRequest()
+    private val _searchKeyword = MutableStateFlow<String>("")
+    val searchKeyword = _searchKeyword.asStateFlow()
+
+    fun updateSearchKeyword (newSearchTerm: String) {
+        _searchKeyword.update {
+            newSearchTerm
+        }
     }
 
+    fun handleSearchButtonRequest() {
+         handleGameSearchRequest(_searchKeyword.value)
+    }
 
-
-    fun handleGameSearchRequest() {
+    fun handleGameSearchRequest(gameName: String) {
         viewModelScope.launch {
-            println("GameSearchViewModel: Starting search for Red Dead Redemption")
+            println("GameSearchViewModel: Starting search for $gameName")
             _uiState.update { it.copy(isLoading = true) }
 
-            val response = backlogAPIRepository.gameSearch("Red Dead Redemption")
+            val response = backlogAPIRepository.gameSearch(gameName)
             println("GameSearchViewModel: Search response received: $response")
 
             _uiState.update {
@@ -46,7 +53,17 @@ class GameSearchViewModel(
                             }
                             game.copy(cover = game.cover?.copy(url = formattedURL ))
                         }
-                        GameSearchUIState(isLoading = false, gameData = formattedData)
+                        GameSearchUIState(
+                            isLoading = false,
+                            gameData = formattedData.map {
+                                SimpleGameObject(
+                                    id = it.id,
+                                    name =  it.name,
+                                    coverURL = it.cover?.url ?: "",
+                                    summary = it.summary
+                                )
+                            }
+                        )
                     }
                     is Resource.Error ->  {
                         println("GameSearchViewModel: Error: ${response.message}")
@@ -62,8 +79,15 @@ class GameSearchViewModel(
 
 }
 
+data class SimpleGameObject (
+    val id: ULong,
+    val name: String,
+    val coverURL: String,
+    val summary: String
+)
+
 data class GameSearchUIState (
     val isLoading : Boolean = false,
-    val gameData: List<Game> = emptyList(),
+    val gameData: List<SimpleGameObject> = emptyList(),
     val error: String? = null
 )
