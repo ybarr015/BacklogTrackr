@@ -1,5 +1,6 @@
 package com.x3vo.backlogtrackr.ui.gamesearch
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,6 +47,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun GameSearchScreen(
     handleBackNavigation: () -> Unit,
+    handleGameSelection: (String) -> Unit,
     viewModel: GameSearchViewModel = koinViewModel(),
     modifier: Modifier = Modifier
 ) {
@@ -58,18 +60,20 @@ fun GameSearchScreen(
         handleCancelTextInput = { viewModel.updateSearchKeyword("") },
         uiState = uiState,
         handleBackNavigation = handleBackNavigation,
+        handleGameSelection = handleGameSelection,
         modifier = modifier
     )
 }
 
 @Composable
-fun GameSearchScreenContent(
+private fun GameSearchScreenContent(
     searchTextFieldText: String,
     onSearchTextUpdate: (String) -> Unit,
     handleSearchButtonRequest: () -> Unit,
     handleCancelTextInput: () -> Unit,
     uiState: GameSearchUIState,
     handleBackNavigation: () -> Unit,
+    handleGameSelection: (String)-> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -95,7 +99,7 @@ fun GameSearchScreenContent(
     }
 
     ScreenWithScaffold(
-        title = NavigationScreen.GameSearch.screenName,
+        title = "Game Search",
         canNavBack = true,
         onNavigateBack = handleBackNavigation,
         navButtonEnabled = true,
@@ -184,6 +188,9 @@ fun GameSearchScreenContent(
                                 game.summary,
                                 imageURI = game.coverURL,
                                 Modifier.fillMaxWidth()
+                                    .clickable(onClick = {
+                                        handleGameSelection(game.id.toString())
+                                    })
                             )
                         }
                     }
@@ -198,7 +205,7 @@ fun GameSearchScreenContent(
 
 @PreviewScreenSizes
 @Composable
-fun GameSearchScreenPreview() {
+private fun GameSearchScreenPreview() {
     GameSearchScreenContent(
         searchTextFieldText = "test",
         onSearchTextUpdate = {},
@@ -207,13 +214,14 @@ fun GameSearchScreenPreview() {
         uiState = GameSearchUIState(
             gameData = listOf(SimpleGameObject(id = 212UL, name = "test", coverURL = "", summary = "summary"))
         ),
-        handleBackNavigation = {}
+        handleBackNavigation = {},
+        handleGameSelection = {}
     )
 }
 
 @PreviewScreenSizes
 @Composable
-fun GameSearchScreenErrorPreview() {
+private fun GameSearchScreenErrorPreview() {
     GameSearchScreenContent(
         searchTextFieldText = "",
         onSearchTextUpdate = {},
@@ -222,13 +230,14 @@ fun GameSearchScreenErrorPreview() {
         uiState = GameSearchUIState(
             error = "test"
         ),
-        handleBackNavigation = {}
+        handleBackNavigation = {},
+        handleGameSelection = {}
     )
 }
 
 @PreviewScreenSizes
 @Composable
-fun GameSearchLoadingPreview() {
+private fun GameSearchLoadingPreview() {
     GameSearchScreenContent(
         searchTextFieldText = "",
         onSearchTextUpdate = {},
@@ -237,6 +246,7 @@ fun GameSearchLoadingPreview() {
         uiState = GameSearchUIState(
             isLoading = true
         ),
-        handleBackNavigation = {}
+        handleBackNavigation = {},
+        handleGameSelection = {}
     )
 }

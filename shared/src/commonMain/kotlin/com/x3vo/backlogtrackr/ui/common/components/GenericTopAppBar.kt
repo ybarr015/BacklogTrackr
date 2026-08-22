@@ -48,7 +48,7 @@ fun GenericTopAppBar(
 }
 
 @Composable
-fun FakeTopAppBar() {
+private fun FakeTopAppBar() {
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -66,9 +66,9 @@ fun FakeTopAppBar() {
     }
 }
 
-@Preview()
+@Preview
 @Composable
-fun GenericTopAppBarPreview() {
+private fun GenericTopAppBarPreview() {
     FakeTopAppBar()
 
 }

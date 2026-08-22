@@ -5,6 +5,7 @@ import com.x3vo.backlogtrackr.network.BackLogAuthAPIService
 import com.x3vo.backlogtrackr.network.BacklogAPIRepository
 import com.x3vo.backlogtrackr.ui.BacklogApi
 import com.x3vo.backlogtrackr.ui.auth.AuthViewModel
+import com.x3vo.backlogtrackr.ui.gamesearch.GameSearchDetailViewModel
 import com.x3vo.backlogtrackr.ui.gamesearch.GameSearchViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpRequestRetry
@@ -111,6 +112,7 @@ val appModule = module{
     //view models
     viewModelOf(::AuthViewModel)
     viewModelOf(::GameSearchViewModel)
+    viewModelOf(::GameSearchDetailViewModel)
 }
 
 expect val platformModule: Module

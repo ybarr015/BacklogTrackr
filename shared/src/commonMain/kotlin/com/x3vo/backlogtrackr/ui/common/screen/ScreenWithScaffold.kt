@@ -49,7 +49,7 @@ fun ScreenWithScaffold(
 }
 
 @Composable
-fun FakeScreenWithScaffold() {
+private fun FakeScreenWithScaffold() {
     ScreenWithScaffold(modifier = Modifier, title = "test", canNavBack = false, navButtonEnabled = true) {
         Text("test")
     }
@@ -57,6 +57,6 @@ fun FakeScreenWithScaffold() {
 
 @Preview(device = TABLET)
 @Composable
-fun ScreenWithScaffoldPreview() {
+private fun ScreenWithScaffoldPreview() {
     FakeScreenWithScaffold()
 }

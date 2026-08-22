@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
+import com.x3vo.backlogtrackr.navigation.HomeScreenCard
 import com.x3vo.backlogtrackr.navigation.NavigationScreen
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithScaffold
 import com.x3vo.backlogtrackr.utils.AppDimensions
@@ -17,8 +18,8 @@ import com.x3vo.backlogtrackr.utils.AppDimensions
 @Composable
 fun HomeScreen(
     canNavBack: Boolean,
-    handleCardClick: (NavigationScreen) -> Unit,
-    cards: List<NavigationScreen>,
+    handleCardClick: (Any) -> Unit,
+    cards: List<HomeScreenCard>,
     modifier: Modifier = Modifier
 ) {
     HomeScreenContent(
@@ -30,15 +31,15 @@ fun HomeScreen(
 }
 
 @Composable
-fun HomeScreenContent(
+private fun HomeScreenContent(
     canNavBack: Boolean,
-    handleCardClick: (NavigationScreen) -> Unit,
-    cards: List<NavigationScreen>,
+    handleCardClick: (Any) -> Unit,
+    cards: List<HomeScreenCard>,
     modifier: Modifier = Modifier,
 ) {
 
     ScreenWithScaffold(
-        title = NavigationScreen.Home.screenName,
+        title = "Home",
         canNavBack = canNavBack,
         navButtonEnabled = canNavBack,
         modifier = modifier
@@ -51,13 +52,13 @@ fun HomeScreenContent(
         ) {
             items(
                 items = cards,
-                key = { item ->
-                    item.screenName
+                key = { item  ->
+                    item.cardName
                 }
             ) { item ->
                 HomeScreenCard(
                     item.cardName,
-                    onCardClick = { handleCardClick(item) },
+                    onCardClick = { handleCardClick(item.route) },
                     modifier = Modifier.width(150.dp)
                 )
             }
@@ -67,16 +68,16 @@ fun HomeScreenContent(
 }
 
 @Composable
-fun FakeHomeScreenContent() {
+private fun FakeHomeScreenContent() {
     HomeScreenContent(
         canNavBack = false,
         handleCardClick = {},
-        cards = NavigationScreen.entries.filter { it != NavigationScreen.Home }
+        cards = NavigationScreen.homeScreenCards
     )
 }
 
 @PreviewScreenSizes
 @Composable
-fun HomeScreenContentPreview() {
+private fun HomeScreenContentPreview() {
     FakeHomeScreenContent()
 }

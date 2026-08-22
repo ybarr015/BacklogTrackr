@@ -71,6 +71,6 @@ fun GameSearchCard(
 
 @Preview
 @Composable
-fun GameSearchCardPreview(){
+private fun GameSearchCardPreview(){
     GameSearchCard("gameName","game summary", "")
 }

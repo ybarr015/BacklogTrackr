@@ -5,14 +5,35 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.x3vo.backlogtrackr.ui.auth.AuthScreen
+import com.x3vo.backlogtrackr.ui.gamesearch.GameSearchDetailScreen
 import com.x3vo.backlogtrackr.ui.gamesearch.GameSearchScreen
 import com.x3vo.backlogtrackr.ui.home.HomeScreen
+import kotlinx.serialization.Serializable
 
-enum class NavigationScreen(val screenName: String, val cardName: String) {
-    Home(screenName = "Home", cardName = "Home"),
-    Auth(screenName = "Authentication", cardName = "Auth"),
-    GameSearch(screenName = "GameSearch", cardName = "Search")
+data class HomeScreenCard (
+    val route: Any,
+    val cardName: String
+)
+
+@Serializable
+object NavigationScreen {
+    @Serializable object HOME{
+        val cardName = "Home"
+    }
+    @Serializable object AUTH {
+        val cardName = "Auth"
+    }
+    @Serializable object GAMESEARCH {
+        val cardName = "Search"
+    }
+    @Serializable data class GAMESEARCHDETAIL(val gameId:String)
+
+    val homeScreenCards = listOf<HomeScreenCard>(
+        HomeScreenCard(AUTH, AUTH.cardName),
+        HomeScreenCard(GAMESEARCH, GAMESEARCH.cardName)
+    )
 }
 
 @Composable
@@ -22,26 +43,34 @@ fun BackLogTrackrNavHost (
 ) {
 
     NavHost(navController = navController,
-        startDestination = NavigationScreen.Home.name,
+        startDestination = NavigationScreen.HOME,
         modifier = modifier) {
 
-        composable(route = NavigationScreen.Home.name) {
+        composable<NavigationScreen.HOME> {
             HomeScreen(
                 canNavBack = false,
-                handleCardClick = { navController.navigate(it.name)},
-                cards = NavigationScreen.entries.filter {
-                    it != NavigationScreen.Home
-                }
+                handleCardClick = { navController.navigate(it)},
+                cards = NavigationScreen.homeScreenCards
             )
         }
 
-        composable(route = NavigationScreen.Auth.name) {
+        composable<NavigationScreen.AUTH> {
             AuthScreen(
                 handleBackNavigation = { navController.navigateUp() }
             )
         }
-        composable(route = NavigationScreen.GameSearch.name) {
+        composable<NavigationScreen.GAMESEARCH> {
             GameSearchScreen(
+                handleBackNavigation = { navController.navigateUp() },
+                handleGameSelection = { gameId ->
+                    navController.navigate(NavigationScreen.GAMESEARCHDETAIL(gameId = gameId))
+                }
+            )
+        }
+        composable<NavigationScreen.GAMESEARCHDETAIL> { backstackEntry ->
+            val route: NavigationScreen.GAMESEARCHDETAIL = backstackEntry.toRoute()
+            GameSearchDetailScreen(
+                gameId = route.gameId,
                 handleBackNavigation = { navController.navigateUp() }
             )
         }

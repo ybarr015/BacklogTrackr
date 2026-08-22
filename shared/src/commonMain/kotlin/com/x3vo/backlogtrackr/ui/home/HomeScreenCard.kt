@@ -43,12 +43,12 @@ fun HomeScreenCard(
 }
 
 @Composable
-fun FakeHomeScreenCard() {
+private fun FakeHomeScreenCard() {
     HomeScreenCard("Home", onCardClick = {})
 }
 
 @Preview
 @Composable
-fun HomeScreenCardPreview() {
+private fun HomeScreenCardPreview() {
     FakeHomeScreenCard()
 }

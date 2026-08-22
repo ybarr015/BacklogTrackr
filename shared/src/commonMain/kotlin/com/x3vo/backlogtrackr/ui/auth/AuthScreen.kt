@@ -38,7 +38,7 @@ fun AuthScreen(
 }
 
 @Composable
-fun AuthScreenContent(
+private fun AuthScreenContent(
     authToken: String,
     onAuthenticate: () -> Unit,
     onFakeAuthenticationRequest: () -> Unit,
@@ -47,7 +47,7 @@ fun AuthScreenContent(
     modifier: Modifier = Modifier
 ) {
     ScreenWithScaffold(
-        title = NavigationScreen.Auth.screenName,
+        title = "Authentication",
         canNavBack = true,
         onNavigateBack = handleBackNavigation,
         navButtonEnabled = true,
@@ -91,7 +91,7 @@ fun AuthScreenContent(
 
 @PreviewScreenSizes
 @Composable
-fun AuthScreenPreview() {
+private fun AuthScreenPreview() {
     AuthScreenContent(
         authToken = "preview-token",
         onAuthenticate = {},
