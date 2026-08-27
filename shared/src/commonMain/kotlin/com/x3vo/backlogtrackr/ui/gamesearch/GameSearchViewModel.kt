@@ -3,7 +3,6 @@ package com.x3vo.backlogtrackr.ui.gamesearch
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.x3vo.backlogtrackr.network.BacklogAPIRepository
-import com.x3vo.backlogtrackr.network.models.Game
 import com.x3vo.backlogtrackr.network.utils.Resource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +18,7 @@ class GameSearchViewModel(
     val uiState: StateFlow<GameSearchUIState> = _uiState.asStateFlow()
 
 
-    private val _searchKeyword = MutableStateFlow<String>("")
+    private val _searchKeyword = MutableStateFlow("")
     val searchKeyword = _searchKeyword.asStateFlow()
 
     fun updateSearchKeyword (newSearchTerm: String) {
@@ -37,24 +36,15 @@ class GameSearchViewModel(
             println("GameSearchViewModel: Starting search for $gameName")
             _uiState.update { it.copy(isLoading = true) }
 
-            val response = backlogAPIRepository.gameSearch(gameName)
+            val response = backlogAPIRepository.gameSearchByName(gameName)
 
             _uiState.update {
                 when(response) {
                     is Resource.Success -> {
                         println("GameSearchViewModel: Success with ${response.data.size} items")
-                        val formattedData = response.data.map { game ->
-                            val rawURL = game.cover?.url
-                            val formattedURL = if (!rawURL.isNullOrEmpty()) {
-                                "https:${rawURL.replace("t_thumb", "t_cover_big")}"
-                            } else {
-                                ""
-                            }
-                            game.copy(cover = game.cover?.copy(url = formattedURL ))
-                        }
                         GameSearchUIState(
                             isLoading = false,
-                            gameData = formattedData.map {
+                            gameData = response.data.map {
                                 SimpleGameObject(
                                     id = it.id,
                                     name =  it.name,

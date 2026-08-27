@@ -8,9 +8,7 @@ import io.ktor.client.call.body
 import io.ktor.client.request.headers
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.http.HttpHeaders
 import io.ktor.http.appendPathSegments
-import kotlinx.coroutines.flow.first
 
 class BacklogApi(private val httpClient: HttpClient, private val authRepository: AuthRepository) {
 
@@ -26,9 +24,7 @@ class BacklogApi(private val httpClient: HttpClient, private val authRepository:
 
      */
 
-    suspend fun gameEndpoint(gameName: String): List<Game> {
-        val accessToken = authRepository.authToken.first()
-        println("BacklogApi: Using access token: $accessToken")
+    suspend fun gameSearchByName(gameName: String): List<Game> {
         val result = httpClient.post(IGDB_ENDPOINT) {
             url{
                 appendPathSegments("games")
@@ -38,6 +34,21 @@ class BacklogApi(private val httpClient: HttpClient, private val authRepository:
             }
 
             setBody("search \"$gameName\";where game_type = 0;fields name, summary, id, cover.id, cover.width, cover.height, cover.url ;limit 10;")
+        }.body() as List<Game>
+        println("BacklogApi: Received ${result.size} games")
+        return result
+    }
+
+    suspend fun gameSearchById(gameId: String): List<Game> {
+        val result = httpClient.post(IGDB_ENDPOINT) {
+            url{
+                appendPathSegments("games")
+            }
+            headers{
+                append("Client-ID", SharedBuildConfig.CLIENT_ID)
+            }
+
+            setBody("where id = $gameId;fields name, summary, id, cover.id, cover.width, cover.height, cover.url;")
         }.body() as List<Game>
         println("BacklogApi: Received ${result.size} games")
         return result
