@@ -135,25 +135,26 @@ fun PlatformSettingsScreenContent(
                 }
             }
 
-            if (uiState.platforms.isEmpty()) {
-                Button(
-                    onClick = {resetPlatformsHandler()}
-                ) {
-                    Text(text = "Set Default Platforms")
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.weight(1f)
+                    .nestedScroll(nestedScrollConnection),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(uiState.platforms) { platform ->
+                    PlatformItem(
+                        name = platform.platformName,
+                        onDelete = { deletePlatformHandler(platform.platformName) }
+                    )
+                    HorizontalDivider()
                 }
-            } else {
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier.fillMaxSize()
-                        .nestedScroll(nestedScrollConnection),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(uiState.platforms) { platform ->
-                        PlatformItem(
-                            name = platform.platformName,
-                            onDelete = { deletePlatformHandler(platform.platformName) }
-                        )
-                        HorizontalDivider()
+
+                item {
+                    Button(
+                        onClick = { resetPlatformsHandler() },
+                        modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
+                    ) {
+                        Text(text = "Reset to Default Platforms")
                     }
                 }
             }
