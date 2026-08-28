@@ -3,6 +3,11 @@ package com.x3vo.backlogtrackr.koin
 import com.x3vo.backlogtrackr.auth.AuthRepository
 import com.x3vo.backlogtrackr.network.BackLogAuthAPIService
 import com.x3vo.backlogtrackr.network.BacklogAPIRepository
+import com.x3vo.backlogtrackr.room.BacklogTrackrDatabase
+import androidx.room3.RoomDatabase
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
+import com.x3vo.backlogtrackr.room.platforms.PlatformDao
 import com.x3vo.backlogtrackr.ui.BacklogApi
 import com.x3vo.backlogtrackr.ui.auth.AuthViewModel
 import com.x3vo.backlogtrackr.ui.gamesearch.GameSearchDetailViewModel
@@ -107,6 +112,16 @@ val appModule = module{
             backlogApi = get()
         )
     }
+
+    //room
+    single<BacklogTrackrDatabase> {
+        get<RoomDatabase.Builder<BacklogTrackrDatabase>>()
+            .setDriver(BundledSQLiteDriver())
+            .build()
+    }
+
+    single { get<BacklogTrackrDatabase>().getPlatformDao() }
+    single { BacklogTrackrDBRepository(get()) }
 
 
     //view models
