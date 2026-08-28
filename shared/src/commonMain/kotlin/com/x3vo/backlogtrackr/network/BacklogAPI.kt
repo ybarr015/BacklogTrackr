@@ -3,6 +3,7 @@ package com.x3vo.backlogtrackr.ui
 import com.x3vo.backlogtrackr.SharedBuildConfig
 import com.x3vo.backlogtrackr.auth.AuthRepository
 import com.x3vo.backlogtrackr.network.models.Game
+import com.x3vo.backlogtrackr.network.models.GameTimeToBeat
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.headers
@@ -51,6 +52,20 @@ class BacklogApi(private val httpClient: HttpClient, private val authRepository:
             setBody("where id = $gameId;fields name, summary, id, cover.id, cover.width, cover.height, cover.url;")
         }.body() as List<Game>
         println("BacklogApi: Received ${result.size} games")
+        return result
+    }
+
+    suspend fun getTimeToBeat(gameId: String): List<GameTimeToBeat> {
+        val result = httpClient.post(IGDB_ENDPOINT) {
+            url {
+                appendPathSegments("game_time_to_beats")
+            }
+            headers {
+                append("Client-ID", SharedBuildConfig.CLIENT_ID)
+            }
+            setBody("where game_id = $gameId;fields normally;")
+        }.body() as List<GameTimeToBeat>
+        println("BacklogApi: Received time to beat for $gameId")
         return result
     }
 }

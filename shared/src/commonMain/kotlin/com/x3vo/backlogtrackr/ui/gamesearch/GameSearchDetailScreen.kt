@@ -101,6 +101,11 @@ private fun GameSearchDetailContent(
                                 overflow = TextOverflow.Ellipsis
                             )
                             Text(
+                                text = "Time to beat: ${gameData.timeToBeat}",
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Text(
                                 text = gameData.summary,
                                 style = MaterialTheme.typography.bodySmall,
                                 maxLines = 3,
@@ -123,7 +128,7 @@ private fun GameSearchDetailContent(
 private fun GameSearchDetailScreenPreview() {
     GameSearchDetailContent(
         uiState = GameSearchDetailUIState(
-            gameData = listOf(DetailGameObject(id = 212UL, name = "test", coverURL = "", summary = "summary"))
+            gameData = listOf(DetailGameObject(id = 212UL, name = "test", coverURL = "", summary = "summary", timeToBeat = "10h"))
         ),
         handleBackNavigation = {}
     )

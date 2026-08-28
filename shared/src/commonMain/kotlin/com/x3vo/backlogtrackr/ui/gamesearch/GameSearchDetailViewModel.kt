@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 
+import kotlinx.coroutines.async
+
 class GameSearchDetailViewModel(
     private val gameId: String,
     private val backlogAPIRepository: BacklogAPIRepository
@@ -24,32 +26,36 @@ class GameSearchDetailViewModel(
             println("GameSearchViewModel: Starting search for $gameId")
             _uiState.update { it.copy(isLoading = true) }
 
-            val response = backlogAPIRepository.gameSearchById(gameId)
+            val gameDeferred = async { backlogAPIRepository.gameSearchById(gameId) }
+            val timeToBeatDeferred = async { backlogAPIRepository.getTimeToBeat(gameId) }
 
-            _uiState.update {
-                when(response) {
-                    is Resource.Success -> {
-                        println("GameSearchViewModel: Success with ${response.data.size} items")
+            val gameResponse = gameDeferred.await()
+            val timeResponse = timeToBeatDeferred.await()
+
+            if (gameResponse is Resource.Success) {
+                val game = gameResponse.data.firstOrNull()
+                val timeData = if (timeResponse is Resource.Success) timeResponse.data.firstOrNull() else null
+
+                if (game != null) {
+                    _uiState.update {
                         GameSearchDetailUIState(
                             isLoading = false,
-                            gameData = response.data.map {
+                            gameData = listOf(
                                 DetailGameObject(
-                                    id = it.id,
-                                    name =  it.name,
-                                    coverURL = it.cover?.url ?: "",
-                                    summary = it.summary ?: "No Summary Available"
+                                    id = game.id,
+                                    name = game.name,
+                                    coverURL = game.cover?.url ?: "",
+                                    summary = game.summary ?: "No Summary Available",
+                                    timeToBeat = timeData?.normally?.let { "${it / 3600}h" } ?: "N/A"
                                 )
-                            }
+                            )
                         )
                     }
-                    is Resource.Error ->  {
-                        println("GameSearchViewModel: Error: ${response.message}")
-                        GameSearchDetailUIState(error = response.message)
-                    }
-                    is Resource.Loading -> {
-                        GameSearchDetailUIState(isLoading = true)
-                    }
+                } else {
+                    _uiState.update { GameSearchDetailUIState(error = "Game not found") }
                 }
+            } else if (gameResponse is Resource.Error) {
+                _uiState.update { GameSearchDetailUIState(error = gameResponse.message) }
             }
         }
     }
@@ -59,7 +65,8 @@ data class DetailGameObject(
     val id: ULong,
     val name: String,
     val coverURL: String,
-    val summary: String
+    val summary: String,
+    val timeToBeat: String
 )
 
 data class GameSearchDetailUIState (

@@ -1,6 +1,7 @@
 package com.x3vo.backlogtrackr.network
 
 import com.x3vo.backlogtrackr.network.models.Game
+import com.x3vo.backlogtrackr.network.models.GameTimeToBeat
 import com.x3vo.backlogtrackr.network.utils.Resource
 import com.x3vo.backlogtrackr.network.utils.safeApiCall
 import com.x3vo.backlogtrackr.ui.BacklogApi
@@ -15,6 +16,12 @@ class BacklogAPIRepository (private val backlogApi: BacklogApi) {
     suspend fun gameSearchById(gameId: String): Resource<List<Game>> {
         return safeApiCall {
             backlogApi.gameSearchById(gameId).map { it.formatCoverURL() }
+        }
+    }
+
+    suspend fun getTimeToBeat(gameId: String): Resource<List<GameTimeToBeat>> {
+        return safeApiCall {
+            backlogApi.getTimeToBeat(gameId)
         }
     }
 
