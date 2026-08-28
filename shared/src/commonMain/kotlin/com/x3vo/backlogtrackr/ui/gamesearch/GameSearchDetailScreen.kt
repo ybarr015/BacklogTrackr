@@ -3,15 +3,31 @@ package com.x3vo.backlogtrackr.ui.gamesearch
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,17 +59,30 @@ fun GameSearchDetailScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     GameSearchDetailContent(
         uiState = uiState,
+        onOwnershipUpdate = viewModel::updateOwnership,
+        onPlatformUpdate = viewModel::updatePlatform,
+        onPcLauncherUpdate = viewModel::updatePcStore,
+        onProgressUpdate = viewModel::updateProgress,
         handleBackNavigation = handleBackNavigation,
         modifier = modifier
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun GameSearchDetailContent(
     uiState: GameSearchDetailUIState,
+    onOwnershipUpdate: (Boolean) -> Unit,
+    onPlatformUpdate: (String, Boolean) -> Unit,
+    onPcLauncherUpdate: (String, Boolean) -> Unit,
+    onProgressUpdate: (String) -> Unit,
     handleBackNavigation: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val platforms = listOf("PC", "PS5", "Xbox Series X", "Switch")
+    val pcLaunchers = listOf("Steam", "Epic Games", "GOG", "Ubisoft", "EA")
+    val progressOptions = listOf("Not Started", "In Progress", "Finished", "Dropped")
+    var expanded by rememberSaveable { mutableStateOf(false) }
 
     ScreenWithScaffold(
         title = uiState.gameData.firstOrNull()?.name ?: "Game Details",
@@ -66,12 +95,14 @@ private fun GameSearchDetailContent(
 
             Column(
                 verticalArrangement = Arrangement.spacedBy(AppDimensions.paddingSmall),
-                horizontalAlignment = Alignment.CenterHorizontally,
+                horizontalAlignment = Alignment.Start,
                 modifier = Modifier.padding(AppDimensions.paddingSmall)
             ) {
 
                 if (uiState.isLoading) {
-                    CircularProgressIndicator()
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
                 } else if (uiState.error != null) {
                     Text(
                         text = uiState.error,
@@ -114,11 +145,111 @@ private fun GameSearchDetailContent(
                         }
                     }
 
+                    Text(
+                        text = "Do you own this game or add to wish list?",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+
+                    SingleChoiceSegmentedButtonRow(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        SegmentedButton(
+                            selected = uiState.isOwned,
+                            onClick = { onOwnershipUpdate(true) },
+                            shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2)
+                        ) {
+                            Text("Own it")
+                        }
+                        SegmentedButton(
+                            selected = !uiState.isOwned,
+                            onClick = { onOwnershipUpdate(false) },
+                            shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2)
+                        ) {
+                            Text("Wishlist")
+                        }
+                    }
+
+                    if(uiState.isOwned) {
+                        Text(
+                            text = "What Platforms do you own it on?",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            platforms.forEach { platform ->
+                                val isSelected = uiState.selectedPlatforms.contains(platform)
+                                FilterChip(
+                                    selected = isSelected,
+                                    onClick = { onPlatformUpdate(platform, !isSelected) },
+                                    label = { Text(platform) }
+                                )
+                            }
+                        }
+
+                        if (uiState.selectedPlatforms.contains("PC")) {
+                            Text(
+                                text = "Which PC stores?",
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(start = 16.dp)
+                            )
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                modifier = Modifier.padding(start = 16.dp)
+                            ) {
+                                pcLaunchers.forEach { launcher ->
+                                    val isSelected = uiState.selectedStore.contains(launcher)
+                                    FilterChip(
+                                        selected = isSelected,
+                                        onClick = { onPcLauncherUpdate(launcher, !isSelected) },
+                                        label = { Text(launcher) }
+                                    )
+                                }
+                            }
+                        }
+
+                        Text(
+                            text = "How far are you into it?",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+
+                        ExposedDropdownMenuBox(
+                            expanded = expanded,
+                            onExpandedChange = { expanded = it }
+                        ) {
+                            TextField(
+                                value = uiState.progress,
+                                onValueChange = {},
+                                readOnly = true,
+                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                                modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true).fillMaxWidth(),
+                                colors = ExposedDropdownMenuDefaults.textFieldColors()
+                            )
+                            ExposedDropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false }
+                            ) {
+                                progressOptions.forEach { selectionOption ->
+                                    DropdownMenuItem(
+                                        text = { Text(selectionOption) },
+                                        onClick = {
+                                            onProgressUpdate(selectionOption)
+                                            expanded = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    Button(onClick = {}) {
+                        Text("Add Game")
+                    }
+
+
                 }
-
             }
-
-
         }
     }
 }
@@ -130,6 +261,10 @@ private fun GameSearchDetailScreenPreview() {
         uiState = GameSearchDetailUIState(
             gameData = listOf(DetailGameObject(id = 212UL, name = "test", coverURL = "", summary = "summary", timeToBeat = "10h"))
         ),
+        onOwnershipUpdate = {},
+        onPlatformUpdate = { _, _ -> },
+        onPcLauncherUpdate = { _, _ -> },
+        onProgressUpdate = {},
         handleBackNavigation = {}
     )
 }
