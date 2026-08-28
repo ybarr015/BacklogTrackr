@@ -4,23 +4,29 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.x3vo.backlogtrackr.network.BacklogAPIRepository
 import com.x3vo.backlogtrackr.network.utils.Resource
+import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.async
-import kotlin.collections.emptySet
 
 class GameSearchDetailViewModel(
     private val gameId: String,
-    private val backlogAPIRepository: BacklogAPIRepository
+    private val backlogAPIRepository: BacklogAPIRepository,
+    private val backlogTrackrDBRepository: BacklogTrackrDBRepository
 ): ViewModel() {
 
     private val _uiState = MutableStateFlow(GameSearchDetailUIState())
     val uiState: StateFlow<GameSearchDetailUIState> = _uiState.asStateFlow()
 
     init {
+        loadGameDetails()
+        loadPlatforms()
+    }
+
+    private fun loadGameDetails() {
         viewModelScope.launch {
             println("GameSearchViewModel: Starting search for $gameId")
             _uiState.update { it.copy(isLoading = true) }
@@ -56,6 +62,13 @@ class GameSearchDetailViewModel(
             } else if (gameResponse is Resource.Error) {
                 _uiState.update { it.copy(isLoading = false, error = gameResponse.message) }
             }
+        }
+    }
+
+    private fun loadPlatforms() {
+        viewModelScope.launch {
+            val platforms = backlogTrackrDBRepository.getAllPlatforms()
+            _uiState.update { it.copy(availablePlatforms = platforms.map { it.platformName }) }
         }
     }
 
@@ -105,6 +118,7 @@ data class GameSearchDetailUIState (
     val gameData: List<DetailGameObject> = emptyList(),
     val error: String? = null,
     val isOwned: Boolean = true,
+    val availablePlatforms: List<String> = emptyList(),
     val selectedPlatforms: Set<String> = emptySet(),
     val selectedStore: Set<String> = emptySet(),
     val progress: String = "Not Started"

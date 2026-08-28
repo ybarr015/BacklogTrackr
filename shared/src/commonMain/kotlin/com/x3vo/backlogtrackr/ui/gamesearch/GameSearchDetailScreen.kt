@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
@@ -24,14 +25,20 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
@@ -79,7 +86,6 @@ private fun GameSearchDetailContent(
     handleBackNavigation: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val platforms = listOf("PC", "PS5", "Xbox Series X", "Switch")
     val pcLaunchers = listOf("Steam", "Epic Games", "GOG", "Ubisoft", "EA")
     val progressOptions = listOf("Not Started", "In Progress", "Finished", "Dropped")
     var expanded by rememberSaveable { mutableStateOf(false) }
@@ -175,17 +181,23 @@ private fun GameSearchDetailContent(
                             style = MaterialTheme.typography.bodyLarge
                         )
 
-                        FlowRow(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            platforms.forEach { platform ->
-                                val isSelected = uiState.selectedPlatforms.contains(platform)
-                                FilterChip(
-                                    selected = isSelected,
-                                    onClick = { onPlatformUpdate(platform, !isSelected) },
-                                    label = { Text(platform) }
-                                )
+                        if (uiState.availablePlatforms.isNotEmpty()) {
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                uiState.availablePlatforms.forEach { platform ->
+                                    val isSelected = uiState.selectedPlatforms.contains(platform)
+                                    FilterChip(
+                                        selected = isSelected,
+                                        onClick = { onPlatformUpdate(platform, !isSelected) },
+                                        label = { Text(platform) }
+                                    )
+                                }
                             }
+                        } else {
+                            Text (
+                                text = "No Available Platforms Defined, please define some"
+                            )
                         }
 
                         if (uiState.selectedPlatforms.contains("PC")) {
@@ -259,7 +271,8 @@ private fun GameSearchDetailContent(
 private fun GameSearchDetailScreenPreview() {
     GameSearchDetailContent(
         uiState = GameSearchDetailUIState(
-            gameData = listOf(DetailGameObject(id = 212UL, name = "test", coverURL = "", summary = "summary", timeToBeat = "10h"))
+            gameData = listOf(DetailGameObject(id = 212UL, name = "test", coverURL = "", summary = "summary", timeToBeat = "10h")),
+            availablePlatforms = listOf("PC", "PS5", "Xbox", "Switch")
         ),
         onOwnershipUpdate = {},
         onPlatformUpdate = { _, _ -> },

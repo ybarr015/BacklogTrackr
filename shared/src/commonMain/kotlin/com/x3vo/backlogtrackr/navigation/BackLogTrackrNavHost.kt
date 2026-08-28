@@ -10,6 +10,7 @@ import com.x3vo.backlogtrackr.ui.auth.AuthScreen
 import com.x3vo.backlogtrackr.ui.gamesearch.GameSearchDetailScreen
 import com.x3vo.backlogtrackr.ui.gamesearch.GameSearchScreen
 import com.x3vo.backlogtrackr.ui.home.HomeScreen
+import com.x3vo.backlogtrackr.ui.platforms.PlatformSettingsScreen
 import kotlinx.serialization.Serializable
 
 data class HomeScreenCard (
@@ -28,11 +29,15 @@ object NavigationScreen {
     @Serializable object GAMESEARCH {
         val cardName = "Search"
     }
+    @Serializable object PLATFORMS {
+        val cardName = "Platforms"
+    }
     @Serializable data class GAMESEARCHDETAIL(val gameId:String)
 
     val homeScreenCards = listOf<HomeScreenCard>(
         HomeScreenCard(AUTH, AUTH.cardName),
-        HomeScreenCard(GAMESEARCH, GAMESEARCH.cardName)
+        HomeScreenCard(GAMESEARCH, GAMESEARCH.cardName),
+        HomeScreenCard(PLATFORMS, PLATFORMS.cardName)
     )
 }
 
@@ -71,6 +76,11 @@ fun BackLogTrackrNavHost (
             val route: NavigationScreen.GAMESEARCHDETAIL = backstackEntry.toRoute()
             GameSearchDetailScreen(
                 gameId = route.gameId,
+                handleBackNavigation = { navController.navigateUp() }
+            )
+        }
+        composable<NavigationScreen.PLATFORMS> {
+            PlatformSettingsScreen(
                 handleBackNavigation = { navController.navigateUp() }
             )
         }

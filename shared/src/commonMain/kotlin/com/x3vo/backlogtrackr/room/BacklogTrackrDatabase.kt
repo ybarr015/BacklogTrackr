@@ -11,7 +11,7 @@ import com.x3vo.backlogtrackr.room.platforms.PlatformEntity
     entities = [
         PlatformEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 @ConstructedBy(AppDataBaseConstructor::class)

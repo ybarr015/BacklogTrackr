@@ -12,6 +12,7 @@ import com.x3vo.backlogtrackr.ui.BacklogApi
 import com.x3vo.backlogtrackr.ui.auth.AuthViewModel
 import com.x3vo.backlogtrackr.ui.gamesearch.GameSearchDetailViewModel
 import com.x3vo.backlogtrackr.ui.gamesearch.GameSearchViewModel
+import com.x3vo.backlogtrackr.ui.platforms.PlatformViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.auth.Auth
@@ -117,6 +118,7 @@ val appModule = module{
     single<BacklogTrackrDatabase> {
         get<RoomDatabase.Builder<BacklogTrackrDatabase>>()
             .setDriver(BundledSQLiteDriver())
+            .fallbackToDestructiveMigration(true)
             .build()
     }
 
@@ -128,6 +130,7 @@ val appModule = module{
     viewModelOf(::AuthViewModel)
     viewModelOf(::GameSearchViewModel)
     viewModelOf(::GameSearchDetailViewModel)
+    viewModelOf(::PlatformViewModel)
 }
 
 expect val platformModule: Module

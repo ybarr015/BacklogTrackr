@@ -16,6 +16,9 @@ interface PlatformDao {
     @Query("DELETE FROM platforms WHERE platformName = :platformName")
     suspend fun deletePlatform(platformName: String)
 
+    @Query("DELETE FROM platforms")
+    suspend fun deleteAllPlatforms()
+
     @Query("SELECT * FROM platforms")
     suspend fun getAllPlatforms(): List<PlatformEntity>
 }

@@ -8,7 +8,16 @@ class BacklogTrackrDBRepository (
     private val platformDao: PlatformDao
 ) {
 
+    private val defaultPlatforms = listOf("PC", "PS5", "Xbox Series X", "Switch")
+
     suspend fun getAllPlatforms() = platformDao.getAllPlatforms()
+
+    suspend fun resetPlatforms() {
+        platformDao.deleteAllPlatforms()
+        for (platform in defaultPlatforms) {
+            addPlatform(platform)
+        }
+    }
 
     suspend fun addPlatform(platformName: String)  {
         val newEntity = PlatformEntity(
