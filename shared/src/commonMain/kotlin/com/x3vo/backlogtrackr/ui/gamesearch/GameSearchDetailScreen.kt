@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
@@ -43,6 +42,7 @@ import backlogtrackr.shared.generated.resources.loading_img
 import coil3.compose.AsyncImage
 import com.x3vo.backlogtrackr.ui.common.components.BasicDataUiState
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithScaffold
+import com.x3vo.backlogtrackr.ui.common.screen.StatefulContent
 import com.x3vo.backlogtrackr.utils.AppDimensions
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -101,16 +101,10 @@ private fun GameSearchDetailContent(
                 modifier = Modifier.padding(AppDimensions.paddingSmall)
             ) {
 
-                if (gameDetailsState.isLoading) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
-                } else if (gameDetailsState.error != null) {
-                    Text(
-                        text = gameDetailsState.error,
-                        color = Color.Red
-                    )
-                } else {
+                StatefulContent(
+                    gameDetailsState.isLoading,
+                    gameDetailsState.error
+                ) {
                     val gameData = gameDetailsState.data
 
                     if (gameData == null) {
@@ -261,10 +255,6 @@ private fun GameSearchDetailContent(
                             Text("Add Game")
                         }
                     }
-
-
-
-
                 }
             }
         }

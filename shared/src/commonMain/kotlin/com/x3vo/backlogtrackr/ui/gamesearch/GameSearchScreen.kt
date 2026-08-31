@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,7 +25,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -40,6 +38,7 @@ import backlogtrackr.shared.generated.resources.search_24px
 import com.x3vo.backlogtrackr.ui.common.components.BasicListUIState
 import com.x3vo.backlogtrackr.ui.common.components.GameSearchCard
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithScaffold
+import com.x3vo.backlogtrackr.ui.common.screen.StatefulContent
 import com.x3vo.backlogtrackr.utils.AppDimensions
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -164,14 +163,10 @@ private fun GameSearchScreenContent(
 
                 }
 
-                if (uiState.isLoading) {
-                    CircularProgressIndicator()
-                } else if (uiState.error != null) {
-                    Text(
-                        text = uiState.error,
-                        color = Color.Red
-                    )
-                } else {
+                StatefulContent(
+                    uiState.isLoading,
+                    uiState.error
+                ) {
                     LazyColumn(
                         state = listState,
                         modifier = Modifier
