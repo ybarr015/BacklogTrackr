@@ -4,37 +4,26 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
 import com.x3vo.backlogtrackr.room.platforms.PlatformEntity
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class PlatformViewModel(
     private val repository: BacklogTrackrDBRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(PlatformUIState())
-    val uiState: StateFlow<PlatformUIState> = _uiState.asStateFlow()
-
-    init {
-        loadPlatforms()
-    }
-
-    private fun loadPlatforms() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            val platforms = repository.getAllPlatforms()
-            _uiState.update { it.copy(isLoading = false, platforms = platforms) }
-        }
-    }
+    val uiState: StateFlow<PlatformUIState> = repository.allPlatforms
+        .map { platforms -> PlatformUIState(platforms = platforms) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = PlatformUIState(isLoading = true)
+        )
 
     fun addPlatform(name: String) {
         if (name.isBlank())
             return
         viewModelScope.launch {
             repository.addPlatform(name)
-            loadPlatforms()
         }
     }
 
@@ -43,14 +32,12 @@ class PlatformViewModel(
             return
         viewModelScope.launch {
             repository.deletePlatform(name)
-            loadPlatforms()
         }
     }
 
     fun resetPlatforms() {
         viewModelScope.launch {
             repository.resetPlatforms()
-            loadPlatforms()
         }
     }
 

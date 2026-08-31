@@ -12,6 +12,7 @@ import com.x3vo.backlogtrackr.ui.auth.AuthViewModel
 import com.x3vo.backlogtrackr.ui.gamesearch.GameSearchDetailViewModel
 import com.x3vo.backlogtrackr.ui.gamesearch.GameSearchViewModel
 import com.x3vo.backlogtrackr.ui.platforms.PlatformViewModel
+import com.x3vo.backlogtrackr.ui.stores.StoresSettingsViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.auth.Auth
@@ -21,6 +22,9 @@ import io.ktor.client.plugins.cache.HttpCache
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 import org.koin.core.context.startKoin
@@ -113,6 +117,8 @@ val appModule = module{
         )
     }
 
+    single { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
+
     //room
     single<BacklogTrackrDatabase> {
         get<RoomDatabase.Builder<BacklogTrackrDatabase>>()
@@ -122,7 +128,8 @@ val appModule = module{
     }
 
     single { get<BacklogTrackrDatabase>().getPlatformDao() }
-    single { BacklogTrackrDBRepository(platformDao = get(), dataStore = get()) }
+    single { get<BacklogTrackrDatabase>().getPCStoreDAO() }
+    single { BacklogTrackrDBRepository(platformDao = get(), pcStoreDAO = get(), dataStore = get(), appScope = get()) }
 
 
     //view models
@@ -130,6 +137,7 @@ val appModule = module{
     viewModelOf(::GameSearchViewModel)
     viewModelOf(::GameSearchDetailViewModel)
     viewModelOf(::PlatformViewModel)
+    viewModelOf(::StoresSettingsViewModel)
 }
 
 expect val platformModule: Module

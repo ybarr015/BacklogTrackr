@@ -23,7 +23,8 @@ class GameSearchDetailViewModel(
 
     init {
         loadGameDetails()
-        loadPlatforms()
+        observePlatforms()
+        observePcStores()
     }
 
     private fun loadGameDetails() {
@@ -65,10 +66,19 @@ class GameSearchDetailViewModel(
         }
     }
 
-    private fun loadPlatforms() {
+    private fun observePlatforms() {
         viewModelScope.launch {
-            val platforms = backlogTrackrDBRepository.getAllPlatforms()
-            _uiState.update { it.copy(availablePlatforms = platforms.map { it.platformName }) }
+            backlogTrackrDBRepository.allPlatforms.collect { platforms ->
+                _uiState.update { it.copy(availablePlatforms = platforms.map { it.platformName }) }
+            }
+        }
+    }
+
+    private fun observePcStores() {
+        viewModelScope.launch {
+            backlogTrackrDBRepository.allPCStores.collect { stores ->
+                _uiState.update { it.copy(availablePcStores = stores.map { it.pcStoreName }) }
+            }
         }
     }
 
@@ -83,20 +93,20 @@ class GameSearchDetailViewModel(
             } else {
                 state.selectedPlatforms - platform
             }
-            // Clear PC launchers if PC is unselected
-            val pcStores = if (!updatedPlatforms.contains("PC")) emptySet() else state.selectedStore
-            state.copy(selectedPlatforms = updatedPlatforms, selectedStore = pcStores)
+            // Clear PC stores if PC is unselected
+            val pcStores = if (!updatedPlatforms.contains("PC")) emptySet() else state.selectedStores
+            state.copy(selectedPlatforms = updatedPlatforms, selectedStores = pcStores)
         }
     }
 
     fun updatePcStore(store: String, selected: Boolean) {
         _uiState.update { state ->
             val updatedStores = if (selected) {
-                state.selectedStore + store
+                state.selectedStores + store
             } else {
-                state.selectedStore - store
+                state.selectedStores - store
             }
-            state.copy(selectedStore = updatedStores)
+            state.copy(selectedStores = updatedStores)
         }
     }
 
@@ -120,6 +130,7 @@ data class GameSearchDetailUIState (
     val isOwned: Boolean = true,
     val availablePlatforms: List<String> = emptyList(),
     val selectedPlatforms: Set<String> = emptySet(),
-    val selectedStore: Set<String> = emptySet(),
+    val availablePcStores: List<String> = emptyList(),
+    val selectedStores: Set<String> = emptySet(),
     val progress: String = "Not Started"
 )

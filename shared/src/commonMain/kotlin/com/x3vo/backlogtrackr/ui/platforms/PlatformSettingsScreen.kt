@@ -67,7 +67,7 @@ fun PlatformSettingsScreen(
 }
 
 @Composable
-fun PlatformSettingsScreenContent(
+private fun PlatformSettingsScreenContent(
     uiState: PlatformUIState,
     handleBackNavigation: () -> Unit,
     addPlatformHandler: (String) -> Unit,
