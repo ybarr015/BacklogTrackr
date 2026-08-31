@@ -5,12 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.x3vo.backlogtrackr.network.BacklogAPIRepository
 import com.x3vo.backlogtrackr.network.utils.Resource
 import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
+import com.x3vo.backlogtrackr.ui.common.components.BasicDataUiState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.collections.emptySet
 
 class GameSearchDetailViewModel(
     private val gameId: String,
@@ -18,8 +20,13 @@ class GameSearchDetailViewModel(
     private val backlogTrackrDBRepository: BacklogTrackrDBRepository
 ): ViewModel() {
 
-    private val _uiState = MutableStateFlow(GameSearchDetailUIState())
-    val uiState: StateFlow<GameSearchDetailUIState> = _uiState.asStateFlow()
+    //this flow contains the data about the game fetch from the server
+    private val _gameDetailState = MutableStateFlow(BasicDataUiState<GameSearchObject>())
+    val gameDetailState: StateFlow<BasicDataUiState<GameSearchObject>> = _gameDetailState.asStateFlow()
+
+    //this flow contains the user selections made on the screen and sources the options from the database
+    private val _selectionsState = MutableStateFlow(UserSelectionsState())
+    val selectionsState: StateFlow<UserSelectionsState> = _selectionsState.asStateFlow()
 
     init {
         loadGameDetails()
@@ -30,7 +37,7 @@ class GameSearchDetailViewModel(
     private fun loadGameDetails() {
         viewModelScope.launch {
             println("GameSearchViewModel: Starting search for $gameId")
-            _uiState.update { it.copy(isLoading = true) }
+            _gameDetailState.update { it.copy(isLoading = true) }
 
             val gameDeferred = async { backlogAPIRepository.gameSearchById(gameId) }
             val timeToBeatDeferred = async { backlogAPIRepository.getTimeToBeat(gameId) }
@@ -43,25 +50,23 @@ class GameSearchDetailViewModel(
                 val timeData = if (timeResponse is Resource.Success) timeResponse.data.firstOrNull() else null
 
                 if (game != null) {
-                    _uiState.update {
+                    _gameDetailState.update {
                         it.copy(
                             isLoading = false,
-                            gameData = listOf(
-                                DetailGameObject(
-                                    id = game.id,
-                                    name = game.name,
-                                    coverURL = game.cover?.url ?: "",
-                                    summary = game.summary ?: "No Summary Available",
-                                    timeToBeat = timeData?.normally?.let { seconds -> "${seconds / 3600}h" } ?: "N/A"
-                                )
+                            data = GameSearchObject(
+                                id = game.id,
+                                name = game.name,
+                                coverURL = game.cover?.url ?: "",
+                                summary = game.summary ?: "No Summary Available",
+                                timeToBeat = timeData?.normally?.let { seconds -> "${seconds / 3600}h" } ?: "N/A"
                             )
                         )
                     }
                 } else {
-                    _uiState.update { it.copy(isLoading = false, error = "Game not found") }
+                    _gameDetailState.update { it.copy(isLoading = false, error = "Game not found") }
                 }
             } else if (gameResponse is Resource.Error) {
-                _uiState.update { it.copy(isLoading = false, error = gameResponse.message) }
+                _gameDetailState.update { it.copy(isLoading = false, error = gameResponse.message) }
             }
         }
     }
@@ -69,7 +74,7 @@ class GameSearchDetailViewModel(
     private fun observePlatforms() {
         viewModelScope.launch {
             backlogTrackrDBRepository.allPlatforms.collect { platforms ->
-                _uiState.update { it.copy(availablePlatforms = platforms.map { it.platformName }) }
+                _selectionsState.update { it.copy(availablePlatforms = platforms.map { it.platformName }) }
             }
         }
     }
@@ -77,30 +82,30 @@ class GameSearchDetailViewModel(
     private fun observePcStores() {
         viewModelScope.launch {
             backlogTrackrDBRepository.allPCStores.collect { stores ->
-                _uiState.update { it.copy(availablePcStores = stores.map { it.pcStoreName }) }
+                _selectionsState.update { it.copy(availablePcStores = stores.map { it.pcStoreName }) }
             }
         }
     }
 
     fun updateOwnership(owned: Boolean) {
-        _uiState.update { it.copy(isOwned = owned) }
+        _selectionsState.update { it.copy(isOwned = owned) }
     }
 
     fun updatePlatform(platform: String, selected: Boolean) {
-        _uiState.update { state ->
+        _selectionsState.update { state ->
             val updatedPlatforms = if (selected) {
                 state.selectedPlatforms + platform
             } else {
                 state.selectedPlatforms - platform
             }
             // Clear PC stores if PC is unselected
-            val pcStores = if (!updatedPlatforms.contains("PC")) emptySet() else state.selectedStores
+            val pcStores = if (updatedPlatforms.contains("PC")) state.selectedStores else emptySet()
             state.copy(selectedPlatforms = updatedPlatforms, selectedStores = pcStores)
         }
     }
 
     fun updatePcStore(store: String, selected: Boolean) {
-        _uiState.update { state ->
+        _selectionsState.update { state ->
             val updatedStores = if (selected) {
                 state.selectedStores + store
             } else {
@@ -111,26 +116,15 @@ class GameSearchDetailViewModel(
     }
 
     fun updateProgress(progress: String) {
-        _uiState.update { it.copy(progress = progress) }
+        _selectionsState.update { it.copy(progress = progress) }
     }
 }
 
-data class DetailGameObject(
-    val id: ULong,
-    val name: String,
-    val coverURL: String,
-    val summary: String,
-    val timeToBeat: String
-)
-
-data class GameSearchDetailUIState (
-    val isLoading : Boolean = false,
-    val gameData: List<DetailGameObject> = emptyList(),
-    val error: String? = null,
-    val isOwned: Boolean = true,
+data class UserSelectionsState(
     val availablePlatforms: List<String> = emptyList(),
-    val selectedPlatforms: Set<String> = emptySet(),
     val availablePcStores: List<String> = emptyList(),
+    val isOwned: Boolean = true,
+    val selectedPlatforms: Set<String> = emptySet(),
     val selectedStores: Set<String> = emptySet(),
     val progress: String = "Not Started"
 )

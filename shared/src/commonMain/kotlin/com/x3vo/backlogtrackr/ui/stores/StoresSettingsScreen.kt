@@ -15,8 +15,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,8 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import backlogtrackr.shared.generated.resources.Res
 import backlogtrackr.shared.generated.resources.add_24px
-import backlogtrackr.shared.generated.resources.delete_24px
 import com.x3vo.backlogtrackr.room.pcstores.PCStoreEntity
+import com.x3vo.backlogtrackr.ui.common.components.BasicListUIState
 import com.x3vo.backlogtrackr.ui.common.components.GameAttributeItem
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithScaffold
 import com.x3vo.backlogtrackr.utils.AppDimensions
@@ -73,7 +71,7 @@ fun StoresSettingsScreen(
 
 @Composable
 private fun StoresSettingsScreenContent(
-    uiState: StoreSettingsUIState,
+    uiState: BasicListUIState<PCStoreEntity>,
     handleBackNavigation: () -> Unit = {},
     addStoreHandler: (String) -> Unit = {},
     deleteStoreHandler: (String) -> Unit = {},
@@ -146,7 +144,7 @@ private fun StoresSettingsScreenContent(
                     .nestedScroll(nestedScrollConnection),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(uiState.stores) { store->
+                items(uiState.data) { store->
                     GameAttributeItem(
                         attributeText = store.pcStoreName,
                         onDelete = { deleteStoreHandler(store.pcStoreName) }
@@ -172,8 +170,8 @@ private fun StoresSettingsScreenContent(
 @PreviewScreenSizes
 private fun StoresSettingsScreenPreview(){
     StoresSettingsScreenContent(
-        uiState = StoreSettingsUIState(
-            stores = listOf(PCStoreEntity(id = 0, pcStoreName = "test"))
+        uiState = BasicListUIState(
+            data = listOf(PCStoreEntity(id = 0, pcStoreName = "test"))
         )
     )
 }

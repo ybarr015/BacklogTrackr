@@ -15,8 +15,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,8 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import backlogtrackr.shared.generated.resources.Res
 import backlogtrackr.shared.generated.resources.add_24px
-import backlogtrackr.shared.generated.resources.delete_24px
 import com.x3vo.backlogtrackr.room.platforms.PlatformEntity
+import com.x3vo.backlogtrackr.ui.common.components.BasicListUIState
 import com.x3vo.backlogtrackr.ui.common.components.GameAttributeItem
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithScaffold
 import com.x3vo.backlogtrackr.utils.AppDimensions
@@ -69,7 +67,7 @@ fun PlatformSettingsScreen(
 
 @Composable
 private fun PlatformSettingsScreenContent(
-    uiState: PlatformUIState,
+    uiState: BasicListUIState<PlatformEntity>,
     handleBackNavigation: () -> Unit = {},
     addPlatformHandler: (String) -> Unit = {},
     deletePlatformHandler: (String) -> Unit = {},
@@ -142,7 +140,7 @@ private fun PlatformSettingsScreenContent(
                     .nestedScroll(nestedScrollConnection),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(uiState.platforms) { platform ->
+                items(uiState.data) { platform ->
                     GameAttributeItem(
                         attributeText = platform.platformName,
                         onDelete = { deletePlatformHandler(platform.platformName) }
@@ -170,6 +168,6 @@ private fun PlatformSettingsScreenContent(
 @PreviewScreenSizes
 private fun PlatformSettingsScreenPreview() {
     PlatformSettingsScreenContent(
-        uiState = PlatformUIState(platforms = listOf(PlatformEntity(id = 0, platformName = "test")))
+        uiState = BasicListUIState<PlatformEntity>(data = listOf(PlatformEntity(id = 0, platformName = "test")))
     )
 }

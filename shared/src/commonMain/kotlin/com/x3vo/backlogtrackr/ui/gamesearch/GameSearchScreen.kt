@@ -37,7 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import backlogtrackr.shared.generated.resources.Res
 import backlogtrackr.shared.generated.resources.cancel_24px
 import backlogtrackr.shared.generated.resources.search_24px
-import com.x3vo.backlogtrackr.navigation.NavigationScreen
+import com.x3vo.backlogtrackr.ui.common.components.BasicListUIState
 import com.x3vo.backlogtrackr.ui.common.components.GameSearchCard
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithScaffold
 import com.x3vo.backlogtrackr.utils.AppDimensions
@@ -71,7 +71,7 @@ private fun GameSearchScreenContent(
     onSearchTextUpdate: (String) -> Unit = {},
     handleSearchButtonRequest: () -> Unit = {},
     handleCancelTextInput: () -> Unit = {},
-    uiState: GameSearchUIState,
+    uiState: BasicListUIState<GameSearchObject>,
     handleBackNavigation: () -> Unit = {},
     handleGameSelection: (String)-> Unit = {},
     modifier: Modifier = Modifier
@@ -180,7 +180,7 @@ private fun GameSearchScreenContent(
                         verticalArrangement = Arrangement.spacedBy(AppDimensions.paddingSmall),
                     ) {
                         items(
-                            items = uiState.gameData,
+                            items = uiState.data,
                             key = { it.id.toString() }
                         ) { game ->
                             GameSearchCard(
@@ -208,8 +208,8 @@ private fun GameSearchScreenContent(
 private fun GameSearchScreenPreview() {
     GameSearchScreenContent(
         searchTextFieldText = "test",
-        uiState = GameSearchUIState(
-            gameData = listOf(SimpleGameObject(id = 212UL, name = "test", coverURL = "", summary = "summary"))
+        uiState = BasicListUIState<GameSearchObject>(
+            data = listOf(GameSearchObject(id = 212UL, name = "test", coverURL = "", summary = "summary"))
         )
     )
 }
@@ -218,7 +218,7 @@ private fun GameSearchScreenPreview() {
 @Composable
 private fun GameSearchScreenErrorPreview() {
     GameSearchScreenContent(
-        uiState = GameSearchUIState(
+        uiState = BasicListUIState<GameSearchObject>(
             error = "test"
         )
     )
@@ -228,7 +228,7 @@ private fun GameSearchScreenErrorPreview() {
 @Composable
 private fun GameSearchLoadingPreview() {
     GameSearchScreenContent(
-        uiState = GameSearchUIState(
+        uiState = BasicListUIState<GameSearchObject>(
             isLoading = true
         )
     )

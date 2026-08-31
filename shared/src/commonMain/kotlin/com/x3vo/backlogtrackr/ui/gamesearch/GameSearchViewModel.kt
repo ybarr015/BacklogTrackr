@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.x3vo.backlogtrackr.network.BacklogAPIRepository
 import com.x3vo.backlogtrackr.network.utils.Resource
+import com.x3vo.backlogtrackr.ui.common.components.BasicListUIState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,8 +15,8 @@ class GameSearchViewModel(
     private val backlogAPIRepository: BacklogAPIRepository
 ): ViewModel() {
 
-    private val _uiState = MutableStateFlow(GameSearchUIState())
-    val uiState: StateFlow<GameSearchUIState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(BasicListUIState<GameSearchObject>())
+    val uiState: StateFlow<BasicListUIState<GameSearchObject>> = _uiState.asStateFlow()
 
 
     private val _searchKeyword = MutableStateFlow("")
@@ -42,10 +43,10 @@ class GameSearchViewModel(
                 when(response) {
                     is Resource.Success -> {
                         println("GameSearchViewModel: Success with ${response.data.size} items")
-                        GameSearchUIState(
+                        BasicListUIState<GameSearchObject>(
                             isLoading = false,
-                            gameData = response.data.map {
-                                SimpleGameObject(
+                            data = response.data.map {
+                                GameSearchObject(
                                     id = it.id,
                                     name =  it.name,
                                     coverURL = it.cover?.url ?: "",
@@ -56,10 +57,10 @@ class GameSearchViewModel(
                     }
                     is Resource.Error ->  {
                         println("GameSearchViewModel: Error: ${response.message}")
-                        GameSearchUIState(error = response.message)
+                        BasicListUIState(error = response.message)
                     }
                     is Resource.Loading -> {
-                        GameSearchUIState(isLoading = true)
+                        BasicListUIState(isLoading = true)
                     }
                 }
             }
@@ -68,15 +69,3 @@ class GameSearchViewModel(
 
 }
 
-data class SimpleGameObject (
-    val id: ULong,
-    val name: String,
-    val coverURL: String,
-    val summary: String
-)
-
-data class GameSearchUIState (
-    val isLoading : Boolean = false,
-    val gameData: List<SimpleGameObject> = emptyList(),
-    val error: String? = null
-)

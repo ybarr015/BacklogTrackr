@@ -41,6 +41,7 @@ import backlogtrackr.shared.generated.resources.Res
 import backlogtrackr.shared.generated.resources.ic_broken_image
 import backlogtrackr.shared.generated.resources.loading_img
 import coil3.compose.AsyncImage
+import com.x3vo.backlogtrackr.ui.common.components.BasicDataUiState
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithScaffold
 import com.x3vo.backlogtrackr.utils.AppDimensions
 import org.jetbrains.compose.resources.painterResource
@@ -56,9 +57,11 @@ fun GameSearchDetailScreen(
     ),
     modifier: Modifier = Modifier
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val gameDetailsState by viewModel.gameDetailState.collectAsStateWithLifecycle()
+    val userSelectionsState by viewModel.selectionsState.collectAsStateWithLifecycle()
     GameSearchDetailContent(
-        uiState = uiState,
+        gameDetailsState = gameDetailsState,
+        userSelectionsState = userSelectionsState,
         onOwnershipUpdate = viewModel::updateOwnership,
         onPlatformUpdate = viewModel::updatePlatform,
         onPcStoreUpdate = viewModel::updatePcStore,
@@ -71,7 +74,8 @@ fun GameSearchDetailScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun GameSearchDetailContent(
-    uiState: GameSearchDetailUIState,
+    gameDetailsState: BasicDataUiState<GameSearchObject>,
+    userSelectionsState: UserSelectionsState,
     onOwnershipUpdate: (Boolean) -> Unit = {},
     onPlatformUpdate: (String, Boolean) -> Unit = { _,_ -> },
     onPcStoreUpdate: (String, Boolean) -> Unit = { _,_ -> },
@@ -83,7 +87,7 @@ private fun GameSearchDetailContent(
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     ScreenWithScaffold(
-        title = uiState.gameData.firstOrNull()?.name ?: "Game Details",
+        title = gameDetailsState.data?.name ?: "Game Details",
         canNavBack = true,
         onNavigateBack = handleBackNavigation,
         navButtonEnabled = true,
@@ -97,159 +101,168 @@ private fun GameSearchDetailContent(
                 modifier = Modifier.padding(AppDimensions.paddingSmall)
             ) {
 
-                if (uiState.isLoading) {
+                if (gameDetailsState.isLoading) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator()
                     }
-                } else if (uiState.error != null) {
+                } else if (gameDetailsState.error != null) {
                     Text(
-                        text = uiState.error,
+                        text = gameDetailsState.error,
                         color = Color.Red
                     )
                 } else {
-                    val gameData = uiState.gameData.first()
+                    val gameData = gameDetailsState.data
 
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        AsyncImage(
-                            model = gameData.coverURL,
-                            contentDescription = "networkImage",
-                            modifier = Modifier.size(height = 200.dp, width = 150.dp),
-                            contentScale = ContentScale.Crop,
-                            error = painterResource(Res.drawable.ic_broken_image),
-                            placeholder = painterResource(Res.drawable.loading_img)
-                        )
-
-                        Column(Modifier.padding(AppDimensions.paddingSmall)) {
-                            Text(
-                                text = gameData.name,
-                                style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.Bold,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            Text(
-                                text = "Time to beat: ${gameData.timeToBeat}",
-                                style = MaterialTheme.typography.bodySmall,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            Text(
-                                text = gameData.summary,
-                                style = MaterialTheme.typography.bodySmall,
-                                maxLines = 3,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-                    }
-
-                    Text(
-                        text = "Do you own this game or add to wish list?",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-
-                    SingleChoiceSegmentedButtonRow(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        SegmentedButton(
-                            selected = uiState.isOwned,
-                            onClick = { onOwnershipUpdate(true) },
-                            shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2)
-                        ) {
-                            Text("Own it")
-                        }
-                        SegmentedButton(
-                            selected = !uiState.isOwned,
-                            onClick = { onOwnershipUpdate(false) },
-                            shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2)
-                        ) {
-                            Text("Wishlist")
-                        }
-                    }
-
-                    if(uiState.isOwned) {
+                    if (gameData == null) {
                         Text(
-                            text = "What Platforms do you own it on?",
-                            style = MaterialTheme.typography.bodyLarge
+                            text = "No Game Data was found from the api server",
+                            color = Color.Red
                         )
-
-                        if (uiState.availablePlatforms.isNotEmpty()) {
-                            FlowRow(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                uiState.availablePlatforms.forEach { platform ->
-                                    val isSelected = uiState.selectedPlatforms.contains(platform)
-                                    FilterChip(
-                                        selected = isSelected,
-                                        onClick = { onPlatformUpdate(platform, !isSelected) },
-                                        label = { Text(platform) }
-                                    )
-                                }
-                            }
-                        } else {
-                            Text (
-                                text = "No Available Platforms Defined, please define some"
+                    } else {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            AsyncImage(
+                                model = gameData.coverURL,
+                                contentDescription = "networkImage",
+                                modifier = Modifier.size(height = 200.dp, width = 150.dp),
+                                contentScale = ContentScale.Crop,
+                                error = painterResource(Res.drawable.ic_broken_image),
+                                placeholder = painterResource(Res.drawable.loading_img)
                             )
-                        }
 
-                        if (uiState.selectedPlatforms.contains("PC") && uiState.availablePcStores.isNotEmpty()) {
-                            Text(
-                                text = "Which PC stores?",
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.padding(start = 16.dp)
-                            )
-                            FlowRow(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                modifier = Modifier.padding(start = 16.dp)
-                            ) {
-                                uiState.availablePcStores.forEach { store ->
-                                    val isSelected = uiState.selectedStores.contains(store)
-                                    FilterChip(
-                                        selected = isSelected,
-                                        onClick = { onPcStoreUpdate(store, !isSelected) },
-                                        label = { Text(store) }
-                                    )
-                                }
+                            Column(Modifier.padding(AppDimensions.paddingSmall)) {
+                                Text(
+                                    text = gameData.name,
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                Text(
+                                    text = "Time to beat: ${gameData.timeToBeat}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                Text(
+                                    text = gameData.summary,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    maxLines = 3,
+                                    overflow = TextOverflow.Ellipsis
+                                )
                             }
                         }
 
                         Text(
-                            text = "How far are you into it?",
+                            text = "Do you own this game or add to wish list?",
                             style = MaterialTheme.typography.bodyLarge
                         )
 
-                        ExposedDropdownMenuBox(
-                            expanded = expanded,
-                            onExpandedChange = { expanded = it }
+                        SingleChoiceSegmentedButtonRow(
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            TextField(
-                                value = uiState.progress,
-                                onValueChange = {},
-                                readOnly = true,
-                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                                modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true).fillMaxWidth(),
-                                colors = ExposedDropdownMenuDefaults.textFieldColors()
+                            SegmentedButton(
+                                selected = userSelectionsState.isOwned,
+                                onClick = { onOwnershipUpdate(true) },
+                                shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2)
+                            ) {
+                                Text("Own it")
+                            }
+                            SegmentedButton(
+                                selected = !userSelectionsState.isOwned,
+                                onClick = { onOwnershipUpdate(false) },
+                                shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2)
+                            ) {
+                                Text("Wishlist")
+                            }
+                        }
+
+                        if(userSelectionsState.isOwned) {
+                            Text(
+                                text = "What Platforms do you own it on?",
+                                style = MaterialTheme.typography.bodyLarge
                             )
-                            ExposedDropdownMenu(
+
+                            if (userSelectionsState.availablePlatforms.isNotEmpty()) {
+                                FlowRow(
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    userSelectionsState.availablePlatforms.forEach { platform ->
+                                        val isSelected = userSelectionsState.selectedPlatforms.contains(platform)
+                                        FilterChip(
+                                            selected = isSelected,
+                                            onClick = { onPlatformUpdate(platform, !isSelected) },
+                                            label = { Text(platform) }
+                                        )
+                                    }
+                                }
+                            } else {
+                                Text (
+                                    text = "No Available Platforms Defined, please define some"
+                                )
+                            }
+
+                            if (userSelectionsState.selectedPlatforms.contains("PC") && userSelectionsState.availablePcStores.isNotEmpty()) {
+                                Text(
+                                    text = "Which PC stores?",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    modifier = Modifier.padding(start = 16.dp)
+                                )
+                                FlowRow(
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    modifier = Modifier.padding(start = 16.dp)
+                                ) {
+                                    userSelectionsState.availablePcStores.forEach { store ->
+                                        val isSelected = userSelectionsState.selectedStores.contains(store)
+                                        FilterChip(
+                                            selected = isSelected,
+                                            onClick = { onPcStoreUpdate(store, !isSelected) },
+                                            label = { Text(store) }
+                                        )
+                                    }
+                                }
+                            }
+
+                            Text(
+                                text = "How far are you into it?",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+
+                            ExposedDropdownMenuBox(
                                 expanded = expanded,
-                                onDismissRequest = { expanded = false }
+                                onExpandedChange = { expanded = it }
                             ) {
-                                progressOptions.forEach { selectionOption ->
-                                    DropdownMenuItem(
-                                        text = { Text(selectionOption) },
-                                        onClick = {
-                                            onProgressUpdate(selectionOption)
-                                            expanded = false
-                                        }
-                                    )
+                                TextField(
+                                    value = userSelectionsState.progress,
+                                    onValueChange = {},
+                                    readOnly = true,
+                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                                    modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true).fillMaxWidth(),
+                                    colors = ExposedDropdownMenuDefaults.textFieldColors()
+                                )
+                                ExposedDropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false }
+                                ) {
+                                    progressOptions.forEach { selectionOption ->
+                                        DropdownMenuItem(
+                                            text = { Text(selectionOption) },
+                                            onClick = {
+                                                onProgressUpdate(selectionOption)
+                                                expanded = false
+                                            }
+                                        )
+                                    }
                                 }
                             }
                         }
+
+                        Button(onClick = {}) {
+                            Text("Add Game")
+                        }
                     }
 
-                    Button(onClick = {}) {
-                        Text("Add Game")
-                    }
+
 
 
                 }
@@ -262,11 +275,14 @@ private fun GameSearchDetailContent(
 @Composable
 private fun GameSearchDetailScreenPreview() {
     GameSearchDetailContent(
-        uiState = GameSearchDetailUIState(
-            gameData = listOf(DetailGameObject(id = 212UL, name = "test", coverURL = "", summary = "summary", timeToBeat = "10h")),
+        gameDetailsState = BasicDataUiState<GameSearchObject>(
+            data = GameSearchObject(id = 212UL, name = "test", coverURL = "", summary = "summary", timeToBeat = "10h")
+        ),
+        userSelectionsState = UserSelectionsState(
             availablePlatforms = listOf("PC", "PS5", "Xbox", "Switch"),
             availablePcStores = listOf("Steam", "Epic"),
-            selectedPlatforms = setOf("PC")
+            selectedPlatforms = setOf("PC"),
+            isOwned = true
         )
     )
 }

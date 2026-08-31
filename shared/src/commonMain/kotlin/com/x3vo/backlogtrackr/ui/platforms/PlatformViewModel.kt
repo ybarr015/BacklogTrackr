@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
 import com.x3vo.backlogtrackr.room.platforms.PlatformEntity
+import com.x3vo.backlogtrackr.ui.common.components.BasicListUIState
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -11,12 +12,12 @@ class PlatformViewModel(
     private val repository: BacklogTrackrDBRepository
 ) : ViewModel() {
 
-    val uiState: StateFlow<PlatformUIState> = repository.allPlatforms
-        .map { platforms -> PlatformUIState(platforms = platforms) }
+    val uiState: StateFlow<BasicListUIState<PlatformEntity>> = repository.allPlatforms
+        .map { platforms -> BasicListUIState<PlatformEntity>(data = platforms) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = PlatformUIState(isLoading = true)
+            initialValue = BasicListUIState<PlatformEntity>(isLoading = true)
         )
 
     fun addPlatform(name: String) {
@@ -42,9 +43,3 @@ class PlatformViewModel(
     }
 
 }
-
-data class PlatformUIState(
-    val isLoading: Boolean = false,
-    val platforms: List<PlatformEntity> = emptyList(),
-    val error: String? = null
-)
