@@ -1,4 +1,4 @@
-package com.x3vo.backlogtrackr.room.pcstores
+package com.x3vo.backlogtrackr.room.game_attribute_settings.pcstores
 
 import androidx.room3.Dao
 import androidx.room3.Insert

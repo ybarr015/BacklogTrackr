@@ -4,10 +4,10 @@ import androidx.room3.ConstructedBy
 import androidx.room3.Database
 import androidx.room3.RoomDatabase
 import androidx.room3.RoomDatabaseConstructor
-import com.x3vo.backlogtrackr.room.pcstores.PCStoreDAO
-import com.x3vo.backlogtrackr.room.pcstores.PCStoreEntity
-import com.x3vo.backlogtrackr.room.platforms.PlatformDao
-import com.x3vo.backlogtrackr.room.platforms.PlatformEntity
+import com.x3vo.backlogtrackr.room.game_attribute_settings.pcstores.PCStoreDAO
+import com.x3vo.backlogtrackr.room.game_attribute_settings.pcstores.PCStoreEntity
+import com.x3vo.backlogtrackr.room.game_attribute_settings.platforms.PlatformDao
+import com.x3vo.backlogtrackr.room.game_attribute_settings.platforms.PlatformEntity
 
 @Database(
     entities = [

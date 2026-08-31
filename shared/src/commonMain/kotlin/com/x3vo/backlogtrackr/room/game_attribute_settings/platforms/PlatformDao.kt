@@ -1,7 +1,6 @@
-package com.x3vo.backlogtrackr.room.platforms
+package com.x3vo.backlogtrackr.room.game_attribute_settings.platforms
 
 import androidx.room3.Dao
-import androidx.room3.Delete
 import androidx.room3.Insert
 import androidx.room3.OnConflictStrategy
 import androidx.room3.Query

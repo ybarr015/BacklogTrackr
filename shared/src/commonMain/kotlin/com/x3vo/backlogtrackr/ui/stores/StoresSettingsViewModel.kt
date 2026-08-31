@@ -3,7 +3,7 @@ package com.x3vo.backlogtrackr.ui.stores
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
-import com.x3vo.backlogtrackr.room.pcstores.PCStoreEntity
+import com.x3vo.backlogtrackr.room.game_attribute_settings.pcstores.PCStoreEntity
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 class StoresSettingsViewModel(
     private val repository: BacklogTrackrDBRepository
 ): ViewModel() {
-    val uiState: StateFlow<List<PCStoreEntity>> = repository.allPCStores
+    val stores: StateFlow<List<PCStoreEntity>> = repository.allPCStores
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

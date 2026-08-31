@@ -4,10 +4,10 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import com.x3vo.backlogtrackr.room.pcstores.PCStoreDAO
-import com.x3vo.backlogtrackr.room.pcstores.PCStoreEntity
-import com.x3vo.backlogtrackr.room.platforms.PlatformDao
-import com.x3vo.backlogtrackr.room.platforms.PlatformEntity
+import com.x3vo.backlogtrackr.room.game_attribute_settings.pcstores.PCStoreDAO
+import com.x3vo.backlogtrackr.room.game_attribute_settings.pcstores.PCStoreEntity
+import com.x3vo.backlogtrackr.room.game_attribute_settings.platforms.PlatformDao
+import com.x3vo.backlogtrackr.room.game_attribute_settings.platforms.PlatformEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

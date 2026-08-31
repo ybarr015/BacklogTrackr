@@ -3,8 +3,7 @@ package com.x3vo.backlogtrackr.ui.platforms
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
-import com.x3vo.backlogtrackr.room.platforms.PlatformEntity
-import com.x3vo.backlogtrackr.ui.common.components.BasicListUIState
+import com.x3vo.backlogtrackr.room.game_attribute_settings.platforms.PlatformEntity
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -12,7 +11,7 @@ class PlatformViewModel(
     private val repository: BacklogTrackrDBRepository
 ) : ViewModel() {
 
-    val uiState: StateFlow<List<PlatformEntity>> = repository.allPlatforms
+    val platforms: StateFlow<List<PlatformEntity>> = repository.allPlatforms
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
