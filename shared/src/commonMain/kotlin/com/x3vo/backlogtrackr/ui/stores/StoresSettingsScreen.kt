@@ -73,7 +73,7 @@ fun StoresSettingsScreen(
 @Composable
 private fun StoresSettingsScreenContent(
     uiState: StoreSettingsUIState,
-    handleBackNavigation: () -> Unit,
+    handleBackNavigation: () -> Unit = {},
     addStoreHandler: (String) -> Unit = {},
     deleteStoreHandler: (String) -> Unit = {},
     resetStoresHandler: () -> Unit = {},
@@ -193,7 +193,6 @@ private fun StoresSettingsScreenPreview(){
     StoresSettingsScreenContent(
         uiState = StoreSettingsUIState(
             stores = listOf(PCStoreEntity(id = 0, pcStoreName = "test"))
-        ),
-        handleBackNavigation = {}
+        )
     )
 }

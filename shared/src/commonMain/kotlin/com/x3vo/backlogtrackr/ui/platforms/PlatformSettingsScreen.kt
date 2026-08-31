@@ -69,10 +69,10 @@ fun PlatformSettingsScreen(
 @Composable
 private fun PlatformSettingsScreenContent(
     uiState: PlatformUIState,
-    handleBackNavigation: () -> Unit,
-    addPlatformHandler: (String) -> Unit,
-    deletePlatformHandler: (String) -> Unit,
-    resetPlatformsHandler: () -> Unit,
+    handleBackNavigation: () -> Unit = {},
+    addPlatformHandler: (String) -> Unit = {},
+    deletePlatformHandler: (String) -> Unit = {},
+    resetPlatformsHandler: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
@@ -187,10 +187,6 @@ private fun PlatformItem(
 @PreviewScreenSizes
 private fun PlatformSettingsScreenPreview() {
     PlatformSettingsScreenContent(
-        uiState = PlatformUIState(platforms = listOf(PlatformEntity(id = 0, platformName = "test"))),
-        handleBackNavigation = {},
-        addPlatformHandler = {},
-        deletePlatformHandler = {},
-        resetPlatformsHandler = {}
+        uiState = PlatformUIState(platforms = listOf(PlatformEntity(id = 0, platformName = "test")))
     )
 }

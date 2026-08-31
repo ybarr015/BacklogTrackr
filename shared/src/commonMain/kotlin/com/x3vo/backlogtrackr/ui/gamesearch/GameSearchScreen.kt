@@ -67,13 +67,13 @@ fun GameSearchScreen(
 
 @Composable
 private fun GameSearchScreenContent(
-    searchTextFieldText: String,
-    onSearchTextUpdate: (String) -> Unit,
-    handleSearchButtonRequest: () -> Unit,
-    handleCancelTextInput: () -> Unit,
+    searchTextFieldText: String = "",
+    onSearchTextUpdate: (String) -> Unit = {},
+    handleSearchButtonRequest: () -> Unit = {},
+    handleCancelTextInput: () -> Unit = {},
     uiState: GameSearchUIState,
-    handleBackNavigation: () -> Unit,
-    handleGameSelection: (String)-> Unit,
+    handleBackNavigation: () -> Unit = {},
+    handleGameSelection: (String)-> Unit = {},
     modifier: Modifier = Modifier
 ) {
 
@@ -208,14 +208,9 @@ private fun GameSearchScreenContent(
 private fun GameSearchScreenPreview() {
     GameSearchScreenContent(
         searchTextFieldText = "test",
-        onSearchTextUpdate = {},
-        handleSearchButtonRequest = {},
-        handleCancelTextInput = {},
         uiState = GameSearchUIState(
             gameData = listOf(SimpleGameObject(id = 212UL, name = "test", coverURL = "", summary = "summary"))
-        ),
-        handleBackNavigation = {},
-        handleGameSelection = {}
+        )
     )
 }
 
@@ -223,15 +218,9 @@ private fun GameSearchScreenPreview() {
 @Composable
 private fun GameSearchScreenErrorPreview() {
     GameSearchScreenContent(
-        searchTextFieldText = "",
-        onSearchTextUpdate = {},
-        handleSearchButtonRequest = {},
-        handleCancelTextInput = {},
         uiState = GameSearchUIState(
             error = "test"
-        ),
-        handleBackNavigation = {},
-        handleGameSelection = {}
+        )
     )
 }
 
@@ -239,14 +228,8 @@ private fun GameSearchScreenErrorPreview() {
 @Composable
 private fun GameSearchLoadingPreview() {
     GameSearchScreenContent(
-        searchTextFieldText = "",
-        onSearchTextUpdate = {},
-        handleSearchButtonRequest = {},
-        handleCancelTextInput = {},
         uiState = GameSearchUIState(
             isLoading = true
-        ),
-        handleBackNavigation = {},
-        handleGameSelection = {}
+        )
     )
 }

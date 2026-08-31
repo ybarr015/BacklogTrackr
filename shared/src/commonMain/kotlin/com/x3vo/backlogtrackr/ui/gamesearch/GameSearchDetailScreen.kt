@@ -72,11 +72,11 @@ fun GameSearchDetailScreen(
 @Composable
 private fun GameSearchDetailContent(
     uiState: GameSearchDetailUIState,
-    onOwnershipUpdate: (Boolean) -> Unit,
-    onPlatformUpdate: (String, Boolean) -> Unit,
-    onPcStoreUpdate: (String, Boolean) -> Unit,
-    onProgressUpdate: (String) -> Unit,
-    handleBackNavigation: () -> Unit,
+    onOwnershipUpdate: (Boolean) -> Unit = {},
+    onPlatformUpdate: (String, Boolean) -> Unit = { _,_ -> },
+    onPcStoreUpdate: (String, Boolean) -> Unit = { _,_ -> },
+    onProgressUpdate: (String) -> Unit = {},
+    handleBackNavigation: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val progressOptions = listOf("Not Started", "In Progress", "Finished", "Dropped")
@@ -267,11 +267,6 @@ private fun GameSearchDetailScreenPreview() {
             availablePlatforms = listOf("PC", "PS5", "Xbox", "Switch"),
             availablePcStores = listOf("Steam", "Epic"),
             selectedPlatforms = setOf("PC")
-        ),
-        onOwnershipUpdate = {},
-        onPlatformUpdate = { _, _ -> },
-        onPcStoreUpdate = { _, _ -> },
-        onProgressUpdate = {},
-        handleBackNavigation = {}
+        )
     )
 }

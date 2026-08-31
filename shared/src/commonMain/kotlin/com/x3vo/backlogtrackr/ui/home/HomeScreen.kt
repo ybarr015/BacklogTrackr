@@ -17,13 +17,11 @@ import com.x3vo.backlogtrackr.utils.AppDimensions
 
 @Composable
 fun HomeScreen(
-    canNavBack: Boolean,
     handleCardClick: (Any) -> Unit,
     cards: List<HomeScreenCard>,
     modifier: Modifier = Modifier
 ) {
     HomeScreenContent(
-        canNavBack = canNavBack,
         handleCardClick = handleCardClick,
         cards = cards,
         modifier = modifier
@@ -32,16 +30,15 @@ fun HomeScreen(
 
 @Composable
 private fun HomeScreenContent(
-    canNavBack: Boolean,
-    handleCardClick: (Any) -> Unit,
+    handleCardClick: (Any) -> Unit = {},
     cards: List<HomeScreenCard>,
     modifier: Modifier = Modifier,
 ) {
 
     ScreenWithScaffold(
         title = "Home",
-        canNavBack = canNavBack,
-        navButtonEnabled = canNavBack,
+        canNavBack = false,
+        navButtonEnabled = false,
         modifier = modifier
     ) {
         LazyColumn(
@@ -70,8 +67,6 @@ private fun HomeScreenContent(
 @Composable
 private fun FakeHomeScreenContent() {
     HomeScreenContent(
-        canNavBack = false,
-        handleCardClick = {},
         cards = NavigationScreen.homeScreenCards
     )
 }

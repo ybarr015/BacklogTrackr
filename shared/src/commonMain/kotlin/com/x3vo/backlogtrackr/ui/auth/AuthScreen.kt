@@ -39,11 +39,11 @@ fun AuthScreen(
 
 @Composable
 private fun AuthScreenContent(
-    authToken: String,
-    onAuthenticate: () -> Unit,
-    onFakeAuthenticationRequest: () -> Unit,
-    onClearAuth: () -> Unit,
-    handleBackNavigation: () -> Unit,
+    authToken: String = "",
+    onAuthenticate: () -> Unit = {},
+    onFakeAuthenticationRequest: () -> Unit = {},
+    onClearAuth: () -> Unit = {},
+    handleBackNavigation: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     ScreenWithScaffold(
@@ -93,10 +93,6 @@ private fun AuthScreenContent(
 @Composable
 private fun AuthScreenPreview() {
     AuthScreenContent(
-        authToken = "preview-token",
-        onAuthenticate = {},
-        onFakeAuthenticationRequest = {},
-        onClearAuth = {},
-        handleBackNavigation = {}
+        authToken = "preview-token"
     )
 }

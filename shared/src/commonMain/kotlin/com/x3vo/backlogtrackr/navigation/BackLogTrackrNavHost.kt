@@ -60,7 +60,6 @@ fun BackLogTrackrNavHost (
 
         composable<NavigationScreen.HOME> {
             HomeScreen(
-                canNavBack = false,
                 handleCardClick = { navController.navigate(it)},
                 cards = NavigationScreen.homeScreenCards
             )

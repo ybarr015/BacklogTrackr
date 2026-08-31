@@ -56,8 +56,7 @@ private fun FakeTopAppBar() {
             topBar = {
                 GenericTopAppBar(
                     title = "top app bar text",
-                    canNavigateBack = true,
-                    navigateBack = {}
+                    canNavigateBack = true
                 )
             }
         ) { padding ->
