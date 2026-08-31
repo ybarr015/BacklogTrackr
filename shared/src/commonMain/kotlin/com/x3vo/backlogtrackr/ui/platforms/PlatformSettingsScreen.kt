@@ -41,6 +41,7 @@ import backlogtrackr.shared.generated.resources.Res
 import backlogtrackr.shared.generated.resources.add_24px
 import backlogtrackr.shared.generated.resources.delete_24px
 import com.x3vo.backlogtrackr.room.platforms.PlatformEntity
+import com.x3vo.backlogtrackr.ui.common.components.GameAttributeItem
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithScaffold
 import com.x3vo.backlogtrackr.utils.AppDimensions
 import org.jetbrains.compose.resources.painterResource
@@ -142,8 +143,8 @@ private fun PlatformSettingsScreenContent(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(uiState.platforms) { platform ->
-                    PlatformItem(
-                        name = platform.platformName,
+                    GameAttributeItem(
+                        attributeText = platform.platformName,
                         onDelete = { deletePlatformHandler(platform.platformName) }
                     )
                     HorizontalDivider()
@@ -163,25 +164,7 @@ private fun PlatformSettingsScreenContent(
     }
 }
 
-@Composable
-private fun PlatformItem(
-    name: String,
-    onDelete: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(text = name, style = MaterialTheme.typography.bodyLarge)
-        IconButton(onClick = onDelete) {
-            Icon(painter = painterResource(Res.drawable.delete_24px), contentDescription = "Delete", tint = MaterialTheme.colorScheme.error)
-        }
 
-    }
-}
 
 @Composable
 @PreviewScreenSizes
