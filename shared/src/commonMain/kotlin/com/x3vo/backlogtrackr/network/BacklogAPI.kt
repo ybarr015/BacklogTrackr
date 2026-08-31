@@ -2,8 +2,8 @@ package com.x3vo.backlogtrackr.ui
 
 import com.x3vo.backlogtrackr.SharedBuildConfig
 import com.x3vo.backlogtrackr.auth.AuthRepository
-import com.x3vo.backlogtrackr.network.models.Game
-import com.x3vo.backlogtrackr.network.models.GameTimeToBeat
+import com.x3vo.backlogtrackr.network.igdb_model.Game
+import com.x3vo.backlogtrackr.network.igdb_model.GameTimeToBeat
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.headers

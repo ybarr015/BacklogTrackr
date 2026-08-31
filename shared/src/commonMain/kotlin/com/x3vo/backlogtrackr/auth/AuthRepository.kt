@@ -4,8 +4,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.x3vo.backlogtrackr.network.AuthResponse
-import com.x3vo.backlogtrackr.network.BackLogAuthAPIService
+import com.x3vo.backlogtrackr.network.auth.AuthResponse
+import com.x3vo.backlogtrackr.network.auth.BackLogAuthAPIService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

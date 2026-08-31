@@ -1,7 +1,7 @@
 package com.x3vo.backlogtrackr.network
 
-import com.x3vo.backlogtrackr.network.models.Game
-import com.x3vo.backlogtrackr.network.models.GameTimeToBeat
+import com.x3vo.backlogtrackr.network.igdb_model.Game
+import com.x3vo.backlogtrackr.network.igdb_model.GameTimeToBeat
 import com.x3vo.backlogtrackr.network.utils.Resource
 import com.x3vo.backlogtrackr.network.utils.safeApiCall
 import com.x3vo.backlogtrackr.ui.BacklogApi

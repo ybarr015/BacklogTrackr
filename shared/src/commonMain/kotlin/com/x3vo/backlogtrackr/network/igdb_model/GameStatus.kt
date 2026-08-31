@@ -1,0 +1,15 @@
+package com.x3vo.backlogtrackr.network.igdb_model
+
+import kotlinx.serialization.Serializable
+
+
+
+
+@Serializable
+data class GameStatus(
+    val id: ULong,
+    val status: String,
+    val createdAt: Long? = null,
+    val updatedAt: Long? = null,
+    val checksum: String
+)

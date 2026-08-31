@@ -3,7 +3,7 @@ package com.x3vo.backlogtrackr.koin
 import androidx.room3.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.x3vo.backlogtrackr.auth.AuthRepository
-import com.x3vo.backlogtrackr.network.BackLogAuthAPIService
+import com.x3vo.backlogtrackr.network.auth.BackLogAuthAPIService
 import com.x3vo.backlogtrackr.network.BacklogAPIRepository
 import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
 import com.x3vo.backlogtrackr.room.BacklogTrackrDatabase
