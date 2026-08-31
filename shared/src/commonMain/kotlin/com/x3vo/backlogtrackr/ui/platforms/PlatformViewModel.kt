@@ -12,12 +12,11 @@ class PlatformViewModel(
     private val repository: BacklogTrackrDBRepository
 ) : ViewModel() {
 
-    val uiState: StateFlow<BasicListUIState<PlatformEntity>> = repository.allPlatforms
-        .map { platforms -> BasicListUIState<PlatformEntity>(data = platforms) }
+    val uiState: StateFlow<List<PlatformEntity>> = repository.allPlatforms
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = BasicListUIState<PlatformEntity>(isLoading = true)
+            initialValue = emptyList()
         )
 
     fun addPlatform(name: String) {

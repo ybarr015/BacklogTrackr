@@ -71,7 +71,7 @@ fun StoresSettingsScreen(
 
 @Composable
 private fun StoresSettingsScreenContent(
-    uiState: BasicListUIState<PCStoreEntity>,
+    uiState: List<PCStoreEntity>,
     handleBackNavigation: () -> Unit = {},
     addStoreHandler: (String) -> Unit = {},
     deleteStoreHandler: (String) -> Unit = {},
@@ -144,7 +144,7 @@ private fun StoresSettingsScreenContent(
                     .nestedScroll(nestedScrollConnection),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(uiState.data) { store->
+                items(uiState) { store->
                     GameAttributeItem(
                         attributeText = store.pcStoreName,
                         onDelete = { deleteStoreHandler(store.pcStoreName) }
@@ -170,8 +170,6 @@ private fun StoresSettingsScreenContent(
 @PreviewScreenSizes
 private fun StoresSettingsScreenPreview(){
     StoresSettingsScreenContent(
-        uiState = BasicListUIState(
-            data = listOf(PCStoreEntity(id = 0, pcStoreName = "test"))
-        )
+        uiState = listOf(PCStoreEntity(id = 0, pcStoreName = "test"))
     )
 }

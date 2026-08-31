@@ -4,19 +4,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
 import com.x3vo.backlogtrackr.room.pcstores.PCStoreEntity
-import com.x3vo.backlogtrackr.ui.common.components.BasicListUIState
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class StoresSettingsViewModel(
     private val repository: BacklogTrackrDBRepository
 ): ViewModel() {
-    val uiState: StateFlow<BasicListUIState<PCStoreEntity>> = repository.allPCStores
-        .map { stores -> BasicListUIState(data = stores) }
+    val uiState: StateFlow<List<PCStoreEntity>> = repository.allPCStores
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = BasicListUIState(isLoading = true)
+            initialValue = listOf()
         )
 
     fun addStore(name: String) {

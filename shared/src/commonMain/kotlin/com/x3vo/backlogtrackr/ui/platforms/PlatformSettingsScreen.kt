@@ -38,7 +38,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import backlogtrackr.shared.generated.resources.Res
 import backlogtrackr.shared.generated.resources.add_24px
 import com.x3vo.backlogtrackr.room.platforms.PlatformEntity
-import com.x3vo.backlogtrackr.ui.common.components.BasicListUIState
 import com.x3vo.backlogtrackr.ui.common.components.GameAttributeItem
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithScaffold
 import com.x3vo.backlogtrackr.utils.AppDimensions
@@ -67,7 +66,7 @@ fun PlatformSettingsScreen(
 
 @Composable
 private fun PlatformSettingsScreenContent(
-    uiState: BasicListUIState<PlatformEntity>,
+    uiState: List<PlatformEntity>,
     handleBackNavigation: () -> Unit = {},
     addPlatformHandler: (String) -> Unit = {},
     deletePlatformHandler: (String) -> Unit = {},
@@ -140,7 +139,7 @@ private fun PlatformSettingsScreenContent(
                     .nestedScroll(nestedScrollConnection),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(uiState.data) { platform ->
+                items(uiState) { platform ->
                     GameAttributeItem(
                         attributeText = platform.platformName,
                         onDelete = { deletePlatformHandler(platform.platformName) }
@@ -168,6 +167,6 @@ private fun PlatformSettingsScreenContent(
 @PreviewScreenSizes
 private fun PlatformSettingsScreenPreview() {
     PlatformSettingsScreenContent(
-        uiState = BasicListUIState<PlatformEntity>(data = listOf(PlatformEntity(id = 0, platformName = "test")))
+        uiState = listOf(PlatformEntity(id = 0, platformName = "test"))
     )
 }
