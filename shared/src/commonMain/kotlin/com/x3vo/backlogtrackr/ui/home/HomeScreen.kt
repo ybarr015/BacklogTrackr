@@ -3,9 +3,9 @@ package com.x3vo.backlogtrackr.ui.home
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
@@ -41,11 +41,13 @@ private fun HomeScreenContent(
         navButtonEnabled = false,
         modifier = modifier
     ) {
-        LazyColumn(
+        LazyVerticalGrid(
             modifier = Modifier
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(AppDimensions.paddingMedium),
-            contentPadding = PaddingValues(AppDimensions.paddingSmall)
+            horizontalArrangement = Arrangement.spacedBy(AppDimensions.paddingMedium),
+            contentPadding = PaddingValues(AppDimensions.paddingSmall),
+            columns = GridCells.Adaptive(minSize = 150.dp)
         ) {
             items(
                 items = cards,
@@ -55,8 +57,7 @@ private fun HomeScreenContent(
             ) { item ->
                 HomeScreenCard(
                     item.cardName,
-                    onCardClick = { handleCardClick(item.route) },
-                    modifier = Modifier.width(150.dp)
+                    onCardClick = { handleCardClick(item.route) }
                 )
             }
         }

@@ -42,18 +42,23 @@ class GameSearchViewModel(
             _uiState.update {
                 when(response) {
                     is Resource.Success -> {
-                        println("GameSearchViewModel: Success with ${response.data.size} items")
-                        BasicListUIState<GameSearchObject>(
-                            isLoading = false,
-                            data = response.data.map {
-                                GameSearchObject(
-                                    id = it.id,
-                                    name =  it.name,
-                                    coverURL = it.cover?.url ?: "",
-                                    summary = it.summary?: "No Summary Available"
-                                )
-                            }
-                        )
+                        println("GameSearchViewModel: Success response with ${response.data.size} items")
+
+                        if (response.data.isEmpty()) {
+                            BasicListUIState(isLoading = false, error = "There was no game data found for this search query")
+                        } else {
+                            BasicListUIState<GameSearchObject>(
+                                isLoading = false,
+                                data = response.data.map {
+                                    GameSearchObject(
+                                        id = it.id,
+                                        name =  it.name,
+                                        coverURL = it.cover?.url ?: "",
+                                        summary = it.summary?: "No Summary Available"
+                                    )
+                                }
+                            )
+                        }
                     }
                     is Resource.Error ->  {
                         println("GameSearchViewModel: Error: ${response.message}")
