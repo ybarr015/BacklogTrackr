@@ -4,6 +4,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import com.x3vo.backlogtrackr.room.game_attribute_settings.gameprogress.GameProgressOptionEntity
+import com.x3vo.backlogtrackr.room.game_attribute_settings.gameprogress.GameProgressOptionsDao
 import com.x3vo.backlogtrackr.room.game_attribute_settings.pcstores.PCStoreDAO
 import com.x3vo.backlogtrackr.room.game_attribute_settings.pcstores.PCStoreEntity
 import com.x3vo.backlogtrackr.room.game_attribute_settings.platforms.PlatformDao
@@ -16,6 +18,7 @@ import kotlinx.coroutines.launch
 class BacklogTrackrDBRepository (
     private val platformDao: PlatformDao,
     private val pcStoreDAO: PCStoreDAO,
+    private val gameProgressOptionsDao: GameProgressOptionsDao,
     private val dataStore: DataStore<Preferences>,
     appScope: CoroutineScope
 ) {
@@ -23,8 +26,11 @@ class BacklogTrackrDBRepository (
     private val INITIALIZED_KEY = booleanPreferencesKey("platforms_initialized")
 
     private val defaultPlatforms = listOf("PC", "PS5", "Xbox Series X", "Switch", "Mobile").map { PlatformEntity(platformName = it) }
-    val defaultPCStores = listOf("Steam", "Epic Games", "GOG", "Ubisoft", "EA").map { PCStoreEntity(pcStoreName = it) }
+    private val defaultPCStores = listOf("Steam", "Epic Games", "GOG", "Ubisoft", "EA").map { PCStoreEntity(pcStoreName = it) }
+    private val defaultGameProgressOptions = listOf("Not Started", "In Progress", "Finished", "Dropped").map { GameProgressOptionEntity(progressOption = it) }
 
+
+    //this initializes the default options if app is first installed
     private val initializationJob = appScope.launch {
         val preferences = dataStore.data.first()
         val isInitialized = preferences[INITIALIZED_KEY] ?: false
@@ -34,19 +40,17 @@ class BacklogTrackrDBRepository (
 
             platformDao.addMultiplePlatforms(defaultPlatforms)
             pcStoreDAO.addMultiplePCStores(defaultPCStores)
+            gameProgressOptionsDao.addMultipleGameProgressOptions(defaultGameProgressOptions)
         }
     }
 
+    //this joins the initialization job if its required
     private suspend fun ensureInitialized() {
         initializationJob.join()
     }
 
+    //platforms
     val allPlatforms: Flow<List<PlatformEntity>> = platformDao.getAllPlatformsFlow()
-        .onStart {
-            ensureInitialized()
-        }
-
-    val allPCStores: Flow<List<PCStoreEntity>> = pcStoreDAO.getAllPCStoresFlow()
         .onStart {
             ensureInitialized()
         }
@@ -75,6 +79,12 @@ class BacklogTrackrDBRepository (
         platformDao.deletePlatform(platformName)
     }
 
+    //stores
+    val allPCStores: Flow<List<PCStoreEntity>> = pcStoreDAO.getAllPCStoresFlow()
+        .onStart {
+            ensureInitialized()
+        }
+
     suspend fun getAllPCStores(): List<PCStoreEntity> {
         ensureInitialized()
         return pcStoreDAO.getAllPCStores()
@@ -97,6 +107,36 @@ class BacklogTrackrDBRepository (
     suspend fun deletePCStore(storeName: String) {
         ensureInitialized()
         pcStoreDAO.deletePCStore(storeName)
+    }
+
+    //gameprogress
+    val allGameProgressOptions: Flow<List<GameProgressOptionEntity>> = gameProgressOptionsDao.getallGameProgressOptionsFlow()
+        .onStart {
+            ensureInitialized()
+        }
+
+    suspend fun getAllGameProgressOptions(): List<GameProgressOptionEntity> {
+        ensureInitialized()
+        return gameProgressOptionsDao.getAllGameProgressOptions()
+    }
+
+    suspend fun resetGameProgressOptions() {
+        ensureInitialized()
+        gameProgressOptionsDao.deleteAllGameProgressOptions()
+        gameProgressOptionsDao.addMultipleGameProgressOptions(defaultGameProgressOptions)
+    }
+
+    suspend fun addGameProgressOption(progressOption: String) {
+        ensureInitialized()
+        val newEntity = GameProgressOptionEntity(
+            progressOption = progressOption
+        )
+        gameProgressOptionsDao.addGameProgressOption(newEntity)
+    }
+
+    suspend fun deleteGameProgressOption(progressOption: String) {
+        ensureInitialized()
+        gameProgressOptionsDao.deleteGameProgressOption(progressOption)
     }
 
 

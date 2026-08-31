@@ -83,7 +83,7 @@ private fun GameSearchDetailContent(
     handleBackNavigation: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val progressOptions = listOf("Not Started", "In Progress", "Finished", "Dropped")
+
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     ScreenWithScaffold(
@@ -217,38 +217,42 @@ private fun GameSearchDetailContent(
                                 }
                             }
 
-                            Text(
-                                text = "How far are you into it?",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-
-                            ExposedDropdownMenuBox(
-                                expanded = expanded,
-                                onExpandedChange = { expanded = it }
-                            ) {
-                                TextField(
-                                    value = userSelectionsState.progress,
-                                    onValueChange = {},
-                                    readOnly = true,
-                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                                    modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true).fillMaxWidth(),
-                                    colors = ExposedDropdownMenuDefaults.textFieldColors()
+                            if (userSelectionsState.availableProgressOptions.isNotEmpty()) {
+                                Text(
+                                    text = "How far are you into it?",
+                                    style = MaterialTheme.typography.bodyLarge
                                 )
-                                ExposedDropdownMenu(
+
+                                ExposedDropdownMenuBox(
                                     expanded = expanded,
-                                    onDismissRequest = { expanded = false }
+                                    onExpandedChange = { expanded = it }
                                 ) {
-                                    progressOptions.forEach { selectionOption ->
-                                        DropdownMenuItem(
-                                            text = { Text(selectionOption) },
-                                            onClick = {
-                                                onProgressUpdate(selectionOption)
-                                                expanded = false
-                                            }
-                                        )
+                                    TextField(
+                                        value = userSelectionsState.selectedProgressOption,
+                                        onValueChange = {},
+                                        readOnly = true,
+                                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                                        modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true).fillMaxWidth(),
+                                        colors = ExposedDropdownMenuDefaults.textFieldColors()
+                                    )
+                                    ExposedDropdownMenu(
+                                        expanded = expanded,
+                                        onDismissRequest = { expanded = false }
+                                    ) {
+                                        userSelectionsState.availableProgressOptions.forEach { selectionOption ->
+                                            DropdownMenuItem(
+                                                text = { Text(selectionOption) },
+                                                onClick = {
+                                                    onProgressUpdate(selectionOption)
+                                                    expanded = false
+                                                }
+                                            )
+                                        }
                                     }
                                 }
                             }
+
+
                         }
 
                         Button(onClick = {}) {

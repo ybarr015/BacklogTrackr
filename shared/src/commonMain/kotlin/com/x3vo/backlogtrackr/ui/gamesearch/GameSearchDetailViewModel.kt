@@ -32,6 +32,7 @@ class GameSearchDetailViewModel(
         loadGameDetails()
         observePlatforms()
         observePcStores()
+        observeGameProgressOptions()
     }
 
     private fun loadGameDetails() {
@@ -87,6 +88,25 @@ class GameSearchDetailViewModel(
         }
     }
 
+    private fun observeGameProgressOptions() {
+        viewModelScope.launch {
+            backlogTrackrDBRepository.allGameProgressOptions.collect { progressOptions ->
+                val progressOptions = progressOptions.map { it.progressOption }
+                _selectionsState.update { state ->
+                    state.copy(
+                        availableProgressOptions = progressOptions,
+                        // If nothing is selected yet, pick the first available option
+                        selectedProgressOption = if (state.selectedProgressOption.isEmpty() && progressOptions.isNotEmpty()) {
+                            progressOptions[0]
+                        } else {
+                            state.selectedProgressOption
+                        }
+                    )
+                }
+            }
+        }
+    }
+
     fun updateOwnership(owned: Boolean) {
         _selectionsState.update { it.copy(isOwned = owned) }
     }
@@ -116,15 +136,18 @@ class GameSearchDetailViewModel(
     }
 
     fun updateProgress(progress: String) {
-        _selectionsState.update { it.copy(progress = progress) }
+        _selectionsState.update { state ->
+            state.copy(selectedProgressOption = progress)
+        }
     }
 }
 
 data class UserSelectionsState(
     val availablePlatforms: List<String> = emptyList(),
     val availablePcStores: List<String> = emptyList(),
+    val availableProgressOptions: List<String> = emptyList(),
     val isOwned: Boolean = true,
     val selectedPlatforms: Set<String> = emptySet(),
     val selectedStores: Set<String> = emptySet(),
-    val progress: String = "Not Started"
+    val selectedProgressOption: String = ""
 )

@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.x3vo.backlogtrackr.ui.auth.AuthScreen
+import com.x3vo.backlogtrackr.ui.gameprogressoptions.GameProgressSettingsScreen
 import com.x3vo.backlogtrackr.ui.gamesearch.GameSearchDetailScreen
 import com.x3vo.backlogtrackr.ui.gamesearch.GameSearchScreen
 import com.x3vo.backlogtrackr.ui.home.HomeScreen
@@ -31,11 +32,15 @@ object NavigationScreen {
         val cardName = "Search"
     }
     @Serializable object PLATFORMS {
-        val cardName = "Platforms"
+        val cardName = "Platform Options"
     }
 
     @Serializable object STORES {
-        val cardName = "Stores"
+        val cardName = "Store Options"
+    }
+
+    @Serializable object GAMEPROGRESSOPTIONS {
+        val cardName = "Game Progress Options"
     }
 
     @Serializable data class GAMESEARCHDETAIL(val gameId:String)
@@ -44,7 +49,8 @@ object NavigationScreen {
         HomeScreenCard(AUTH, AUTH.cardName),
         HomeScreenCard(GAMESEARCH, GAMESEARCH.cardName),
         HomeScreenCard(PLATFORMS, PLATFORMS.cardName),
-        HomeScreenCard(STORES, STORES.cardName)
+        HomeScreenCard(STORES, STORES.cardName),
+        HomeScreenCard(GAMEPROGRESSOPTIONS, GAMEPROGRESSOPTIONS.cardName)
     )
 }
 
@@ -92,6 +98,11 @@ fun BackLogTrackrNavHost (
         }
         composable<NavigationScreen.STORES> {
             StoresSettingsScreen(
+                handleBackNavigation = { navController.navigateUp() }
+            )
+        }
+        composable<NavigationScreen.GAMEPROGRESSOPTIONS> {
+            GameProgressSettingsScreen(
                 handleBackNavigation = { navController.navigateUp() }
             )
         }

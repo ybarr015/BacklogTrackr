@@ -9,6 +9,7 @@ import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
 import com.x3vo.backlogtrackr.room.BacklogTrackrDatabase
 import com.x3vo.backlogtrackr.ui.BacklogApi
 import com.x3vo.backlogtrackr.ui.auth.AuthViewModel
+import com.x3vo.backlogtrackr.ui.gameprogressoptions.GameProgressSettingsViewModel
 import com.x3vo.backlogtrackr.ui.gamesearch.GameSearchDetailViewModel
 import com.x3vo.backlogtrackr.ui.gamesearch.GameSearchViewModel
 import com.x3vo.backlogtrackr.ui.platforms.PlatformViewModel
@@ -129,7 +130,8 @@ val appModule = module{
 
     single { get<BacklogTrackrDatabase>().getPlatformDao() }
     single { get<BacklogTrackrDatabase>().getPCStoreDAO() }
-    single { BacklogTrackrDBRepository(platformDao = get(), pcStoreDAO = get(), dataStore = get(), appScope = get()) }
+    single { get<BacklogTrackrDatabase>().getGameProgressOptionsDao() }
+    single { BacklogTrackrDBRepository(platformDao = get(), pcStoreDAO = get(), gameProgressOptionsDao = get(), dataStore = get(), appScope = get()) }
 
 
     //view models
@@ -138,6 +140,7 @@ val appModule = module{
     viewModelOf(::GameSearchDetailViewModel)
     viewModelOf(::PlatformViewModel)
     viewModelOf(::StoresSettingsViewModel)
+    viewModelOf(::GameProgressSettingsViewModel)
 }
 
 expect val platformModule: Module
