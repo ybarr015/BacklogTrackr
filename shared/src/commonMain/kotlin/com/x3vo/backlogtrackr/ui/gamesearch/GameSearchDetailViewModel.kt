@@ -5,11 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.x3vo.backlogtrackr.network.BacklogAPIRepository
 import com.x3vo.backlogtrackr.network.utils.Resource
 import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
+import com.x3vo.backlogtrackr.room.LibraryGame.LibraryGameEntity
 import com.x3vo.backlogtrackr.ui.common.components.BasicDataUiState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.collections.emptySet
@@ -138,6 +140,32 @@ class GameSearchDetailViewModel(
     fun updateProgress(progress: String) {
         _selectionsState.update { state ->
             state.copy(selectedProgressOption = progress)
+        }
+    }
+
+    fun addNewGame() {
+        viewModelScope.launch {
+            val gameSearchVal = _gameDetailState.value.data ?: return@launch
+
+            val userSelections = _selectionsState.value
+
+            val gameEntity: LibraryGameEntity = LibraryGameEntity(
+                gameId = gameSearchVal.id.toLong(),
+                name = gameSearchVal.name,
+                timeToBeat = gameSearchVal.timeToBeat ?: "0h",
+                summary = gameSearchVal.summary,
+                isOwned = userSelections.isOwned,
+                gameProgress = userSelections.selectedProgressOption
+            )
+
+            val platformsList = userSelections.selectedPlatforms.toList()
+            val storesList = if("PC" in userSelections.selectedPlatforms) userSelections.selectedStores.toList() else emptyList()
+            
+            backlogTrackrDBRepository.addLibraryGame(
+                game = gameEntity,
+                platforms = platformsList,
+                stores = storesList
+            )
         }
     }
 }

@@ -4,6 +4,10 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import com.x3vo.backlogtrackr.room.LibraryGame.GamePcStoreCrossRef
+import com.x3vo.backlogtrackr.room.LibraryGame.GamePlatformCrossRef
+import com.x3vo.backlogtrackr.room.LibraryGame.LibraryGameDao
+import com.x3vo.backlogtrackr.room.LibraryGame.LibraryGameEntity
 import com.x3vo.backlogtrackr.room.game_attribute_settings.gameprogress.GameProgressOptionEntity
 import com.x3vo.backlogtrackr.room.game_attribute_settings.gameprogress.GameProgressOptionsDao
 import com.x3vo.backlogtrackr.room.game_attribute_settings.pcstores.PCStoreDAO
@@ -19,6 +23,7 @@ class BacklogTrackrDBRepository (
     private val platformDao: PlatformDao,
     private val pcStoreDAO: PCStoreDAO,
     private val gameProgressOptionsDao: GameProgressOptionsDao,
+    private val libraryGameDao: LibraryGameDao,
     private val dataStore: DataStore<Preferences>,
     appScope: CoroutineScope
 ) {
@@ -138,6 +143,24 @@ class BacklogTrackrDBRepository (
         ensureInitialized()
         gameProgressOptionsDao.deleteGameProgressOption(progressOption)
     }
+
+    //library game dao
+    suspend fun getLibraryGame(id: Long) = libraryGameDao.getLibraryGameDetails(id)
+
+    val libraryGamesFlow = libraryGameDao.getAllLibraryGameDetails()
+
+    suspend fun addLibraryGame(game: LibraryGameEntity, platforms: List<String>, stores: List<String>) {
+        val platformLinks = platforms.map {
+            GamePlatformCrossRef(gameId = game.gameId, platformName = it)
+        }
+        val storeLinks = stores.map {
+            GamePcStoreCrossRef(gameId = game.gameId, pcStoreName = it)
+        }
+
+        libraryGameDao.addLibraryGame(game, platformLinks, storeLinks)
+    }
+
+    suspend fun deleteLibraryGame(gameId: Long) = libraryGameDao.deleteLibraryGame(id = gameId)
 
 
 }

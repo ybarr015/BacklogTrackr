@@ -12,6 +12,7 @@ import com.x3vo.backlogtrackr.ui.auth.AuthViewModel
 import com.x3vo.backlogtrackr.ui.gameprogressoptions.GameProgressSettingsViewModel
 import com.x3vo.backlogtrackr.ui.gamesearch.GameSearchDetailViewModel
 import com.x3vo.backlogtrackr.ui.gamesearch.GameSearchViewModel
+import com.x3vo.backlogtrackr.ui.librarygames.LibraryGamesViewModel
 import com.x3vo.backlogtrackr.ui.platforms.PlatformViewModel
 import com.x3vo.backlogtrackr.ui.stores.StoresSettingsViewModel
 import io.ktor.client.HttpClient
@@ -131,7 +132,8 @@ val appModule = module{
     single { get<BacklogTrackrDatabase>().getPlatformDao() }
     single { get<BacklogTrackrDatabase>().getPCStoreDAO() }
     single { get<BacklogTrackrDatabase>().getGameProgressOptionsDao() }
-    single { BacklogTrackrDBRepository(platformDao = get(), pcStoreDAO = get(), gameProgressOptionsDao = get(), dataStore = get(), appScope = get()) }
+    single { get<BacklogTrackrDatabase>().getLibraryGameDao() }
+    single { BacklogTrackrDBRepository(platformDao = get(), pcStoreDAO = get(), gameProgressOptionsDao = get(), libraryGameDao = get(), dataStore = get(), appScope = get()) }
 
 
     //view models
@@ -141,6 +143,7 @@ val appModule = module{
     viewModelOf(::PlatformViewModel)
     viewModelOf(::StoresSettingsViewModel)
     viewModelOf(::GameProgressSettingsViewModel)
+    viewModelOf(::LibraryGamesViewModel)
 }
 
 expect val platformModule: Module

@@ -67,6 +67,7 @@ fun GameSearchDetailScreen(
         onPcStoreUpdate = viewModel::updatePcStore,
         onProgressUpdate = viewModel::updateProgress,
         handleBackNavigation = handleBackNavigation,
+        addGameHandler = viewModel::addNewGame,
         modifier = modifier
     )
 }
@@ -81,6 +82,7 @@ private fun GameSearchDetailContent(
     onPcStoreUpdate: (String, Boolean) -> Unit = { _,_ -> },
     onProgressUpdate: (String) -> Unit = {},
     handleBackNavigation: () -> Unit = {},
+    addGameHandler: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
 
@@ -255,7 +257,7 @@ private fun GameSearchDetailContent(
 
                         }
 
-                        Button(onClick = {}) { //todo: add in a handler for this that checks the options selected and creates a new database item
+                        Button(onClick = addGameHandler) {
                             Text("Add Game")
                         }
                     }

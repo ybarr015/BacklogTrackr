@@ -11,6 +11,7 @@ import com.x3vo.backlogtrackr.ui.gameprogressoptions.GameProgressSettingsScreen
 import com.x3vo.backlogtrackr.ui.gamesearch.GameSearchDetailScreen
 import com.x3vo.backlogtrackr.ui.gamesearch.GameSearchScreen
 import com.x3vo.backlogtrackr.ui.home.HomeScreen
+import com.x3vo.backlogtrackr.ui.librarygames.LibraryGamesScreen
 import com.x3vo.backlogtrackr.ui.platforms.PlatformSettingsScreen
 import com.x3vo.backlogtrackr.ui.stores.StoresSettingsScreen
 import kotlinx.serialization.Serializable
@@ -45,12 +46,17 @@ object NavigationScreen {
 
     @Serializable data class GAMESEARCHDETAIL(val gameId:String)
 
+    @Serializable object LIBRARYGAMES {
+        val cardName = "View Library"
+    }
+
     val homeScreenCards = listOf<HomeScreenCard>(
         HomeScreenCard(AUTH, AUTH.cardName),
         HomeScreenCard(GAMESEARCH, GAMESEARCH.cardName),
         HomeScreenCard(PLATFORMS, PLATFORMS.cardName),
         HomeScreenCard(STORES, STORES.cardName),
-        HomeScreenCard(GAMEPROGRESSOPTIONS, GAMEPROGRESSOPTIONS.cardName)
+        HomeScreenCard(GAMEPROGRESSOPTIONS, GAMEPROGRESSOPTIONS.cardName),
+        HomeScreenCard(LIBRARYGAMES, LIBRARYGAMES.cardName)
     )
 }
 
@@ -104,6 +110,11 @@ fun BackLogTrackrNavHost (
         composable<NavigationScreen.GAMEPROGRESSOPTIONS> {
             GameProgressSettingsScreen(
                 handleBackNavigation = { navController.navigateUp() }
+            )
+        }
+        composable<NavigationScreen.LIBRARYGAMES> {
+            LibraryGamesScreen(
+                handleBackNavigation = { navController.navigateUp() },
             )
         }
 
