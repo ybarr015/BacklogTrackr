@@ -10,7 +10,7 @@ import com.x3vo.backlogtrackr.room.game_attribute_settings.GameAttributeEntity
     indices = [Index(value = ["platformName"], unique = true)]
 )
 data class PlatformEntity(
-    @PrimaryKey(autoGenerate = true) override val id: Long = 0L,
+    @PrimaryKey(autoGenerate = true) override val attributeId: Long = 0L,
     val platformName: String
 ): GameAttributeEntity {
     override val attributeName: String

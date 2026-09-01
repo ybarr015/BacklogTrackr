@@ -63,6 +63,6 @@ private fun PlatformSettingsScreenContent(
 @PreviewScreenSizes
 private fun PlatformSettingsScreenPreview() {
     PlatformSettingsScreenContent(
-        platforms = listOf(PlatformEntity(id = 0, platformName = "test"))
+        platforms = listOf(PlatformEntity(attributeId = 0, platformName = "test"))
     )
 }

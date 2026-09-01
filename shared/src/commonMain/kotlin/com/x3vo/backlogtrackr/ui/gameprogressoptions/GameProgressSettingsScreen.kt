@@ -59,6 +59,6 @@ private fun GameProgressOptionsScreenContent(
 @PreviewScreenSizes
 private fun GameProgressOptionsScreenPreview() {
     GameProgressOptionsScreenContent(
-        gameProgressOptions = listOf(GameProgressOptionEntity(id = 0L, progressOption = "test"))
+        gameProgressOptions = listOf(GameProgressOptionEntity(attributeId = 0L, progressOption = "test"))
     )
 }

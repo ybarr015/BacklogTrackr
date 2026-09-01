@@ -10,7 +10,7 @@ import com.x3vo.backlogtrackr.room.game_attribute_settings.GameAttributeEntity
     indices = [Index(value = ["progressOption"], unique = true)]
 )
 data class GameProgressOptionEntity(
-    @PrimaryKey(autoGenerate = true) override val id: Long = 0L,
+    @PrimaryKey(autoGenerate = true) override val attributeId: Long = 0L,
     val progressOption: String
 ): GameAttributeEntity {
     override val attributeName: String

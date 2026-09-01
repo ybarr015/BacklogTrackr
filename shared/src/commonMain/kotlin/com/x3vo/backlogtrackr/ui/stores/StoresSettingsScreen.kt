@@ -65,6 +65,6 @@ private fun StoresSettingsScreenContent(
 @PreviewScreenSizes
 private fun StoresSettingsScreenPreview(){
     StoresSettingsScreenContent(
-        stores = listOf(PCStoreEntity(id = 0, pcStoreName = "test"))
+        stores = listOf(PCStoreEntity(attributeId = 0, pcStoreName = "test"))
     )
 }

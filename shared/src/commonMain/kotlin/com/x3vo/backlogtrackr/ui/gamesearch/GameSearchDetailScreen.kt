@@ -255,7 +255,7 @@ private fun GameSearchDetailContent(
 
                         }
 
-                        Button(onClick = {}) {
+                        Button(onClick = {}) { //todo: add in a handler for this that checks the options selected and creates a new database item
                             Text("Add Game")
                         }
                     }
@@ -276,6 +276,7 @@ private fun GameSearchDetailScreenPreview() {
             availablePlatforms = listOf("PC", "PS5", "Xbox", "Switch"),
             availablePcStores = listOf("Steam", "Epic"),
             selectedPlatforms = setOf("PC"),
+            availableProgressOptions = listOf(""),
             isOwned = true
         )
     )

@@ -10,7 +10,7 @@ import com.x3vo.backlogtrackr.room.game_attribute_settings.GameAttributeEntity
     indices = [Index(value = ["pcStoreName"], unique = true)]
 )
 data class PCStoreEntity(
-    @PrimaryKey(autoGenerate = true) override val id: Long = 0L,
+    @PrimaryKey(autoGenerate = true) override val attributeId: Long = 0L,
     val pcStoreName: String
 ): GameAttributeEntity {
     override val attributeName: String
