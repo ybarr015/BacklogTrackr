@@ -19,11 +19,10 @@ fun ScreenWithScaffold(
     canNavBack: Boolean,
     onNavigateBack: () -> Unit = {},
     navButtonEnabled: Boolean,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
+    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
     content: @Composable () -> Unit
     ) {
-
-    val snackBarHostState = remember { SnackbarHostState() }
 
     Scaffold(
         topBar = {

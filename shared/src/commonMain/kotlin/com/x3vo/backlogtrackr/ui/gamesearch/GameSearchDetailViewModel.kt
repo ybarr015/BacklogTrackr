@@ -8,10 +8,11 @@ import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
 import com.x3vo.backlogtrackr.room.LibraryGame.LibraryGameEntity
 import com.x3vo.backlogtrackr.ui.common.components.BasicDataUiState
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.collections.emptySet
@@ -21,6 +22,8 @@ class GameSearchDetailViewModel(
     private val backlogAPIRepository: BacklogAPIRepository,
     private val backlogTrackrDBRepository: BacklogTrackrDBRepository
 ): ViewModel() {
+    private val _gameAddEvent = MutableSharedFlow<GameAddEvent>()
+    val gameAddEvent = _gameAddEvent.asSharedFlow()
 
     //this flow contains the data about the game fetch from the server
     private val _gameDetailState = MutableStateFlow(BasicDataUiState<GameSearchObject>())
@@ -160,12 +163,16 @@ class GameSearchDetailViewModel(
 
             val platformsList = userSelections.selectedPlatforms.toList()
             val storesList = if("PC" in userSelections.selectedPlatforms) userSelections.selectedStores.toList() else emptyList()
-            
-            backlogTrackrDBRepository.addLibraryGame(
-                game = gameEntity,
-                platforms = platformsList,
-                stores = storesList
-            )
+            if (backlogTrackrDBRepository.checkIfGameExistsInLibrary(gameEntity.gameId)) {
+                _gameAddEvent.emit(GameAddEvent(isSuccess = false, message = "Game already exists in library"))
+            } else {
+                backlogTrackrDBRepository.addLibraryGame(
+                    game = gameEntity,
+                    platforms = platformsList,
+                    stores = storesList
+                )
+                _gameAddEvent.emit(GameAddEvent(isSuccess = true, message = "Game added to library"))
+            }
         }
     }
 }
@@ -178,4 +185,9 @@ data class UserSelectionsState(
     val selectedPlatforms: Set<String> = emptySet(),
     val selectedStores: Set<String> = emptySet(),
     val selectedProgressOption: String = ""
+)
+
+data class GameAddEvent (
+    val isSuccess: Boolean = false,
+    val message: String = ""
 )

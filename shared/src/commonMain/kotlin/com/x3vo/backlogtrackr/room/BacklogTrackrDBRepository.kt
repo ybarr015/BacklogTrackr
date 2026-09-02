@@ -162,5 +162,6 @@ class BacklogTrackrDBRepository (
 
     suspend fun deleteLibraryGame(gameId: Long) = libraryGameDao.deleteLibraryGame(id = gameId)
 
+    suspend fun checkIfGameExistsInLibrary(gameId: Long) = libraryGameDao.checkIfGameExistsInLibrary(gameId)
 
 }

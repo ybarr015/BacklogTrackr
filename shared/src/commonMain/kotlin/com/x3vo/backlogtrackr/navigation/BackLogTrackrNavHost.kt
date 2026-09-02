@@ -94,7 +94,12 @@ fun BackLogTrackrNavHost (
             val route: NavigationScreen.GAMESEARCHDETAIL = backstackEntry.toRoute()
             GameSearchDetailScreen(
                 gameId = route.gameId,
-                handleBackNavigation = { navController.navigateUp() }
+                handleBackNavigation = { navController.navigateUp() },
+                onNavigateToLibrary = {
+                    navController.navigate(NavigationScreen.LIBRARYGAMES) {
+                        popUpTo(NavigationScreen.HOME)
+                    }
+                }
             )
         }
         composable<NavigationScreen.PLATFORMS> {

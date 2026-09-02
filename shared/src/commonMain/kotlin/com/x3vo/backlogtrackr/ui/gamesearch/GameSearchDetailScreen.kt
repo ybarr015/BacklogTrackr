@@ -20,11 +20,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -44,6 +48,7 @@ import com.x3vo.backlogtrackr.ui.common.components.BasicDataUiState
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithScaffold
 import com.x3vo.backlogtrackr.ui.common.screen.StatefulContent
 import com.x3vo.backlogtrackr.utils.AppDimensions
+import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -52,6 +57,7 @@ import org.koin.core.parameter.parametersOf
 fun GameSearchDetailScreen(
     gameId:String,
     handleBackNavigation: () -> Unit,
+    onNavigateToLibrary: () -> Unit,
     viewModel: GameSearchDetailViewModel = koinViewModel(
         parameters = { parametersOf(gameId) }
     ),
@@ -59,6 +65,26 @@ fun GameSearchDetailScreen(
 ) {
     val gameDetailsState by viewModel.gameDetailState.collectAsStateWithLifecycle()
     val userSelectionsState by viewModel.selectionsState.collectAsStateWithLifecycle()
+
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        viewModel.gameAddEvent.collectLatest { event ->
+
+            if(event.isSuccess) {
+                val result = snackbarHostState.showSnackbar(
+                    message = event.message,
+                    actionLabel = "Go to Library"
+                )
+                if (result == SnackbarResult.ActionPerformed) {
+                    onNavigateToLibrary()
+                }
+            } else {
+                snackbarHostState.showSnackbar(event.message)
+            }
+        }
+    }
+
     GameSearchDetailContent(
         gameDetailsState = gameDetailsState,
         userSelectionsState = userSelectionsState,
@@ -68,6 +94,7 @@ fun GameSearchDetailScreen(
         onProgressUpdate = viewModel::updateProgress,
         handleBackNavigation = handleBackNavigation,
         addGameHandler = viewModel::addNewGame,
+        snackbarHostState = snackbarHostState,
         modifier = modifier
     )
 }
@@ -83,6 +110,7 @@ private fun GameSearchDetailContent(
     onProgressUpdate: (String) -> Unit = {},
     handleBackNavigation: () -> Unit = {},
     addGameHandler: () -> Unit = {},
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     modifier: Modifier = Modifier
 ) {
 
@@ -93,6 +121,7 @@ private fun GameSearchDetailContent(
         canNavBack = true,
         onNavigateBack = handleBackNavigation,
         navButtonEnabled = true,
+        snackBarHostState = snackbarHostState,
         modifier = modifier
     ) {
         Box(modifier = Modifier.fillMaxSize()) {

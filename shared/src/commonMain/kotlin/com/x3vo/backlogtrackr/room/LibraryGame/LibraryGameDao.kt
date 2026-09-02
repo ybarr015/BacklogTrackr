@@ -4,6 +4,7 @@ import androidx.room3.Dao
 import androidx.room3.Insert
 import androidx.room3.Query
 import androidx.room3.Transaction
+import androidx.room3.Upsert
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -32,7 +33,7 @@ interface LibraryGameDao {
 
     }
 
-    @Insert
+    @Upsert
     suspend fun insertLibraryGame(game: LibraryGameEntity)
 
     @Insert
@@ -43,4 +44,7 @@ interface LibraryGameDao {
 
     @Query("DELETE FROM LibraryGames WHERE gameId = :id")
     suspend fun deleteLibraryGame(id: Long)
+
+    @Query("SELECT EXISTS(SELECT 1 FROM LibraryGames WHERE gameId = :gameId)")
+    suspend fun checkIfGameExistsInLibrary(gameId: Long): Boolean
 }
