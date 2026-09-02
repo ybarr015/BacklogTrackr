@@ -1,4 +1,4 @@
-package com.x3vo.backlogtrackr.ui.stores
+package com.x3vo.backlogtrackr.ui.settings.stores
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -1,4 +1,4 @@
-package com.x3vo.backlogtrackr.ui.auth
+package com.x3vo.backlogtrackr.ui.settings.auth
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.x3vo.backlogtrackr.navigation.NavigationScreen
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithScaffold
 import com.x3vo.backlogtrackr.utils.AppDimensions
 import org.koin.compose.viewmodel.koinViewModel

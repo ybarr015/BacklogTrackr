@@ -1,4 +1,4 @@
-package com.x3vo.backlogtrackr.ui.gameprogressoptions
+package com.x3vo.backlogtrackr.ui.settings.gameprogressoptions
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue

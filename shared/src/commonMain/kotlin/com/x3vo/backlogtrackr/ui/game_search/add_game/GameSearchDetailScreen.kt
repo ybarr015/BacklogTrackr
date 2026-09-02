@@ -1,4 +1,4 @@
-package com.x3vo.backlogtrackr.ui.gamesearch
+package com.x3vo.backlogtrackr.ui.game_search.add_game
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,6 +47,7 @@ import coil3.compose.AsyncImage
 import com.x3vo.backlogtrackr.ui.common.components.BasicDataUiState
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithScaffold
 import com.x3vo.backlogtrackr.ui.common.screen.StatefulContent
+import com.x3vo.backlogtrackr.ui.game_search.GameSearchObject
 import com.x3vo.backlogtrackr.utils.AppDimensions
 import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.resources.painterResource
@@ -301,7 +302,13 @@ private fun GameSearchDetailContent(
 private fun GameSearchDetailScreenPreview() {
     GameSearchDetailContent(
         gameDetailsState = BasicDataUiState<GameSearchObject>(
-            data = GameSearchObject(id = 212UL, name = "test", coverURL = "", summary = "summary", timeToBeat = "10h")
+            data = GameSearchObject(
+                id = 212UL,
+                name = "test",
+                coverURL = "",
+                summary = "summary",
+                timeToBeat = "10h"
+            )
         ),
         userSelectionsState = UserSelectionsState(
             availablePlatforms = listOf("PC", "PS5", "Xbox", "Switch"),

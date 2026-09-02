@@ -6,15 +6,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.x3vo.backlogtrackr.ui.auth.AuthScreen
-import com.x3vo.backlogtrackr.ui.gameprogressoptions.GameProgressSettingsScreen
-import com.x3vo.backlogtrackr.ui.gamesearch.GameSearchDetailScreen
-import com.x3vo.backlogtrackr.ui.gamesearch.GameSearchScreen
+import com.x3vo.backlogtrackr.ui.settings.auth.AuthScreen
+import com.x3vo.backlogtrackr.ui.settings.gameprogressoptions.GameProgressSettingsScreen
+import com.x3vo.backlogtrackr.ui.game_search.add_game.GameSearchDetailScreen
+import com.x3vo.backlogtrackr.ui.game_search.search_games.GameSearchScreen
 import com.x3vo.backlogtrackr.ui.home.HomeScreen
-import com.x3vo.backlogtrackr.ui.librarygames.LibraryGamesScreen
-import com.x3vo.backlogtrackr.ui.platforms.PlatformSettingsScreen
+import com.x3vo.backlogtrackr.ui.library_games.LibraryGamesScreen
+import com.x3vo.backlogtrackr.ui.settings.platforms.PlatformSettingsScreen
 import com.x3vo.backlogtrackr.ui.settings.SettingsScreen
-import com.x3vo.backlogtrackr.ui.stores.StoresSettingsScreen
+import com.x3vo.backlogtrackr.ui.settings.stores.StoresSettingsScreen
 import kotlinx.serialization.Serializable
 
 data class HomeScreenCard (

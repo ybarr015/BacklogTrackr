@@ -1,4 +1,4 @@
-package com.x3vo.backlogtrackr.ui.gameprogressoptions
+package com.x3vo.backlogtrackr.ui.settings.gameprogressoptions
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

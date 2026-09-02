@@ -1,4 +1,4 @@
-package com.x3vo.backlogtrackr.ui.gamesearch
+package com.x3vo.backlogtrackr.ui.game_search.add_game
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,6 +7,7 @@ import com.x3vo.backlogtrackr.network.utils.Resource
 import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
 import com.x3vo.backlogtrackr.room.LibraryGame.LibraryGameEntity
 import com.x3vo.backlogtrackr.ui.common.components.BasicDataUiState
+import com.x3vo.backlogtrackr.ui.game_search.GameSearchObject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

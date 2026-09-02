@@ -1,4 +1,4 @@
-package com.x3vo.backlogtrackr.ui.platforms
+package com.x3vo.backlogtrackr.ui.settings.platforms
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue

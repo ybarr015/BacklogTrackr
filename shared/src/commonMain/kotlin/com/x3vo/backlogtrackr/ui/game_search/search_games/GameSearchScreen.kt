@@ -1,4 +1,4 @@
-package com.x3vo.backlogtrackr.ui.gamesearch
+package com.x3vo.backlogtrackr.ui.game_search.search_games
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -39,6 +39,7 @@ import com.x3vo.backlogtrackr.ui.common.components.BasicListUIState
 import com.x3vo.backlogtrackr.ui.common.components.GameSearchCard
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithScaffold
 import com.x3vo.backlogtrackr.ui.common.screen.StatefulContent
+import com.x3vo.backlogtrackr.ui.game_search.GameSearchObject
 import com.x3vo.backlogtrackr.utils.AppDimensions
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -204,7 +205,14 @@ private fun GameSearchScreenPreview() {
     GameSearchScreenContent(
         searchTextFieldText = "test",
         uiState = BasicListUIState<GameSearchObject>(
-            data = listOf(GameSearchObject(id = 212UL, name = "test", coverURL = "", summary = "summary"))
+            data = listOf(
+                GameSearchObject(
+                    id = 212UL,
+                    name = "test",
+                    coverURL = "",
+                    summary = "summary"
+                )
+            )
         )
     )
 }

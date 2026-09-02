@@ -1,10 +1,11 @@
-package com.x3vo.backlogtrackr.ui.gamesearch
+package com.x3vo.backlogtrackr.ui.game_search.search_games
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.x3vo.backlogtrackr.network.BacklogAPIRepository
 import com.x3vo.backlogtrackr.network.utils.Resource
 import com.x3vo.backlogtrackr.ui.common.components.BasicListUIState
+import com.x3vo.backlogtrackr.ui.game_search.GameSearchObject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -52,9 +53,9 @@ class GameSearchViewModel(
                                 data = response.data.map {
                                     GameSearchObject(
                                         id = it.id,
-                                        name =  it.name,
+                                        name = it.name,
                                         coverURL = it.cover?.url ?: "",
-                                        summary = it.summary?: "No Summary Available"
+                                        summary = it.summary ?: "No Summary Available"
                                     )
                                 }
                             )

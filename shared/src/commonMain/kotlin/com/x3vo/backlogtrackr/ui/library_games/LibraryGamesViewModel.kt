@@ -1,4 +1,4 @@
-package com.x3vo.backlogtrackr.ui.librarygames
+package com.x3vo.backlogtrackr.ui.library_games
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
