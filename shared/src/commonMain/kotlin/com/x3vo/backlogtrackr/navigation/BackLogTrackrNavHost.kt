@@ -13,6 +13,7 @@ import com.x3vo.backlogtrackr.ui.gamesearch.GameSearchScreen
 import com.x3vo.backlogtrackr.ui.home.HomeScreen
 import com.x3vo.backlogtrackr.ui.librarygames.LibraryGamesScreen
 import com.x3vo.backlogtrackr.ui.platforms.PlatformSettingsScreen
+import com.x3vo.backlogtrackr.ui.settings.SettingsScreen
 import com.x3vo.backlogtrackr.ui.stores.StoresSettingsScreen
 import kotlinx.serialization.Serializable
 
@@ -23,25 +24,19 @@ data class HomeScreenCard (
 
 @Serializable
 object NavigationScreen {
-    @Serializable object HOME{
-        val cardName = "Home"
-    }
-    @Serializable object AUTH {
-        val cardName = "Auth"
-    }
+    @Serializable object HOME
+    @Serializable object AUTH
     @Serializable object GAMESEARCH {
         val cardName = "Search"
     }
-    @Serializable object PLATFORMS {
-        val cardName = "Platform Options"
-    }
+    @Serializable object PLATFORMS
 
-    @Serializable object STORES {
-        val cardName = "Store Options"
-    }
+    @Serializable object STORES
 
-    @Serializable object GAMEPROGRESSOPTIONS {
-        val cardName = "Game Progress Options"
+    @Serializable object GAMEPROGRESSOPTIONS
+
+    @Serializable object SETTINGS {
+        const val cardName = "Settings"
     }
 
     @Serializable data class GAMESEARCHDETAIL(val gameId:String)
@@ -51,12 +46,9 @@ object NavigationScreen {
     }
 
     val homeScreenCards = listOf<HomeScreenCard>(
-        HomeScreenCard(AUTH, AUTH.cardName),
         HomeScreenCard(GAMESEARCH, GAMESEARCH.cardName),
-        HomeScreenCard(PLATFORMS, PLATFORMS.cardName),
-        HomeScreenCard(STORES, STORES.cardName),
-        HomeScreenCard(GAMEPROGRESSOPTIONS, GAMEPROGRESSOPTIONS.cardName),
-        HomeScreenCard(LIBRARYGAMES, LIBRARYGAMES.cardName)
+        HomeScreenCard(LIBRARYGAMES, LIBRARYGAMES.cardName),
+        HomeScreenCard(SETTINGS, SETTINGS.cardName)
     )
 }
 
@@ -120,6 +112,15 @@ fun BackLogTrackrNavHost (
         composable<NavigationScreen.LIBRARYGAMES> {
             LibraryGamesScreen(
                 handleBackNavigation = { navController.navigateUp() },
+            )
+        }
+        composable<NavigationScreen.SETTINGS> {
+            SettingsScreen (
+                navigateToAuth = { navController.navigate(NavigationScreen.AUTH) },
+                navigateToProgress = { navController.navigate(NavigationScreen.GAMEPROGRESSOPTIONS) },
+                navigateToStores = { navController.navigate(NavigationScreen.STORES) },
+                navigateToPlatforms = { navController.navigate(NavigationScreen.PLATFORMS) },
+                navBackHandler = { navController.navigateUp() }
             )
         }
 
