@@ -157,6 +157,7 @@ class GameSearchDetailViewModel(
                 name = gameSearchVal.name,
                 timeToBeat = gameSearchVal.timeToBeat ?: "0h",
                 summary = gameSearchVal.summary,
+                coverUrl = gameSearchVal.coverURL,
                 isOwned = userSelections.isOwned,
                 gameProgress = userSelections.selectedProgressOption
             )

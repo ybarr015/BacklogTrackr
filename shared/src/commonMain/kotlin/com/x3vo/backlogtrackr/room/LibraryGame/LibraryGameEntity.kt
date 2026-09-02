@@ -27,6 +27,7 @@ import com.x3vo.backlogtrackr.room.game_attribute_settings.platforms.PlatformEnt
 data class LibraryGameEntity(
     @PrimaryKey val gameId:Long = 0,
     val name: String,
+    val coverUrl: String,
     val timeToBeat: String,
     val summary: String,
     val isOwned: Boolean,
