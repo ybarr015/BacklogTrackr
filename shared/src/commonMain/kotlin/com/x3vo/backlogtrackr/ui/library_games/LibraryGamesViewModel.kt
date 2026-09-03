@@ -4,18 +4,136 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
 import com.x3vo.backlogtrackr.room.LibraryGame.GameWithDetails
+import com.x3vo.backlogtrackr.room.game_attribute_settings.gameprogress.GameProgressOptionEntity
+import com.x3vo.backlogtrackr.room.game_attribute_settings.pcstores.PCStoreEntity
+import com.x3vo.backlogtrackr.room.game_attribute_settings.platforms.PlatformEntity
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 
 class LibraryGamesViewModel(
     private val repository: BacklogTrackrDBRepository
 ) : ViewModel() {
 
-    val libraryGames: StateFlow<List<GameWithDetails>> = repository.libraryGamesFlow
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
+
+    private val _filterUiState = MutableStateFlow(FilterUiState())
+
+
+    val filterUiState: StateFlow<FilterUiState> = combine(
+        repository.allPlatformsFlow,
+        repository.allGameProgressOptionsFlow,
+        repository.allPCStoresFlow,
+        _filterUiState
+    ) { allPlatforms, allProgressStates, allPcStores, filterUiState ->
+        filterUiState.copy(availablePlatforms = allPlatforms, availableProgressStates = allProgressStates, availablePcStores = allPcStores)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = FilterUiState()
+    )
+
+
+
+    val filteredLibraryGames: StateFlow<List<GameWithDetails>> = combine(
+        repository.allLibraryGamesFlow,
+        _filterUiState
+    ) { allGames, filterUiState ->
+        val platformFilters = filterUiState.selectedPlatformFilters
+        val pcStoreFilters = filterUiState.selectedPcStoreFilters
+        val progressFilters = filterUiState.selectedProgressStateFilters
+
+        if (platformFilters.isEmpty() && progressFilters.isEmpty()) { // if nothing is selected then show all games
+            allGames
+        } else {
+            var filteredGames = allGames // store all games before making changes
+
+            if(platformFilters.isNotEmpty()) { // if there are platform filters
+                filteredGames = filteredGames.filter { game ->
+                    game.platforms.any { platform -> // check all the platforms of the game
+
+                        //if a platform of a game is inside the platform filters set then it should be shown, more complex for pc case
+                        if (platformFilters.contains(platform.platformName)) {
+                            //if the current platform is pc and there are pc store filters, then also filter by those
+                            if(platform.platformName == "PC" && pcStoreFilters.isNotEmpty()) {
+                                game.pcStores.any { pcStore ->
+                                    pcStoreFilters.contains(pcStore.pcStoreName)
+                                }
+                            } else // if the game is not pc , then we return true because we already checked that the game has a platform that was selected
+                                true
+                        } else { // if the game had no platforms that were selected return false
+                            false
+                        }
+                    }
+                }
+            }
+
+            //then by progress state
+            if (progressFilters.isNotEmpty()) {
+                filteredGames = filteredGames.filter { game ->
+                    progressFilters.contains(game.progressOption.progressOption)
+                }
+            }
+
+            filteredGames
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
+
+
+
+    fun onPlatformFilterSelected(filterName: String) {
+        _filterUiState.update { currentUiState ->
+            val updatedPlatformFilter = if (currentUiState.selectedPlatformFilters.contains(filterName)) { // if filter is already in the set remove it, otherwise add it
+                currentUiState.selectedPlatformFilters - filterName
+            } else {
+                currentUiState.selectedPlatformFilters + filterName
+            }
+
+            val updatedPcStoreFilter = if(filterName == "PC" && currentUiState.selectedPlatformFilters.contains(filterName)) {
+                emptySet()
+            } else {
+                currentUiState.selectedPcStoreFilters
+            }
+            currentUiState.copy(selectedPlatformFilters = updatedPlatformFilter, selectedPcStoreFilters = updatedPcStoreFilter)
+        }
+
+    }
+
+    fun onProgressFilterSelected(filterName: String) {
+        _filterUiState.update { currentUiState ->
+            val updatedProgressFilter  = if (currentUiState.selectedProgressStateFilters.contains(filterName)) { // if filter is already in the set remove it, otherwise add it
+                currentUiState.selectedProgressStateFilters - filterName
+            } else {
+                currentUiState.selectedProgressStateFilters + filterName
+            }
+            currentUiState.copy(selectedProgressStateFilters = updatedProgressFilter)
+        }
+    }
+
+    fun onPcStoreFilterSelected(filterName: String) {
+        _filterUiState.update { currentUiState ->
+            val updatedPcStoreFilter = if(currentUiState.selectedPcStoreFilters.contains(filterName)) {
+                currentUiState.selectedPcStoreFilters - filterName
+            } else {
+                currentUiState.selectedPcStoreFilters + filterName
+            }
+            currentUiState.copy(selectedPcStoreFilters = updatedPcStoreFilter)
+
+        }
+    }
 }
+
+data class FilterUiState(
+    val availablePlatforms: List<PlatformEntity> = emptyList(),
+    val selectedPlatformFilters: Set<String> = emptySet(),
+    val availableProgressStates: List<GameProgressOptionEntity> = emptyList(),
+    val selectedProgressStateFilters: Set<String> = emptySet(),
+    val availablePcStores: List<PCStoreEntity> = emptyList(),
+    val selectedPcStoreFilters: Set<String> = emptySet()
+)

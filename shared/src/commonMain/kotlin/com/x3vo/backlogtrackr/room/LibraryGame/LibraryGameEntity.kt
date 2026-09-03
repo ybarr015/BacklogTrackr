@@ -83,7 +83,7 @@ data class GamePcStoreCrossRef(
 )
 
 data class GameWithDetails(
-    @Embedded val game: LibraryGameEntity,
+    @Embedded val gameData: LibraryGameEntity,
 
     @Relation(
         parentColumns = ["gameProgress"],

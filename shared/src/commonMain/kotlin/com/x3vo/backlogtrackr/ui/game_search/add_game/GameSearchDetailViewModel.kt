@@ -80,7 +80,7 @@ class GameSearchDetailViewModel(
 
     private fun observePlatforms() {
         viewModelScope.launch {
-            backlogTrackrDBRepository.allPlatforms.collect { platforms ->
+            backlogTrackrDBRepository.allPlatformsFlow.collect { platforms ->
                 _selectionsState.update { it.copy(availablePlatforms = platforms.map { it.platformName }) }
             }
         }
@@ -88,7 +88,7 @@ class GameSearchDetailViewModel(
 
     private fun observePcStores() {
         viewModelScope.launch {
-            backlogTrackrDBRepository.allPCStores.collect { stores ->
+            backlogTrackrDBRepository.allPCStoresFlow.collect { stores ->
                 _selectionsState.update { it.copy(availablePcStores = stores.map { it.pcStoreName }) }
             }
         }
@@ -96,7 +96,7 @@ class GameSearchDetailViewModel(
 
     private fun observeGameProgressOptions() {
         viewModelScope.launch {
-            backlogTrackrDBRepository.allGameProgressOptions.collect { progressOptions ->
+            backlogTrackrDBRepository.allGameProgressOptionsFlow.collect { progressOptions ->
                 val progressOptions = progressOptions.map { it.progressOption }
                 _selectionsState.update { state ->
                     state.copy(

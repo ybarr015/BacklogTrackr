@@ -11,7 +11,7 @@ class PlatformViewModel(
     private val repository: BacklogTrackrDBRepository
 ) : ViewModel() {
 
-    val platforms: StateFlow<List<PlatformEntity>> = repository.allPlatforms
+    val platforms: StateFlow<List<PlatformEntity>> = repository.allPlatformsFlow
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

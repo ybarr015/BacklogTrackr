@@ -55,7 +55,7 @@ class BacklogTrackrDBRepository (
     }
 
     //platforms
-    val allPlatforms: Flow<List<PlatformEntity>> = platformDao.getAllPlatformsFlow()
+    val allPlatformsFlow: Flow<List<PlatformEntity>> = platformDao.getAllPlatformsFlow()
         .onStart {
             ensureInitialized()
         }
@@ -85,7 +85,7 @@ class BacklogTrackrDBRepository (
     }
 
     //stores
-    val allPCStores: Flow<List<PCStoreEntity>> = pcStoreDAO.getAllPCStoresFlow()
+    val allPCStoresFlow: Flow<List<PCStoreEntity>> = pcStoreDAO.getAllPCStoresFlow()
         .onStart {
             ensureInitialized()
         }
@@ -115,7 +115,7 @@ class BacklogTrackrDBRepository (
     }
 
     //gameprogress
-    val allGameProgressOptions: Flow<List<GameProgressOptionEntity>> = gameProgressOptionsDao.getallGameProgressOptionsFlow()
+    val allGameProgressOptionsFlow: Flow<List<GameProgressOptionEntity>> = gameProgressOptionsDao.getallGameProgressOptionsFlow()
         .onStart {
             ensureInitialized()
         }
@@ -147,7 +147,7 @@ class BacklogTrackrDBRepository (
     //library game dao
     suspend fun getLibraryGame(id: Long) = libraryGameDao.getLibraryGameDetails(id)
 
-    val libraryGamesFlow = libraryGameDao.getAllLibraryGameDetails()
+    val allLibraryGamesFlow = libraryGameDao.getAllLibraryGameDetails()
 
     suspend fun addLibraryGame(game: LibraryGameEntity, platforms: List<String>, stores: List<String>) {
         val platformLinks = platforms.map {

@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 class StoresSettingsViewModel(
     private val repository: BacklogTrackrDBRepository
 ): ViewModel() {
-    val stores: StateFlow<List<PCStoreEntity>> = repository.allPCStores
+    val stores: StateFlow<List<PCStoreEntity>> = repository.allPCStoresFlow
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

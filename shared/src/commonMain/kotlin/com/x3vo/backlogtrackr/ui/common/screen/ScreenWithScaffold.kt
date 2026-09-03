@@ -49,7 +49,7 @@ fun ScreenWithScaffold(
 
 @Composable
 private fun FakeScreenWithScaffold() {
-    ScreenWithScaffold(modifier = Modifier, title = "test", canNavBack = false, navButtonEnabled = true) {
+    ScreenWithScaffold(modifier = Modifier, title = "test", canNavBack = true, navButtonEnabled = true) {
         Text("test")
     }
 }
