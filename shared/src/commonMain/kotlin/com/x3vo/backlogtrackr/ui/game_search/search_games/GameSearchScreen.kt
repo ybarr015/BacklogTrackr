@@ -39,7 +39,7 @@ import com.x3vo.backlogtrackr.ui.common.components.BasicListUIState
 import com.x3vo.backlogtrackr.ui.common.components.GameSearchCard
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithScaffold
 import com.x3vo.backlogtrackr.ui.common.screen.StatefulContent
-import com.x3vo.backlogtrackr.ui.game_search.GameSearchObject
+import com.x3vo.backlogtrackr.domain.model.GameSearchObject
 import com.x3vo.backlogtrackr.utils.AppDimensions
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel

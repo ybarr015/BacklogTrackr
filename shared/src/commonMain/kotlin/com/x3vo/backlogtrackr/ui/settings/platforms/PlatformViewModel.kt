@@ -2,16 +2,18 @@ package com.x3vo.backlogtrackr.ui.settings.platforms
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
-import com.x3vo.backlogtrackr.room.game_attribute_settings.platforms.PlatformEntity
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class PlatformViewModel(
     private val repository: BacklogTrackrDBRepository
 ) : ViewModel() {
 
-    val platforms: StateFlow<List<PlatformEntity>> = repository.allPlatformsFlow
+    val platforms: StateFlow<List<GameAttribute.PlatformModel>> = repository.allPlatformsFlow
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

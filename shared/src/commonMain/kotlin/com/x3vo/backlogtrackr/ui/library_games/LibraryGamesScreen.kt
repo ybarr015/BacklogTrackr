@@ -30,6 +30,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.x3vo.backlogtrackr.domain.model.DefaultGameProgress
+import com.x3vo.backlogtrackr.domain.model.DefaultPCStores
+import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
+import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.room.LibraryGame.GameWithDetails
 import com.x3vo.backlogtrackr.room.LibraryGame.LibraryGameEntity
 import com.x3vo.backlogtrackr.room.game_attribute_settings.gameprogress.GameProgressOptionEntity
@@ -104,7 +108,7 @@ private fun LibraryGamesScreenContent(
                     }
 
                     filterUiState.availablePlatforms.forEach { platform ->
-                        item(key = platform.attributeId) {
+                        item(key = platform.platformName) {
                             FilterChip(
                                 selected = filterUiState.selectedPlatformFilters.contains(platform.platformName),
                                 onClick = {
@@ -117,11 +121,12 @@ private fun LibraryGamesScreenContent(
                             )
                         }
 
-                        val pcStoresAvailable = platform.platformName == "PC" && filterUiState.availablePcStores.isNotEmpty()
+                        val pcStoresAvailable = platform.platformName == DefaultPlatforms.PC.platformName && filterUiState.availablePcStores.isNotEmpty()
 
                         if (pcStoresAvailable) {
 
-                            val isPcSelected = filterUiState.selectedPlatformFilters.contains("PC")
+                            val isPcSelected = filterUiState.selectedPlatformFilters.contains(
+                                DefaultPlatforms.PC.platformName)
 
                             item(key = "PCDividerStart") {
                                 AnimatedVisibility(
@@ -140,7 +145,7 @@ private fun LibraryGamesScreenContent(
 
                             items(
                                 items = filterUiState.availablePcStores,
-                                key = { pcStore -> "store.${pcStore.attributeId}" }
+                                key = { pcStore -> "store.${pcStore.pcStoreName}" }
                             ) { pcStore ->
                                 AnimatedVisibility(
                                     visible = isPcSelected,
@@ -195,16 +200,16 @@ private fun LibraryGamesScreenContent(
                     items(
                         items = filterUiState.availableProgressStates,
                         key = { progress ->
-                            progress.attributeId
+                            progress.progressName
                         }
                     ) { progress ->
                         FilterChip(
-                            selected = filterUiState.selectedProgressStateFilters.contains(progress.progressOption),
+                            selected = filterUiState.selectedProgressStateFilters.contains(progress.progressName),
                             onClick = {
-                                handleProgressFilterSelection(progress.progressOption)
+                                handleProgressFilterSelection(progress.progressName)
                             },
                             label = {
-                                Text(text = progress.progressOption)
+                                Text(text = progress.progressName)
                             }
                         )
                     }
@@ -253,25 +258,17 @@ private fun LibraryGamesScreenPreview() {
                     coverUrl = ""
                 ),
                 progressOption = GameProgressOptionEntity(
-                    attributeId = 0L, progressOption = "Started"
+                    progressOption = "Started"
                 ),
-                platforms = listOf(
-                    PlatformEntity(
-                        attributeId = 0L, platformName = "PC"
-                    )
-                ),
-                pcStores = listOf(
-                    PCStoreEntity(
-                        attributeId = 0L, pcStoreName = "Steam"
-                    )
-                )
+                platforms = DefaultPlatforms.entries.map { PlatformEntity(it.platformName) },
+                pcStores = DefaultPCStores.entries.map { PCStoreEntity(it.storeName) }
             )
         ),
         filterUiState = FilterUiState(
-            availablePlatforms = listOf(PlatformEntity(platformName = "PC")),
-            availablePcStores = listOf(PCStoreEntity(pcStoreName = "steam")),
-            availableProgressStates = listOf(GameProgressOptionEntity(progressOption = "inProgress")),
-            selectedPlatformFilters = setOf("PC")
+            availablePlatforms = DefaultPlatforms.entries.map { GameAttribute.PlatformModel(it.platformName) },
+            availablePcStores = DefaultPCStores.entries.map { GameAttribute.PCStoreModel(it.storeName) },
+            availableProgressStates = DefaultGameProgress.entries.map { GameAttribute.GameProgressModel(it.progressName) },
+            selectedPlatformFilters = setOf(DefaultPlatforms.PC.platformName)
         )
     )
 }

@@ -24,7 +24,7 @@ import com.x3vo.backlogtrackr.room.game_attribute_settings.platforms.PlatformEnt
         GamePlatformCrossRef::class,
         GamePcStoreCrossRef::class
     ],
-    version = 6,
+    version = 7,
     exportSchema = true
 )
 @ConstructedBy(AppDataBaseConstructor::class)

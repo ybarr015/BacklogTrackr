@@ -4,6 +4,10 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import com.x3vo.backlogtrackr.domain.model.DefaultGameProgress
+import com.x3vo.backlogtrackr.domain.model.DefaultPCStores
+import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
+import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.room.LibraryGame.GamePcStoreCrossRef
 import com.x3vo.backlogtrackr.room.LibraryGame.GamePlatformCrossRef
 import com.x3vo.backlogtrackr.room.LibraryGame.LibraryGameDao
@@ -15,7 +19,10 @@ import com.x3vo.backlogtrackr.room.game_attribute_settings.pcstores.PCStoreEntit
 import com.x3vo.backlogtrackr.room.game_attribute_settings.platforms.PlatformDao
 import com.x3vo.backlogtrackr.room.game_attribute_settings.platforms.PlatformEntity
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 
@@ -30,11 +37,12 @@ class BacklogTrackrDBRepository (
 
     private val INITIALIZED_KEY = booleanPreferencesKey("platforms_initialized")
 
-    private val defaultPlatforms = listOf("PC", "PS5", "Xbox Series X", "Switch", "Mobile").map { PlatformEntity(platformName = it) }
-    private val defaultPCStores = listOf("Steam", "Epic Games", "GOG", "Ubisoft", "EA").map { PCStoreEntity(pcStoreName = it) }
-    private val defaultGameProgressOptions = listOf("Not Started", "In Progress", "Finished", "Dropped").map { GameProgressOptionEntity(progressOption = it) }
+    private val defaultPlatforms = DefaultPlatforms.entries.map { PlatformEntity(platformName = it.platformName) }
+    private val defaultPCStores = DefaultPCStores.entries.map { PCStoreEntity(pcStoreName = it.storeName) }
+    private val defaultGameProgressOptions = DefaultGameProgress.entries.map { GameProgressOptionEntity(progressOption = it.progressName) }
 
 
+    //todo check if this can be done inside an init block here
     //this initializes the default options if app is first installed
     private val initializationJob = appScope.launch {
         val preferences = dataStore.data.first()
@@ -55,15 +63,17 @@ class BacklogTrackrDBRepository (
     }
 
     //platforms
-    val allPlatformsFlow: Flow<List<PlatformEntity>> = platformDao.getAllPlatformsFlow()
+    val allPlatformsFlow: Flow<List<GameAttribute.PlatformModel>> = platformDao.getAllPlatformsFlow()
+        .map { entities ->
+            entities.map {
+                GameAttribute.PlatformModel(
+                    platformName = it.platformName
+                )
+            }
+        }
         .onStart {
             ensureInitialized()
         }
-
-    suspend fun getAllPlatforms(): List<PlatformEntity> {
-        ensureInitialized()
-        return platformDao.getAllPlatforms()
-    }
 
     suspend fun resetPlatforms() {
         ensureInitialized()
@@ -85,15 +95,17 @@ class BacklogTrackrDBRepository (
     }
 
     //stores
-    val allPCStoresFlow: Flow<List<PCStoreEntity>> = pcStoreDAO.getAllPCStoresFlow()
+    val allPCStoresFlow: Flow<List<GameAttribute.PCStoreModel>> = pcStoreDAO.getAllPCStoresFlow()
+        .map { entities ->
+            entities.map {
+                GameAttribute.PCStoreModel(
+                    pcStoreName = it.pcStoreName
+                )
+            }
+        }
         .onStart {
             ensureInitialized()
         }
-
-    suspend fun getAllPCStores(): List<PCStoreEntity> {
-        ensureInitialized()
-        return pcStoreDAO.getAllPCStores()
-    }
 
     suspend fun resetPCStores() {
         ensureInitialized()
@@ -115,15 +127,17 @@ class BacklogTrackrDBRepository (
     }
 
     //gameprogress
-    val allGameProgressOptionsFlow: Flow<List<GameProgressOptionEntity>> = gameProgressOptionsDao.getallGameProgressOptionsFlow()
+    val allGameProgressOptionsFlow: Flow<List<GameAttribute.GameProgressModel>> = gameProgressOptionsDao.getallGameProgressOptionsFlow()
+        .map { entities ->
+            entities.map {
+                GameAttribute.GameProgressModel(
+                    progressName = it.progressOption
+                )
+            }
+        }
         .onStart {
             ensureInitialized()
         }
-
-    suspend fun getAllGameProgressOptions(): List<GameProgressOptionEntity> {
-        ensureInitialized()
-        return gameProgressOptionsDao.getAllGameProgressOptions()
-    }
 
     suspend fun resetGameProgressOptions() {
         ensureInitialized()

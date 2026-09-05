@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.x3vo.backlogtrackr.network.BacklogAPIRepository
 import com.x3vo.backlogtrackr.network.utils.Resource
 import com.x3vo.backlogtrackr.ui.common.components.BasicListUIState
-import com.x3vo.backlogtrackr.ui.game_search.GameSearchObject
+import com.x3vo.backlogtrackr.domain.model.GameSearchObject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -44,10 +44,14 @@ import backlogtrackr.shared.generated.resources.Res
 import backlogtrackr.shared.generated.resources.ic_broken_image
 import backlogtrackr.shared.generated.resources.loading_img
 import coil3.compose.AsyncImage
+import com.x3vo.backlogtrackr.domain.model.DefaultGameProgress
+import com.x3vo.backlogtrackr.domain.model.DefaultPCStores
+import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
+import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.ui.common.components.BasicDataUiState
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithScaffold
 import com.x3vo.backlogtrackr.ui.common.screen.StatefulContent
-import com.x3vo.backlogtrackr.ui.game_search.GameSearchObject
+import com.x3vo.backlogtrackr.domain.model.GameSearchObject
 import com.x3vo.backlogtrackr.utils.AppDimensions
 import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.resources.painterResource
@@ -90,9 +94,9 @@ fun GameSearchDetailScreen(
         gameDetailsState = gameDetailsState,
         userSelectionsState = userSelectionsState,
         onOwnershipUpdate = viewModel::updateOwnership,
-        onPlatformUpdate = viewModel::updatePlatform,
-        onPcStoreUpdate = viewModel::updatePcStore,
-        onProgressUpdate = viewModel::updateProgress,
+        onPlatformSelection = viewModel::updatePlatformSelections,
+        onPcStoreSelection = viewModel::updatePcStoreSelections,
+        onProgressSelection = viewModel::updateProgressSelection,
         handleBackNavigation = handleBackNavigation,
         addGameHandler = viewModel::addNewGame,
         snackbarHostState = snackbarHostState,
@@ -106,9 +110,9 @@ private fun GameSearchDetailContent(
     gameDetailsState: BasicDataUiState<GameSearchObject>,
     userSelectionsState: UserSelectionsState,
     onOwnershipUpdate: (Boolean) -> Unit = {},
-    onPlatformUpdate: (String, Boolean) -> Unit = { _,_ -> },
-    onPcStoreUpdate: (String, Boolean) -> Unit = { _,_ -> },
-    onProgressUpdate: (String) -> Unit = {},
+    onPlatformSelection: (String, Boolean) -> Unit = { _, _ -> },
+    onPcStoreSelection: (String, Boolean) -> Unit = { _,_ -> },
+    onProgressSelection: (String) -> Unit = {},
     handleBackNavigation: () -> Unit = {},
     addGameHandler: () -> Unit = {},
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
@@ -214,11 +218,11 @@ private fun GameSearchDetailContent(
                                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
                                     userSelectionsState.availablePlatforms.forEach { platform ->
-                                        val isSelected = userSelectionsState.selectedPlatforms.contains(platform)
+                                        val isSelected = userSelectionsState.selectedPlatforms.contains(platform.platformName)
                                         FilterChip(
                                             selected = isSelected,
-                                            onClick = { onPlatformUpdate(platform, !isSelected) },
-                                            label = { Text(platform) }
+                                            onClick = { onPlatformSelection(platform.platformName, !isSelected) },
+                                            label = { Text(platform.platformName) }
                                         )
                                     }
                                 }
@@ -228,7 +232,7 @@ private fun GameSearchDetailContent(
                                 )
                             }
 
-                            if (userSelectionsState.selectedPlatforms.contains("PC") && userSelectionsState.availablePcStores.isNotEmpty()) {
+                            if (userSelectionsState.selectedPlatforms.contains(DefaultPlatforms.PC.platformName) && userSelectionsState.availablePcStores.isNotEmpty()) {
                                 Text(
                                     text = "Which PC stores?",
                                     style = MaterialTheme.typography.bodyMedium,
@@ -239,11 +243,11 @@ private fun GameSearchDetailContent(
                                     modifier = Modifier.padding(start = 16.dp)
                                 ) {
                                     userSelectionsState.availablePcStores.forEach { store ->
-                                        val isSelected = userSelectionsState.selectedStores.contains(store)
+                                        val isSelected = userSelectionsState.selectedStores.contains(store.pcStoreName)
                                         FilterChip(
                                             selected = isSelected,
-                                            onClick = { onPcStoreUpdate(store, !isSelected) },
-                                            label = { Text(store) }
+                                            onClick = { onPcStoreSelection(store.pcStoreName, !isSelected) },
+                                            label = { Text(store.pcStoreName) }
                                         )
                                     }
                                 }
@@ -273,9 +277,9 @@ private fun GameSearchDetailContent(
                                     ) {
                                         userSelectionsState.availableProgressOptions.forEach { selectionOption ->
                                             DropdownMenuItem(
-                                                text = { Text(selectionOption) },
+                                                text = { Text(selectionOption.progressName) },
                                                 onClick = {
-                                                    onProgressUpdate(selectionOption)
+                                                    onProgressSelection(selectionOption.progressName)
                                                     expanded = false
                                                 }
                                             )
@@ -311,10 +315,10 @@ private fun GameSearchDetailScreenPreview() {
             )
         ),
         userSelectionsState = UserSelectionsState(
-            availablePlatforms = listOf("PC", "PS5", "Xbox", "Switch"),
-            availablePcStores = listOf("Steam", "Epic"),
-            selectedPlatforms = setOf("PC"),
-            availableProgressOptions = listOf(""),
+            availablePlatforms = DefaultPlatforms.entries.map { GameAttribute.PlatformModel(it.platformName) },
+            availablePcStores = DefaultPCStores.entries.map { GameAttribute.PCStoreModel(it.storeName) },
+            availableProgressOptions = DefaultGameProgress.entries.map { GameAttribute.GameProgressModel(it.progressName) },
+            selectedPlatforms = setOf(DefaultPlatforms.PC.platformName),
             isOwned = true
         )
     )

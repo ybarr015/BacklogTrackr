@@ -31,7 +31,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import backlogtrackr.shared.generated.resources.Res
 import backlogtrackr.shared.generated.resources.add_24px
-import com.x3vo.backlogtrackr.room.game_attribute_settings.GameAttributeEntity
+import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.ui.common.components.GameAttributeItem
 import com.x3vo.backlogtrackr.utils.AppDimensions
 import org.jetbrains.compose.resources.painterResource
@@ -44,7 +44,7 @@ fun GameAttributesSettingsScreen(
     userInput: String = "",
     handleUserInputChange: (String) -> Unit = {},
     userInputHint: String = "",
-    attributesList: List<GameAttributeEntity> = emptyList(),
+    attributesList: List<GameAttribute> = emptyList(),
     addAttributeHandler: (String) -> Unit = {},
     deleteAttributeHandler: (String) -> Unit = {},
     resetAttributesHandler: () -> Unit = {},

@@ -2,12 +2,14 @@ package com.x3vo.backlogtrackr.ui.game_search.add_game
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
+import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.network.BacklogAPIRepository
 import com.x3vo.backlogtrackr.network.utils.Resource
 import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
 import com.x3vo.backlogtrackr.room.LibraryGame.LibraryGameEntity
 import com.x3vo.backlogtrackr.ui.common.components.BasicDataUiState
-import com.x3vo.backlogtrackr.ui.game_search.GameSearchObject
+import com.x3vo.backlogtrackr.domain.model.GameSearchObject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -81,7 +83,7 @@ class GameSearchDetailViewModel(
     private fun observePlatforms() {
         viewModelScope.launch {
             backlogTrackrDBRepository.allPlatformsFlow.collect { platforms ->
-                _selectionsState.update { it.copy(availablePlatforms = platforms.map { it.platformName }) }
+                _selectionsState.update { it.copy(availablePlatforms = platforms) }
             }
         }
     }
@@ -89,7 +91,7 @@ class GameSearchDetailViewModel(
     private fun observePcStores() {
         viewModelScope.launch {
             backlogTrackrDBRepository.allPCStoresFlow.collect { stores ->
-                _selectionsState.update { it.copy(availablePcStores = stores.map { it.pcStoreName }) }
+                _selectionsState.update { it.copy(availablePcStores = stores) }
             }
         }
     }
@@ -97,13 +99,12 @@ class GameSearchDetailViewModel(
     private fun observeGameProgressOptions() {
         viewModelScope.launch {
             backlogTrackrDBRepository.allGameProgressOptionsFlow.collect { progressOptions ->
-                val progressOptions = progressOptions.map { it.progressOption }
                 _selectionsState.update { state ->
                     state.copy(
                         availableProgressOptions = progressOptions,
                         // If nothing is selected yet, pick the first available option
                         selectedProgressOption = if (state.selectedProgressOption.isEmpty() && progressOptions.isNotEmpty()) {
-                            progressOptions[0]
+                            progressOptions[0].progressName
                         } else {
                             state.selectedProgressOption
                         }
@@ -117,31 +118,32 @@ class GameSearchDetailViewModel(
         _selectionsState.update { it.copy(isOwned = owned) }
     }
 
-    fun updatePlatform(platform: String, selected: Boolean) {
+    fun updatePlatformSelections(platform: String, selected: Boolean) {
         _selectionsState.update { state ->
-            val updatedPlatforms = if (selected) {
+            val updatedPlatformSelections:Set<String> = if (selected) {
                 state.selectedPlatforms + platform
             } else {
                 state.selectedPlatforms - platform
             }
-            // Clear PC stores if PC is unselected
-            val pcStores = if (updatedPlatforms.contains("PC")) state.selectedStores else emptySet()
-            state.copy(selectedPlatforms = updatedPlatforms, selectedStores = pcStores)
+            // If PC is not selected, then the pc stores list should be empty
+            val pcStores = if (updatedPlatformSelections.contains(DefaultPlatforms.PC.platformName))
+                state.selectedStores else emptySet()
+            state.copy(selectedPlatforms = updatedPlatformSelections, selectedStores = pcStores)
         }
     }
 
-    fun updatePcStore(store: String, selected: Boolean) {
+    fun updatePcStoreSelections(store: String, selected: Boolean) {
         _selectionsState.update { state ->
-            val updatedStores = if (selected) {
+            val updatedStoreSelections = if (selected) {
                 state.selectedStores + store
             } else {
                 state.selectedStores - store
             }
-            state.copy(selectedStores = updatedStores)
+            state.copy(selectedStores = updatedStoreSelections)
         }
     }
 
-    fun updateProgress(progress: String) {
+    fun updateProgressSelection(progress: String) {
         _selectionsState.update { state ->
             state.copy(selectedProgressOption = progress)
         }
@@ -164,7 +166,7 @@ class GameSearchDetailViewModel(
             )
 
             val platformsList = userSelections.selectedPlatforms.toList()
-            val storesList = if("PC" in userSelections.selectedPlatforms) userSelections.selectedStores.toList() else emptyList()
+            val storesList = if(userSelections.selectedPlatforms.contains(DefaultPlatforms.PC.platformName)) userSelections.selectedStores.toList() else emptyList()
             if (backlogTrackrDBRepository.checkIfGameExistsInLibrary(gameEntity.gameId)) {
                 _gameAddEvent.emit(GameAddEvent(isSuccess = false, message = "Game already exists in library"))
             } else {
@@ -180,9 +182,9 @@ class GameSearchDetailViewModel(
 }
 
 data class UserSelectionsState(
-    val availablePlatforms: List<String> = emptyList(),
-    val availablePcStores: List<String> = emptyList(),
-    val availableProgressOptions: List<String> = emptyList(),
+    val availablePlatforms: List<GameAttribute.PlatformModel> = emptyList(),
+    val availablePcStores: List<GameAttribute.PCStoreModel> = emptyList(),
+    val availableProgressOptions: List<GameAttribute.GameProgressModel> = emptyList(),
     val isOwned: Boolean = true,
     val selectedPlatforms: Set<String> = emptySet(),
     val selectedStores: Set<String> = emptySet(),

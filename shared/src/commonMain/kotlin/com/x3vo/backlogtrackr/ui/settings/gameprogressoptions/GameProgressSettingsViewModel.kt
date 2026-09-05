@@ -2,8 +2,8 @@ package com.x3vo.backlogtrackr.ui.settings.gameprogressoptions
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
-import com.x3vo.backlogtrackr.room.game_attribute_settings.gameprogress.GameProgressOptionEntity
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 class GameProgressSettingsViewModel (
     private val repository: BacklogTrackrDBRepository
 ) : ViewModel() {
-    val gameProgressOptions: StateFlow<List<GameProgressOptionEntity>> = repository.allGameProgressOptionsFlow
+    val gameProgressOptions: StateFlow<List<GameAttribute.GameProgressModel>> = repository.allGameProgressOptionsFlow
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

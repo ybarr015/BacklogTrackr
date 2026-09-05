@@ -2,11 +2,10 @@ package com.x3vo.backlogtrackr.ui.library_games
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
+import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
 import com.x3vo.backlogtrackr.room.LibraryGame.GameWithDetails
-import com.x3vo.backlogtrackr.room.game_attribute_settings.gameprogress.GameProgressOptionEntity
-import com.x3vo.backlogtrackr.room.game_attribute_settings.pcstores.PCStoreEntity
-import com.x3vo.backlogtrackr.room.game_attribute_settings.platforms.PlatformEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -57,7 +56,7 @@ class LibraryGamesViewModel(
                         //if a platform of a game is inside the platform filters set then it should be shown, more complex for pc case
                         if (platformFilters.contains(platform.platformName)) {
                             //if the current platform is pc and there are pc store filters, then also filter by those
-                            if(platform.platformName == "PC" && pcStoreFilters.isNotEmpty()) {
+                            if(platform.platformName == DefaultPlatforms.PC.platformName && pcStoreFilters.isNotEmpty()) {
                                 game.pcStores.any { pcStore ->
                                     pcStoreFilters.contains(pcStore.pcStoreName)
                                 }
@@ -95,7 +94,7 @@ class LibraryGamesViewModel(
                 currentUiState.selectedPlatformFilters + filterName
             }
 
-            val updatedPcStoreFilter = if(filterName == "PC" && currentUiState.selectedPlatformFilters.contains(filterName)) {
+            val updatedPcStoreFilter = if(filterName == DefaultPlatforms.PC.platformName && currentUiState.selectedPlatformFilters.contains(filterName)) {
                 emptySet()
             } else {
                 currentUiState.selectedPcStoreFilters
@@ -130,10 +129,10 @@ class LibraryGamesViewModel(
 }
 
 data class FilterUiState(
-    val availablePlatforms: List<PlatformEntity> = emptyList(),
+    val availablePlatforms: List<GameAttribute.PlatformModel> = emptyList(),
     val selectedPlatformFilters: Set<String> = emptySet(),
-    val availableProgressStates: List<GameProgressOptionEntity> = emptyList(),
+    val availableProgressStates: List<GameAttribute.GameProgressModel> = emptyList(),
     val selectedProgressStateFilters: Set<String> = emptySet(),
-    val availablePcStores: List<PCStoreEntity> = emptyList(),
+    val availablePcStores: List<GameAttribute.PCStoreModel> = emptyList(),
     val selectedPcStoreFilters: Set<String> = emptySet()
 )

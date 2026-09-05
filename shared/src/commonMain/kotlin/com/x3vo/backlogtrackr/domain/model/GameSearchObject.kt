@@ -1,4 +1,4 @@
-package com.x3vo.backlogtrackr.ui.game_search
+package com.x3vo.backlogtrackr.domain.model
 
 data class GameSearchObject(
     val id: ULong = 1UL,
