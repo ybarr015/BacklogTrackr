@@ -31,6 +31,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import backlogtrackr.shared.generated.resources.Res
 import backlogtrackr.shared.generated.resources.add_24px
+import com.x3vo.backlogtrackr.domain.model.DefaultGameProgressSet
+import com.x3vo.backlogtrackr.domain.model.DefaultPCStoresSet
+import com.x3vo.backlogtrackr.domain.model.DefaultPlatformsSet
 import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.ui.common.components.GameAttributeItem
 import com.x3vo.backlogtrackr.utils.AppDimensions
@@ -116,8 +119,17 @@ fun GameAttributesSettingsScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(attributesList) { attribute ->
+                    var isDeleteEnabled = true
+
+                    if ( attribute is GameAttribute.PlatformModel && attribute.attributeName in DefaultPlatformsSet  ||
+                        attribute is GameAttribute.PCStoreModel && attribute.attributeName in DefaultPCStoresSet ||
+                        attribute is GameAttribute.GameProgressModel && attribute.attributeName in DefaultGameProgressSet
+                        ) {
+                        isDeleteEnabled = false
+                    }
                     GameAttributeItem(
                         attributeText = attribute.attributeName,
+                        isDeleteEnabled = isDeleteEnabled,
                         onDelete = { deleteAttributeHandler(attribute.attributeName) }
                     )
                     HorizontalDivider()

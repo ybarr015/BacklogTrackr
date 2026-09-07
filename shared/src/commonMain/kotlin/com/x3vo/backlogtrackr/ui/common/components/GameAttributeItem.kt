@@ -20,6 +20,7 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun GameAttributeItem(
     attributeText: String,
+    isDeleteEnabled: Boolean = true,
     onDelete: () -> Unit = {},
     modifier: Modifier = Modifier
 ){
@@ -31,8 +32,10 @@ fun GameAttributeItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text = attributeText, style = MaterialTheme.typography.bodyLarge)
-        IconButton(onClick = onDelete) {
-            Icon(painter = painterResource(Res.drawable.delete_24px), contentDescription = "Delete", tint = MaterialTheme.colorScheme.error)
+        if (isDeleteEnabled){
+            IconButton(onClick = onDelete) {
+                Icon(painter = painterResource(Res.drawable.delete_24px), contentDescription = "Delete", tint = MaterialTheme.colorScheme.error)
+            }
         }
 
     }

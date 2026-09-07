@@ -24,6 +24,10 @@ enum class DefaultGameProgress(val progressName: String){
 
 }
 
+val DefaultPlatformsSet = DefaultPlatforms.entries.map { it.platformName }.toSet()
+val DefaultPCStoresSet = DefaultPCStores.entries.map { it.storeName }.toSet()
+val DefaultGameProgressSet = DefaultGameProgress.entries.map { it.progressName }.toSet()
+
 sealed interface GameAttribute{
     val attributeName: String
 
