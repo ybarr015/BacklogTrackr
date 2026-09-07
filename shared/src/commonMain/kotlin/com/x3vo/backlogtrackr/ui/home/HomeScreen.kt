@@ -17,7 +17,7 @@ import com.x3vo.backlogtrackr.utils.AppDimensions
 
 @Composable
 fun HomeScreen(
-    handleCardClick: (Any) -> Unit,
+    handleCardClick: (NavigationScreen) -> Unit,
     cards: List<HomeScreenCard>,
     modifier: Modifier = Modifier
 ) {
@@ -30,7 +30,7 @@ fun HomeScreen(
 
 @Composable
 private fun HomeScreenContent(
-    handleCardClick: (Any) -> Unit = {},
+    handleCardClick: (NavigationScreen) -> Unit = {},
     cards: List<HomeScreenCard>,
     modifier: Modifier = Modifier,
 ) {

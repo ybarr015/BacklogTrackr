@@ -18,38 +18,43 @@ import com.x3vo.backlogtrackr.ui.settings.stores.StoresSettingsScreen
 import kotlinx.serialization.Serializable
 
 data class HomeScreenCard (
-    val route: Any,
+    val route: NavigationScreen,
     val cardName: String
 )
 
 @Serializable
-object NavigationScreen {
-    @Serializable object HOME
-    @Serializable object AUTH
-    @Serializable object GAMESEARCH {
+sealed interface NavigationScreen {
+    @Serializable object HOME : NavigationScreen
+    @Serializable object AUTH : NavigationScreen
+    @Serializable object GAMESEARCH : NavigationScreen {
         val cardName = "Search"
     }
-    @Serializable object PLATFORMS
+    @Serializable object PLATFORMS : NavigationScreen
 
-    @Serializable object STORES
+    @Serializable object STORES : NavigationScreen
 
-    @Serializable object GAMEPROGRESSOPTIONS
+    @Serializable object GAMEPROGRESSOPTIONS : NavigationScreen
 
-    @Serializable object SETTINGS {
+    @Serializable object SETTINGS : NavigationScreen {
         const val cardName = "Settings"
     }
 
-    @Serializable data class GAMESEARCHDETAIL(val gameId:String)
+    @Serializable data class GAMESEARCHDETAIL(val gameId:String) : NavigationScreen
 
-    @Serializable object LIBRARYGAMES {
+    @Serializable object LIBRARYGAMES : NavigationScreen {
         val cardName = "View Library"
     }
 
-    val homeScreenCards = listOf<HomeScreenCard>(
-        HomeScreenCard(GAMESEARCH, GAMESEARCH.cardName),
-        HomeScreenCard(LIBRARYGAMES, LIBRARYGAMES.cardName),
-        HomeScreenCard(SETTINGS, SETTINGS.cardName)
-    )
+    companion object {
+        val homeScreenCards = listOf<HomeScreenCard>(
+            HomeScreenCard(GAMESEARCH, GAMESEARCH.cardName),
+            HomeScreenCard(LIBRARYGAMES, LIBRARYGAMES.cardName),
+            HomeScreenCard(SETTINGS, SETTINGS.cardName)
+        )
+
+        val navBarRoutes = listOf(LIBRARYGAMES, GAMESEARCH)
+    }
+
 }
 
 @Composable
@@ -62,6 +67,7 @@ fun BackLogTrackrNavHost (
         startDestination = NavigationScreen.HOME,
         modifier = modifier) {
 
+        //Dev HomeScreen
         composable<NavigationScreen.HOME> {
             HomeScreen(
                 handleCardClick = { navController.navigate(it)},
@@ -69,11 +75,7 @@ fun BackLogTrackrNavHost (
             )
         }
 
-        composable<NavigationScreen.AUTH> {
-            AuthScreen(
-                handleBackNavigation = { navController.navigateUp() }
-            )
-        }
+        //GameSearch
         composable<NavigationScreen.GAMESEARCH> {
             GameSearchScreen(
                 handleBackNavigation = { navController.navigateUp() },
@@ -94,6 +96,25 @@ fun BackLogTrackrNavHost (
                 }
             )
         }
+
+        //Library
+        composable<NavigationScreen.LIBRARYGAMES> {
+            LibraryGamesScreen(
+                handleNavToSearchScreen = { navController.navigate(NavigationScreen.GAMESEARCH) },
+                handleNavToSettingsScreen = { navController.navigate(NavigationScreen.SETTINGS) }
+            )
+        }
+
+        //settings
+        composable<NavigationScreen.SETTINGS> {
+            SettingsScreen (
+                navigateToAuth = { navController.navigate(NavigationScreen.AUTH) },
+                navigateToProgress = { navController.navigate(NavigationScreen.GAMEPROGRESSOPTIONS) },
+                navigateToStores = { navController.navigate(NavigationScreen.STORES) },
+                navigateToPlatforms = { navController.navigate(NavigationScreen.PLATFORMS) },
+                navBackHandler = { navController.navigateUp() }
+            )
+        }
         composable<NavigationScreen.PLATFORMS> {
             PlatformSettingsScreen(
                 handleBackNavigation = { navController.navigateUp() }
@@ -109,19 +130,9 @@ fun BackLogTrackrNavHost (
                 handleBackNavigation = { navController.navigateUp() }
             )
         }
-        composable<NavigationScreen.LIBRARYGAMES> {
-            LibraryGamesScreen(
-                handleBackNavigation = { navController.navigateUp() },
-                handleNavToSearchScreen = { navController.navigate(NavigationScreen.GAMESEARCH) }
-            )
-        }
-        composable<NavigationScreen.SETTINGS> {
-            SettingsScreen (
-                navigateToAuth = { navController.navigate(NavigationScreen.AUTH) },
-                navigateToProgress = { navController.navigate(NavigationScreen.GAMEPROGRESSOPTIONS) },
-                navigateToStores = { navController.navigate(NavigationScreen.STORES) },
-                navigateToPlatforms = { navController.navigate(NavigationScreen.PLATFORMS) },
-                navBackHandler = { navController.navigateUp() }
+        composable<NavigationScreen.AUTH> {
+            AuthScreen(
+                handleBackNavigation = { navController.navigateUp() }
             )
         }
 
