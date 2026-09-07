@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Devices.TABLET
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun ScreenWithScaffold(
+fun ScreenWithBackNav(
     title: String,
     canNavBack: Boolean,
     onNavigateBack: () -> Unit = {},
@@ -48,14 +48,14 @@ fun ScreenWithScaffold(
 }
 
 @Composable
-private fun FakeScreenWithScaffold() {
-    ScreenWithScaffold(modifier = Modifier, title = "test", canNavBack = true, navButtonEnabled = true) {
+private fun FakeScreen() {
+    ScreenWithBackNav(modifier = Modifier, title = "test", canNavBack = true, navButtonEnabled = true) {
         Text("test")
     }
 }
 
 @Preview(device = TABLET)
 @Composable
-private fun ScreenWithScaffoldPreview() {
-    FakeScreenWithScaffold()
+private fun ScreenWithBackNavPreview() {
+    FakeScreen()
 }

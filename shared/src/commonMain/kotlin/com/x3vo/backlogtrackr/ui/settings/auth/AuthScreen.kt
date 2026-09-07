@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithScaffold
+import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithBackNav
 import com.x3vo.backlogtrackr.utils.AppDimensions
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -45,7 +45,7 @@ private fun AuthScreenContent(
     handleBackNavigation: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    ScreenWithScaffold(
+    ScreenWithBackNav(
         title = "Authentication",
         canNavBack = true,
         onNavigateBack = handleBackNavigation,

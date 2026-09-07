@@ -28,7 +28,7 @@ import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
 import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.domain.model.LibraryGameDetailModel
 import com.x3vo.backlogtrackr.ui.common.components.LibraryGameCard
-import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithScaffold
+import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithBackNav
 import com.x3vo.backlogtrackr.utils.AppDimensions
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -66,7 +66,7 @@ private fun LibraryGamesScreenContent(
     modifier: Modifier = Modifier
 ) {
 
-    ScreenWithScaffold(
+    ScreenWithBackNav(
         title = "Your Games",
         canNavBack = true,
         onNavigateBack = handleBackNavigation,

@@ -37,7 +37,7 @@ import backlogtrackr.shared.generated.resources.cancel_24px
 import backlogtrackr.shared.generated.resources.search_24px
 import com.x3vo.backlogtrackr.ui.common.components.BasicListUIState
 import com.x3vo.backlogtrackr.ui.common.components.GameSearchCard
-import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithScaffold
+import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithBackNav
 import com.x3vo.backlogtrackr.ui.common.screen.StatefulContent
 import com.x3vo.backlogtrackr.domain.model.GameSearchObject
 import com.x3vo.backlogtrackr.utils.AppDimensions
@@ -98,7 +98,7 @@ private fun GameSearchScreenContent(
         }
     }
 
-    ScreenWithScaffold(
+    ScreenWithBackNav(
         title = "Game Search",
         canNavBack = true,
         onNavigateBack = handleBackNavigation,

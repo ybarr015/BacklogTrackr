@@ -49,7 +49,7 @@ import com.x3vo.backlogtrackr.domain.model.DefaultPCStores
 import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
 import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.ui.common.components.BasicDataUiState
-import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithScaffold
+import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithBackNav
 import com.x3vo.backlogtrackr.ui.common.screen.StatefulContent
 import com.x3vo.backlogtrackr.domain.model.GameSearchObject
 import com.x3vo.backlogtrackr.utils.AppDimensions
@@ -121,7 +121,7 @@ private fun GameSearchDetailContent(
 
     var expanded by rememberSaveable { mutableStateOf(false) }
 
-    ScreenWithScaffold(
+    ScreenWithBackNav(
         title = gameDetailsState.data?.name ?: "Game Details",
         canNavBack = true,
         onNavigateBack = handleBackNavigation,

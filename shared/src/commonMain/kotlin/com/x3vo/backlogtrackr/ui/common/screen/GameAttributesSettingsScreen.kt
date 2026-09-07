@@ -73,7 +73,7 @@ fun GameAttributesSettingsScreen(
         }
     }
 
-    ScreenWithScaffold(
+    ScreenWithBackNav(
         title = screenTitle,
         canNavBack = true,
         onNavigateBack = handleBackNavigation,

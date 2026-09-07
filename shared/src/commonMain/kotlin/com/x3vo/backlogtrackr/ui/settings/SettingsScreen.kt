@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import backlogtrackr.shared.generated.resources.Res
 import backlogtrackr.shared.generated.resources.arrow_forward_ios_24px
-import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithScaffold
+import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithBackNav
 import com.x3vo.backlogtrackr.utils.AppDimensions
 import org.jetbrains.compose.resources.painterResource
 
@@ -35,7 +35,7 @@ fun SettingsScreen(
     navBackHandler: () -> Unit = {},
 ) {
 
-    ScreenWithScaffold(
+    ScreenWithBackNav(
         title = "Settings",
         canNavBack = true,
         onNavigateBack = navBackHandler,
