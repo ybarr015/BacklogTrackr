@@ -8,6 +8,7 @@ import com.x3vo.backlogtrackr.domain.model.DefaultGameProgress
 import com.x3vo.backlogtrackr.domain.model.DefaultPCStores
 import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
 import com.x3vo.backlogtrackr.domain.model.GameAttribute
+import com.x3vo.backlogtrackr.domain.model.LibraryGameDetailModel
 import com.x3vo.backlogtrackr.room.LibraryGame.GamePcStoreCrossRef
 import com.x3vo.backlogtrackr.room.LibraryGame.GamePlatformCrossRef
 import com.x3vo.backlogtrackr.room.LibraryGame.LibraryGameDao
@@ -161,7 +162,26 @@ class BacklogTrackrDBRepository (
     //library game dao
     suspend fun getLibraryGame(id: Long) = libraryGameDao.getLibraryGameDetails(id)
 
-    val allLibraryGamesFlow = libraryGameDao.getAllLibraryGameDetails()
+    val  allLibraryGamesFlow:Flow<List<LibraryGameDetailModel>> = libraryGameDao.getAllLibraryGameDetails()
+        .map { gamesList ->
+            gamesList.map { game ->
+
+                val gameEntity = game.gameData
+                LibraryGameDetailModel(
+                    gameId = gameEntity.gameId,
+                    name = gameEntity.name,
+                    coverUrl = gameEntity.coverUrl,
+                    timeToBeat = gameEntity.timeToBeat,
+                    summary = gameEntity.summary,
+                    isOwned = gameEntity.isOwned,
+                    progressOption = GameAttribute.GameProgressModel(game.progressOption.progressOption),
+                    platforms = game.platforms.map { GameAttribute.PlatformModel(it.platformName) },
+                    pcStores = game.pcStores.map { GameAttribute.PCStoreModel(it.pcStoreName) }
+                )
+
+            }
+        }
+
 
     suspend fun addLibraryGame(game: LibraryGameEntity, platforms: List<String>, stores: List<String>) {
         val platformLinks = platforms.map {

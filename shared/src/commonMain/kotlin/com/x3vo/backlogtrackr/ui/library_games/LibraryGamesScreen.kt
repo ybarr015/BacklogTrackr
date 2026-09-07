@@ -34,11 +34,7 @@ import com.x3vo.backlogtrackr.domain.model.DefaultGameProgress
 import com.x3vo.backlogtrackr.domain.model.DefaultPCStores
 import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
 import com.x3vo.backlogtrackr.domain.model.GameAttribute
-import com.x3vo.backlogtrackr.room.LibraryGame.GameWithDetails
-import com.x3vo.backlogtrackr.room.LibraryGame.LibraryGameEntity
-import com.x3vo.backlogtrackr.room.game_attribute_settings.gameprogress.GameProgressOptionEntity
-import com.x3vo.backlogtrackr.room.game_attribute_settings.pcstores.PCStoreEntity
-import com.x3vo.backlogtrackr.room.game_attribute_settings.platforms.PlatformEntity
+import com.x3vo.backlogtrackr.domain.model.LibraryGameDetailModel
 import com.x3vo.backlogtrackr.ui.common.components.LibraryGameCard
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithScaffold
 import com.x3vo.backlogtrackr.utils.AppDimensions
@@ -65,7 +61,7 @@ fun LibraryGamesScreen(
 
 @Composable
 private fun LibraryGamesScreenContent(
-    libraryGames: List<GameWithDetails>,
+    libraryGames: List<LibraryGameDetailModel>,
     filterUiState: FilterUiState = FilterUiState(),
     handlePlatformFilterSelection: (String) -> Unit = {},
     handleProgressFilterSelection: (String) -> Unit = {},
@@ -223,11 +219,11 @@ private fun LibraryGamesScreenContent(
                 ) {
 
                     items(items = libraryGames, key = {
-                        it.gameData.gameId
+                        it.gameId
                     }) { game ->
                         LibraryGameCard(
-                            coverURL = game.gameData.coverUrl,
-                            name = game.gameData.name
+                            coverURL = game.coverUrl,
+                            name = game.name
                         )
                     }
 
@@ -247,21 +243,18 @@ private fun LibraryGamesScreenContent(
 private fun LibraryGamesScreenPreview() {
     LibraryGamesScreenContent(
         libraryGames = listOf(
-            GameWithDetails(
-                gameData = LibraryGameEntity(
-                    gameId = 0,
-                    name = "gameName",
-                    timeToBeat = "1h",
-                    summary = "gameSummary",
-                    isOwned = true,
-                    gameProgress = "Started",
-                    coverUrl = ""
+            LibraryGameDetailModel(
+                gameId = 0,
+                name = "gameName",
+                timeToBeat = "1h",
+                summary = "gameSummary",
+                isOwned = true,
+                coverUrl = "",
+                progressOption = GameAttribute.GameProgressModel(
+                    progressName = "Started"
                 ),
-                progressOption = GameProgressOptionEntity(
-                    progressOption = "Started"
-                ),
-                platforms = DefaultPlatforms.entries.map { PlatformEntity(it.platformName) },
-                pcStores = DefaultPCStores.entries.map { PCStoreEntity(it.storeName) }
+                platforms = DefaultPlatforms.entries.map { GameAttribute.PlatformModel(it.platformName) },
+                pcStores = DefaultPCStores.entries.map { GameAttribute.PCStoreModel(it.storeName) }
             )
         ),
         filterUiState = FilterUiState(

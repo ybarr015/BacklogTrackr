@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
 import com.x3vo.backlogtrackr.domain.model.GameAttribute
+import com.x3vo.backlogtrackr.domain.model.LibraryGameDetailModel
 import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
-import com.x3vo.backlogtrackr.room.LibraryGame.GameWithDetails
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -36,7 +36,7 @@ class LibraryGamesViewModel(
 
 
 
-    val filteredLibraryGames: StateFlow<List<GameWithDetails>> = combine(
+    val filteredLibraryGames: StateFlow<List<LibraryGameDetailModel>> = combine(
         repository.allLibraryGamesFlow,
         _filterUiState
     ) { allGames, filterUiState ->
@@ -72,7 +72,7 @@ class LibraryGamesViewModel(
             //then by progress state
             if (progressFilters.isNotEmpty()) {
                 filteredGames = filteredGames.filter { game ->
-                    progressFilters.contains(game.progressOption.progressOption)
+                    progressFilters.contains(game.progressOption.progressName)
                 }
             }
 
