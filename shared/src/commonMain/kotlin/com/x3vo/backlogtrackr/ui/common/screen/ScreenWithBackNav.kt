@@ -1,10 +1,5 @@
 package com.x3vo.backlogtrackr.ui.common.screen
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,27 +18,19 @@ fun ScreenWithBackNav(
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
     content: @Composable () -> Unit
     ) {
-
-    Scaffold(
+    ScreenWithScaffold(
         topBar = {
-            GenericTopAppBar(
+            TopAppBarWithBackNav(
                 title = title,
                 canNavigateBack = canNavBack,
                 navigateBack = onNavigateBack,
                 navButtonEnabled = navButtonEnabled
             )
         },
-        snackbarHost = { SnackbarHost(snackBarHostState) },
+        snackBarHostState = snackBarHostState,
         modifier = modifier
-    ) { innerPadding ->
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-        ) {
-            content()
-        }
+    ) {
+        content()
     }
 }
 

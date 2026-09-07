@@ -18,7 +18,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun GenericTopAppBar(
+fun TopAppBarWithBackNav(
     modifier: Modifier = Modifier,
     title: String = "",
     canNavigateBack: Boolean = false,
@@ -54,7 +54,7 @@ private fun FakeTopAppBar() {
     ) {
         Scaffold(
             topBar = {
-                GenericTopAppBar(
+                TopAppBarWithBackNav(
                     title = "top app bar text",
                     canNavigateBack = true
                 )
@@ -67,7 +67,7 @@ private fun FakeTopAppBar() {
 
 @Preview
 @Composable
-private fun GenericTopAppBarPreview() {
+private fun TopAppBarWithBackNavPreview() {
     FakeTopAppBar()
 
 }
