@@ -112,6 +112,7 @@ fun BackLogTrackrNavHost (
         composable<NavigationScreen.LIBRARYGAMES> {
             LibraryGamesScreen(
                 handleBackNavigation = { navController.navigateUp() },
+                handleNavToSearchScreen = { navController.navigate(NavigationScreen.GAMESEARCH) }
             )
         }
         composable<NavigationScreen.SETTINGS> {

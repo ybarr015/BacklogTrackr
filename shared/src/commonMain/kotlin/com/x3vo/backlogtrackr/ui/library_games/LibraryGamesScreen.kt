@@ -1,28 +1,18 @@
 package com.x3vo.backlogtrackr.ui.library_games
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -30,6 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import backlogtrackr.shared.generated.resources.Res
+import backlogtrackr.shared.generated.resources.sports_esports_24px
 import com.x3vo.backlogtrackr.domain.model.DefaultGameProgress
 import com.x3vo.backlogtrackr.domain.model.DefaultPCStores
 import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
@@ -38,11 +30,13 @@ import com.x3vo.backlogtrackr.domain.model.LibraryGameDetailModel
 import com.x3vo.backlogtrackr.ui.common.components.LibraryGameCard
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithScaffold
 import com.x3vo.backlogtrackr.utils.AppDimensions
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun LibraryGamesScreen(
     handleBackNavigation: () -> Unit,
+    handleNavToSearchScreen: () -> Unit = {},
     viewModel: LibraryGamesViewModel = koinViewModel(),
     modifier: Modifier = Modifier
 ) {
@@ -55,6 +49,7 @@ fun LibraryGamesScreen(
         handleProgressFilterSelection = { viewModel.onProgressFilterSelected(filterName = it) },
         handlePCStoreFilterSelection = { viewModel.onPcStoreFilterSelected(filterName = it)},
         handleBackNavigation = handleBackNavigation,
+        handleNavToSearchScreen = handleNavToSearchScreen,
         modifier = modifier
     )
 }
@@ -66,6 +61,7 @@ private fun LibraryGamesScreenContent(
     handlePlatformFilterSelection: (String) -> Unit = {},
     handleProgressFilterSelection: (String) -> Unit = {},
     handlePCStoreFilterSelection: (String) -> Unit = {},
+    handleNavToSearchScreen: () -> Unit = {},
     handleBackNavigation: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -89,144 +85,58 @@ private fun LibraryGamesScreenContent(
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {
+                LibraryGamesFilters(
+                    filtersAreVisible = true,
+                    availablePlatforms = filterUiState.availablePlatforms,
+                    availablePcStores = filterUiState.availablePcStores,
+                    availableProgressStates = filterUiState.availableProgressStates,
+                    selectedPlatformFilters = filterUiState.selectedPlatformFilters,
+                    selectedPcStoreFilters = filterUiState.selectedPcStoreFilters,
+                    selectedProgressFilters = filterUiState.selectedProgressStateFilters,
+                    handlePlatformFilterSelection = handlePlatformFilterSelection,
+                    handleProgressFilterSelection = handleProgressFilterSelection,
+                    handlePCStoreFilterSelection = handlePCStoreFilterSelection
+                )
 
-                LazyRow(
-                    verticalAlignment = Alignment.CenterVertically,
-                    contentPadding = PaddingValues(horizontal = AppDimensions.paddingSmall),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    item {
-                        Text(
-                            text = "Platforms",
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(end = AppDimensions.paddingSmall)
-                        )
+                if (libraryGames.isEmpty()) {
+
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Button(
+                            onClick = handleNavToSearchScreen
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(AppDimensions.paddingSmall)
+                            ) {
+                                Icon(painter = painterResource(Res.drawable.sports_esports_24px), contentDescription = "Add Game")
+                                Text("Add a game")
+                            }
+                        }
                     }
 
-                    filterUiState.availablePlatforms.forEach { platform ->
-                        item(key = platform.platformName) {
-                            FilterChip(
-                                selected = filterUiState.selectedPlatformFilters.contains(platform.platformName),
-                                onClick = {
-                                    handlePlatformFilterSelection(platform.platformName)
-                                },
-                                label = {
-                                    Text(text = platform.platformName)
-                                },
-                                modifier = Modifier.padding(end = AppDimensions.paddingSmall)
+
+
+                } else {
+                    LazyVerticalGrid(
+                        verticalArrangement = Arrangement.spacedBy(AppDimensions.paddingSmall),
+                        horizontalArrangement = Arrangement.spacedBy(AppDimensions.paddingSmall),
+                        columns = GridCells.Adaptive(125.dp),
+                        contentPadding = PaddingValues(AppDimensions.paddingSmall)
+                    ) {
+
+                        items(items = libraryGames, key = {
+                            it.gameId
+                        }) { game ->
+                            LibraryGameCard(
+                                coverURL = game.coverUrl,
+                                name = game.name
                             )
                         }
 
-                        val pcStoresAvailable = platform.platformName == DefaultPlatforms.PC.platformName && filterUiState.availablePcStores.isNotEmpty()
-
-                        if (pcStoresAvailable) {
-
-                            val isPcSelected = filterUiState.selectedPlatformFilters.contains(
-                                DefaultPlatforms.PC.platformName)
-
-                            item(key = "PCDividerStart") {
-                                AnimatedVisibility(
-                                    visible = isPcSelected,
-                                    enter = expandHorizontally(expandFrom = Alignment.Start) + fadeIn(),
-                                    exit = shrinkHorizontally(shrinkTowards = Alignment.Start) + fadeOut()
-                                ) {
-                                    VerticalDivider(
-                                        modifier = Modifier
-                                            .height(20.dp)
-                                            .padding(end = 8.dp),
-                                        thickness = 1.dp
-                                    )
-                                }
-                            }
-
-                            items(
-                                items = filterUiState.availablePcStores,
-                                key = { pcStore -> "store.${pcStore.pcStoreName}" }
-                            ) { pcStore ->
-                                AnimatedVisibility(
-                                    visible = isPcSelected,
-                                    enter = expandHorizontally(expandFrom = Alignment.Start) + fadeIn(),
-                                    exit = shrinkHorizontally(shrinkTowards = Alignment.Start) + fadeOut()
-                                ) {
-                                    FilterChip(
-                                        selected = filterUiState.selectedPcStoreFilters.contains(pcStore.pcStoreName),
-                                        onClick = {
-                                            handlePCStoreFilterSelection(pcStore.pcStoreName)
-                                        },
-                                        label = {
-                                            Text(text = pcStore.pcStoreName)
-                                        },
-                                        modifier = Modifier.padding(end = AppDimensions.paddingSmall)
-
-                                    )
-                                }
-                            }
-
-                            item(key = "PCDividerEnd") {
-                                AnimatedVisibility(
-                                    visible = isPcSelected,
-                                    enter = expandHorizontally(expandFrom = Alignment.Start) + fadeIn(),
-                                    exit = shrinkHorizontally(shrinkTowards = Alignment.Start) + fadeOut()
-                                ) {
-                                    VerticalDivider(
-                                        modifier = Modifier
-                                            .height(20.dp)
-                                            .padding(end = 8.dp),
-                                        thickness = 1.dp
-                                    )
-                                }
-                            }
-                        }
-
                     }
-
-                }
-                LazyRow(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(AppDimensions.paddingSmall),
-                    contentPadding = PaddingValues(horizontal = AppDimensions.paddingSmall),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    item {
-                        Text(
-                            text = "Progress",
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                    }
-                    items(
-                        items = filterUiState.availableProgressStates,
-                        key = { progress ->
-                            progress.progressName
-                        }
-                    ) { progress ->
-                        FilterChip(
-                            selected = filterUiState.selectedProgressStateFilters.contains(progress.progressName),
-                            onClick = {
-                                handleProgressFilterSelection(progress.progressName)
-                            },
-                            label = {
-                                Text(text = progress.progressName)
-                            }
-                        )
-                    }
-
-                }
-                LazyVerticalGrid(
-                    verticalArrangement = Arrangement.spacedBy(AppDimensions.paddingSmall),
-                    horizontalArrangement = Arrangement.spacedBy(AppDimensions.paddingSmall),
-                    columns = GridCells.Adaptive(125.dp),
-                    contentPadding = PaddingValues(AppDimensions.paddingSmall)
-                ) {
-
-                    items(items = libraryGames, key = {
-                        it.gameId
-                    }) { game ->
-                        LibraryGameCard(
-                            coverURL = game.coverUrl,
-                            name = game.name
-                        )
-                    }
-
                 }
             }
         }
