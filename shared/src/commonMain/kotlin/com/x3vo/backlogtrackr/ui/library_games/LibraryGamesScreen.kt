@@ -15,6 +15,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
@@ -66,9 +69,16 @@ private fun LibraryGamesScreenContent(
     modifier: Modifier = Modifier
 ) {
 
+    var filtersAreShowing by rememberSaveable{ mutableStateOf(false) }
+
+    val isFilterActive = filterUiState.selectedPlatformFilters.isNotEmpty() ||
+            filterUiState.selectedProgressStateFilters.isNotEmpty() ||
+            filterUiState.selectedPcStoreFilters.isNotEmpty()
+
     ScreenWithOptionsAndSettings(
         title = "Your Games",
-        onFilterButtonClicked = {},
+        isFilterActive = isFilterActive,
+        onFilterButtonClicked = { filtersAreShowing = !filtersAreShowing },
         onSettingsButtonClicked = handleNavToSettingsScreen,
         modifier = modifier
     ) {
@@ -85,7 +95,7 @@ private fun LibraryGamesScreenContent(
                 modifier = Modifier.fillMaxSize()
             ) {
                 LibraryGamesFilters(
-                    filtersAreVisible = true,
+                    filtersAreVisible = filtersAreShowing,
                     availablePlatforms = filterUiState.availablePlatforms,
                     availablePcStores = filterUiState.availablePcStores,
                     availableProgressStates = filterUiState.availableProgressStates,

@@ -11,6 +11,7 @@ import com.x3vo.backlogtrackr.ui.common.components.TopAppBarWithFiltersAndSettin
 @Composable
 fun ScreenWithOptionsAndSettings(
     title: String,
+    isFilterActive: Boolean = false,
     onFilterButtonClicked: () -> Unit = {},
     onSettingsButtonClicked: () -> Unit = {},
     bottomBar: @Composable () -> Unit = {},
@@ -22,6 +23,7 @@ fun ScreenWithOptionsAndSettings(
         topBar = {
             TopAppBarWithFiltersAndSettings(
                 title = title,
+                isFilterActive = isFilterActive,
                 onFilterButtonClick = onFilterButtonClicked,
                 onSettingsButtonClick = onSettingsButtonClicked
             )
