@@ -27,9 +27,7 @@ import com.x3vo.backlogtrackr.domain.model.DefaultPCStores
 import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
 import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.domain.model.LibraryGameDetailModel
-import com.x3vo.backlogtrackr.navigation.NavigationScreen
 import com.x3vo.backlogtrackr.ui.common.components.LibraryGameCard
-import com.x3vo.backlogtrackr.ui.common.components.NavigationBarCustom
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithOptionsAndSettings
 import com.x3vo.backlogtrackr.utils.AppDimensions
 import org.jetbrains.compose.resources.painterResource
@@ -39,7 +37,6 @@ import org.koin.compose.viewmodel.koinViewModel
 fun LibraryGamesScreen(
     handleNavToSearchScreen: () -> Unit = {},
     handleNavToSettingsScreen: () -> Unit = {},
-    handleNavBarNavigation: (NavigationScreen) -> Unit = {},
     viewModel: LibraryGamesViewModel = koinViewModel(),
     modifier: Modifier = Modifier
 ) {
@@ -53,7 +50,6 @@ fun LibraryGamesScreen(
         handlePCStoreFilterSelection = { viewModel.onPcStoreFilterSelected(filterName = it)},
         handleNavToSearchScreen = handleNavToSearchScreen,
         handleNavToSettingsScreen = handleNavToSettingsScreen,
-        handleNavBarNavigation = handleNavBarNavigation,
         modifier = modifier
     )
 }
@@ -67,7 +63,6 @@ private fun LibraryGamesScreenContent(
     handlePCStoreFilterSelection: (String) -> Unit = {},
     handleNavToSearchScreen: () -> Unit = {},
     handleNavToSettingsScreen: ()-> Unit = {},
-    handleNavBarNavigation: (NavigationScreen) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
 
@@ -75,12 +70,6 @@ private fun LibraryGamesScreenContent(
         title = "Your Games",
         onFilterButtonClicked = {},
         onSettingsButtonClicked = handleNavToSettingsScreen,
-        bottomBar = {
-            NavigationBarCustom(
-                currentDestination = NavigationScreen.LIBRARYGAMES,
-                handleNavBarNavigation = handleNavBarNavigation
-            )
-        },
         modifier = modifier
     ) {
 
