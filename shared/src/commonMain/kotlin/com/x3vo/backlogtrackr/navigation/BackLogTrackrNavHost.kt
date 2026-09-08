@@ -1,7 +1,15 @@
 package com.x3vo.backlogtrackr.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -52,7 +60,7 @@ sealed interface NavigationScreen {
             HomeScreenCard(SETTINGS, SETTINGS.cardName)
         )
 
-        val navBarRoutes = listOf(LIBRARYGAMES, GAMESEARCH)
+        val navBarRoutes: List<NavigationScreen> = listOf(LIBRARYGAMES, GAMESEARCH)
     }
 
 }
@@ -63,9 +71,33 @@ fun BackLogTrackrNavHost (
     modifier: Modifier = Modifier
 ) {
 
-    NavHost(navController = navController,
-        startDestination = NavigationScreen.HOME,
-        modifier = modifier) {
+    val handleNavBarNavigation: (NavigationScreen) -> Unit = remember(navController) {
+        { destination ->
+            val currentDestination = navController.currentDestination
+            val isResumed = navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED
+            
+            // Only navigate if we're not already there and the current screen is active
+            if (isResumed && currentDestination?.hasRoute(destination::class) == false) {
+                navController.navigate(destination) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
+        }
+    }
+
+    NavHost(
+        navController = navController,
+        startDestination = NavigationScreen.LIBRARYGAMES,
+        modifier = modifier,
+        enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(400)) },
+        exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(400)) },
+        popEnterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(400)) },
+        popExitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(400)) }
+    ) {
 
         //Dev HomeScreen
         composable<NavigationScreen.HOME> {
@@ -76,12 +108,15 @@ fun BackLogTrackrNavHost (
         }
 
         //GameSearch
-        composable<NavigationScreen.GAMESEARCH> {
+        composable<NavigationScreen.GAMESEARCH>(
+            enterTransition = { fadeIn(tween(400)) },
+            exitTransition = { fadeOut(tween(400)) }
+        ) {
             GameSearchScreen(
-                handleBackNavigation = { navController.navigateUp() },
                 handleGameSelection = { gameId ->
                     navController.navigate(NavigationScreen.GAMESEARCHDETAIL(gameId = gameId))
-                }
+                },
+                handleNavBarNavigation = handleNavBarNavigation
             )
         }
         composable<NavigationScreen.GAMESEARCHDETAIL> { backstackEntry ->
@@ -90,18 +125,20 @@ fun BackLogTrackrNavHost (
                 gameId = route.gameId,
                 handleBackNavigation = { navController.navigateUp() },
                 onNavigateToLibrary = {
-                    navController.navigate(NavigationScreen.LIBRARYGAMES) {
-                        popUpTo(NavigationScreen.HOME)
-                    }
+                    handleNavBarNavigation(NavigationScreen.LIBRARYGAMES)
                 }
             )
         }
 
         //Library
-        composable<NavigationScreen.LIBRARYGAMES> {
+        composable<NavigationScreen.LIBRARYGAMES>(
+            enterTransition = { fadeIn(tween(400)) },
+            exitTransition = { fadeOut(tween(400)) }
+        ) {
             LibraryGamesScreen(
-                handleNavToSearchScreen = { navController.navigate(NavigationScreen.GAMESEARCH) },
-                handleNavToSettingsScreen = { navController.navigate(NavigationScreen.SETTINGS) }
+                handleNavToSearchScreen = { handleNavBarNavigation(NavigationScreen.GAMESEARCH) },
+                handleNavToSettingsScreen = { navController.navigate(NavigationScreen.SETTINGS) },
+                handleNavBarNavigation = handleNavBarNavigation
             )
         }
 

@@ -13,6 +13,7 @@ fun ScreenWithOptionsAndSettings(
     title: String,
     onFilterButtonClicked: () -> Unit = {},
     onSettingsButtonClicked: () -> Unit = {},
+    bottomBar: @Composable () -> Unit = {},
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
@@ -25,6 +26,7 @@ fun ScreenWithOptionsAndSettings(
                 onSettingsButtonClick = onSettingsButtonClicked
             )
         },
+        bottomBar = bottomBar,
         snackBarHostState = snackBarHostState,
         modifier = modifier
     ) {

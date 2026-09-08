@@ -21,13 +21,15 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import backlogtrackr.shared.generated.resources.Res
-import backlogtrackr.shared.generated.resources.sports_esports_24px
+import backlogtrackr.shared.generated.resources.search_24px
 import com.x3vo.backlogtrackr.domain.model.DefaultGameProgress
 import com.x3vo.backlogtrackr.domain.model.DefaultPCStores
 import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
 import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.domain.model.LibraryGameDetailModel
+import com.x3vo.backlogtrackr.navigation.NavigationScreen
 import com.x3vo.backlogtrackr.ui.common.components.LibraryGameCard
+import com.x3vo.backlogtrackr.ui.common.components.NavigationBarCustom
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithOptionsAndSettings
 import com.x3vo.backlogtrackr.utils.AppDimensions
 import org.jetbrains.compose.resources.painterResource
@@ -37,6 +39,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun LibraryGamesScreen(
     handleNavToSearchScreen: () -> Unit = {},
     handleNavToSettingsScreen: () -> Unit = {},
+    handleNavBarNavigation: (NavigationScreen) -> Unit = {},
     viewModel: LibraryGamesViewModel = koinViewModel(),
     modifier: Modifier = Modifier
 ) {
@@ -50,6 +53,7 @@ fun LibraryGamesScreen(
         handlePCStoreFilterSelection = { viewModel.onPcStoreFilterSelected(filterName = it)},
         handleNavToSearchScreen = handleNavToSearchScreen,
         handleNavToSettingsScreen = handleNavToSettingsScreen,
+        handleNavBarNavigation = handleNavBarNavigation,
         modifier = modifier
     )
 }
@@ -63,6 +67,7 @@ private fun LibraryGamesScreenContent(
     handlePCStoreFilterSelection: (String) -> Unit = {},
     handleNavToSearchScreen: () -> Unit = {},
     handleNavToSettingsScreen: ()-> Unit = {},
+    handleNavBarNavigation: (NavigationScreen) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
 
@@ -70,6 +75,12 @@ private fun LibraryGamesScreenContent(
         title = "Your Games",
         onFilterButtonClicked = {},
         onSettingsButtonClicked = handleNavToSettingsScreen,
+        bottomBar = {
+            NavigationBarCustom(
+                currentDestination = NavigationScreen.LIBRARYGAMES,
+                handleNavBarNavigation = handleNavBarNavigation
+            )
+        },
         modifier = modifier
     ) {
 
@@ -110,14 +121,11 @@ private fun LibraryGamesScreenContent(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(AppDimensions.paddingSmall)
                             ) {
-                                Icon(painter = painterResource(Res.drawable.sports_esports_24px), contentDescription = "Add Game")
+                                Icon(painter = painterResource(Res.drawable.search_24px), contentDescription = "Add Game")
                                 Text("Add a game")
                             }
                         }
                     }
-
-
-
                 } else {
                     LazyVerticalGrid(
                         verticalArrangement = Arrangement.spacedBy(AppDimensions.paddingSmall),

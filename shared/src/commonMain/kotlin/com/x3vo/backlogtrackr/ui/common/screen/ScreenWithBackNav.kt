@@ -14,6 +14,7 @@ fun ScreenWithBackNav(
     canNavBack: Boolean,
     onNavigateBack: () -> Unit = {},
     navButtonEnabled: Boolean,
+    bottomBar: @Composable () -> Unit = {},
     modifier: Modifier = Modifier,
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
     content: @Composable () -> Unit
@@ -27,6 +28,7 @@ fun ScreenWithBackNav(
                 navButtonEnabled = navButtonEnabled
             )
         },
+        bottomBar = bottomBar,
         snackBarHostState = snackBarHostState,
         modifier = modifier
     ) {

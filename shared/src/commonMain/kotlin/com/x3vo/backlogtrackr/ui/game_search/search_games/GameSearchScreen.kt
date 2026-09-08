@@ -35,8 +35,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import backlogtrackr.shared.generated.resources.Res
 import backlogtrackr.shared.generated.resources.cancel_24px
 import backlogtrackr.shared.generated.resources.search_24px
+import com.x3vo.backlogtrackr.navigation.NavigationScreen
 import com.x3vo.backlogtrackr.ui.common.components.BasicListUIState
 import com.x3vo.backlogtrackr.ui.common.components.GameSearchCard
+import com.x3vo.backlogtrackr.ui.common.components.NavigationBarCustom
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithBackNav
 import com.x3vo.backlogtrackr.ui.common.screen.StatefulContent
 import com.x3vo.backlogtrackr.domain.model.GameSearchObject
@@ -46,8 +48,8 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun GameSearchScreen(
-    handleBackNavigation: () -> Unit,
     handleGameSelection: (String) -> Unit,
+    handleNavBarNavigation: (NavigationScreen) -> Unit = {},
     viewModel: GameSearchViewModel = koinViewModel(),
     modifier: Modifier = Modifier
 ) {
@@ -59,8 +61,8 @@ fun GameSearchScreen(
         handleSearchButtonRequest = { viewModel.handleSearchButtonRequest() },
         handleCancelTextInput = { viewModel.updateSearchKeyword("") },
         uiState = uiState,
-        handleBackNavigation = handleBackNavigation,
         handleGameSelection = handleGameSelection,
+        handleNavBarNavigation = handleNavBarNavigation,
         modifier = modifier
     )
 }
@@ -72,8 +74,8 @@ private fun GameSearchScreenContent(
     handleSearchButtonRequest: () -> Unit = {},
     handleCancelTextInput: () -> Unit = {},
     uiState: BasicListUIState<GameSearchObject>,
-    handleBackNavigation: () -> Unit = {},
     handleGameSelection: (String)-> Unit = {},
+    handleNavBarNavigation: (NavigationScreen) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
 
@@ -100,9 +102,14 @@ private fun GameSearchScreenContent(
 
     ScreenWithBackNav(
         title = "Game Search",
-        canNavBack = true,
-        onNavigateBack = handleBackNavigation,
-        navButtonEnabled = true,
+        canNavBack = false,
+        navButtonEnabled = false,
+        bottomBar = {
+            NavigationBarCustom(
+                currentDestination = NavigationScreen.GAMESEARCH,
+                handleNavBarNavigation = handleNavBarNavigation
+            )
+        },
         modifier = modifier
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
