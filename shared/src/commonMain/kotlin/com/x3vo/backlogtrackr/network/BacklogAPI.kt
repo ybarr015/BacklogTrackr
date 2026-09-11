@@ -36,9 +36,9 @@ class BacklogApi(private val httpClient: HttpClient, private val authRepository:
             }
 
             val searchQuery = """
-                search "${gameName}";
-                fields game.name, game.summary, game.id, game.cover.id, game.cover.width, game.cover.height, game.cover.url ;
-                where game != null & game.game_type = 0;
+                search "$gameName";
+                fields game.name, game.summary, game.id, game.cover.id, game.cover.width, game.cover.height, game.cover.url, game.version_parent ;
+                where game != null & game.game_type = 0 & game.version_parent = null;
                 limit 10;
                 """.trimIndent()
             setBody(searchQuery)

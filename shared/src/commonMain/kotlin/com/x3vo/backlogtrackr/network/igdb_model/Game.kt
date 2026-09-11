@@ -56,7 +56,7 @@ data class Game(
 //    val totalRatingCount: Int,
 //    val updatedAt: Long? = null,
 //    val url: String,
-//    val versionParent: Game? = null,
+    val versionParent: Game? = null,
 //    val versionTitle: String,
 //    val videos: List<GameVideo>,
 //    val websites: List<Website>,
