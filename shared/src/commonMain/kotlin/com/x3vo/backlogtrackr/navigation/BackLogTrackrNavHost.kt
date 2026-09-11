@@ -8,9 +8,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
+import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -93,26 +93,6 @@ fun BackLogTrackrNavHost(
         currentDestination?.hasRoute(route::class) == true
     }
 
-    val handleNavBarNavigation: (NavigationScreen) -> Unit = remember(navController) {
-        { destination ->
-            val currentDestination = navController.currentDestination
-            val isResumed =
-                navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED
-
-            // Only navigate if we're not already there and the current screen is active
-            if (isResumed && currentDestination?.hasRoute(destination::class) == false) {
-                navController.navigate(destination) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                        inclusive = true
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            }
-        }
-    }
-
     Scaffold(
         modifier = modifier,
         bottomBar = {
@@ -123,7 +103,7 @@ fun BackLogTrackrNavHost(
 
                 NavigationBarCustom(
                     currentDestination = selected,
-                    handleNavBarNavigation = handleNavBarNavigation
+                    handleNavBarNavigation = { handleNavBarNavigation(it, navController) }
                 )
             }
         }
@@ -161,7 +141,7 @@ fun BackLogTrackrNavHost(
             //Dev HomeScreen
             composable<NavigationScreen.HOME> {
                 HomeScreen(
-                    handleCardClick = { navController.navigate(it) },
+                    handleCardClick = { handleNavigation(it, navController) },
                     cards = NavigationScreen.homeScreenCards
                 )
             }
@@ -173,7 +153,7 @@ fun BackLogTrackrNavHost(
             ) {
                 GameSearchScreen(
                     handleGameSelection = { gameId ->
-                        navController.navigate(NavigationScreen.GAMESEARCHDETAIL(gameId = gameId))
+                        handleNavigation(NavigationScreen.GAMESEARCHDETAIL(gameId = gameId), navController)
                     }
                 )
             }
@@ -183,7 +163,7 @@ fun BackLogTrackrNavHost(
                     gameId = route.gameId,
                     handleBackNavigation = { navController.navigateUp() },
                     onNavigateToLibrary = {
-                        handleNavBarNavigation(NavigationScreen.LIBRARYGAMES)
+                        handleNavBarNavigation(NavigationScreen.LIBRARYGAMES, navController)
                     }
                 )
             }
@@ -194,18 +174,20 @@ fun BackLogTrackrNavHost(
                 exitTransition = { fadeOut(tween(400)) }
             ) {
                 LibraryGamesScreen(
-                    handleNavToSearchScreen = { handleNavBarNavigation(NavigationScreen.GAMESEARCH) },
-                    handleNavToSettingsScreen = { navController.navigate(NavigationScreen.SETTINGS) }
+                    handleNavToSearchScreen = { handleNavBarNavigation(NavigationScreen.GAMESEARCH, navController) },
+                    handleNavToSettingsScreen = {
+                        handleNavigation(NavigationScreen.SETTINGS, navController)
+                    }
                 )
             }
 
             //settings
             composable<NavigationScreen.SETTINGS> {
                 SettingsScreen(
-                    navigateToAuth = { navController.navigate(NavigationScreen.AUTH) },
-                    navigateToProgress = { navController.navigate(NavigationScreen.GAMEPROGRESSOPTIONS) },
-                    navigateToStores = { navController.navigate(NavigationScreen.STORES) },
-                    navigateToPlatforms = { navController.navigate(NavigationScreen.PLATFORMS) },
+                    navigateToAuth = { handleNavigation(NavigationScreen.AUTH,navController) },
+                    navigateToProgress = { handleNavigation(NavigationScreen.GAMEPROGRESSOPTIONS,navController) },
+                    navigateToStores = { handleNavigation(NavigationScreen.STORES,navController) },
+                    navigateToPlatforms = { handleNavigation(NavigationScreen.PLATFORMS,navController) },
                     navBackHandler = { navController.navigateUp() }
                 )
             }
@@ -231,4 +213,32 @@ fun BackLogTrackrNavHost(
             }
         }
     }
+}
+
+fun handleNavBarNavigation(destination: NavigationScreen, navController: NavHostController) {
+
+    if (checkIfNotAlreadyNavigated(destination, navController)) {
+        navController.navigate(destination) {
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+                inclusive = true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+}
+
+fun handleNavigation(screen: NavigationScreen, navController: NavHostController) {
+    if (checkIfNotAlreadyNavigated(screen, navController)) {
+        navController.navigate(screen)
+    }
+
+}
+
+fun checkIfNotAlreadyNavigated(destination: NavigationScreen, navController: NavHostController): Boolean {
+    val currentDestination: NavDestination? = navController.currentDestination
+    val isResumed =
+        navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED
+    return isResumed && currentDestination?.hasRoute(destination::class) == false
 }
