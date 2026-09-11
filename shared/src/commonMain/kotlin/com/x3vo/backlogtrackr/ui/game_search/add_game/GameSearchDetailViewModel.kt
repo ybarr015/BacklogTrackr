@@ -168,14 +168,14 @@ class GameSearchDetailViewModel(
             val platformsList = userSelections.selectedPlatforms.toList()
             val storesList = if(userSelections.selectedPlatforms.contains(DefaultPlatforms.PC.platformName)) userSelections.selectedStores.toList() else emptyList()
             if (backlogTrackrDBRepository.checkIfGameExistsInLibrary(gameEntity.gameId)) {
-                _gameAddEvent.emit(GameAddEvent(isSuccess = false, message = "Game already exists in library"))
+                _gameAddEvent.emit(GameAddEvent(message = "Game already exists in library"))
             } else {
                 backlogTrackrDBRepository.addLibraryGame(
                     game = gameEntity,
                     platforms = platformsList,
                     stores = storesList
                 )
-                _gameAddEvent.emit(GameAddEvent(isSuccess = true, message = "Game added to library"))
+                _gameAddEvent.emit(GameAddEvent(message = "Game added to library"))
             }
         }
     }
@@ -192,6 +192,5 @@ data class UserSelectionsState(
 )
 
 data class GameAddEvent (
-    val isSuccess: Boolean = false,
     val message: String = ""
 )

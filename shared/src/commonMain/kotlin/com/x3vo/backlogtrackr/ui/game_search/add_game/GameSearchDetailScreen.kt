@@ -75,17 +75,12 @@ fun GameSearchDetailScreen(
 
     LaunchedEffect(Unit) {
         viewModel.gameAddEvent.collectLatest { event ->
-
-            if(event.isSuccess) {
-                val result = snackbarHostState.showSnackbar(
-                    message = event.message,
-                    actionLabel = "Go to Library"
-                )
-                if (result == SnackbarResult.ActionPerformed) {
-                    onNavigateToLibrary()
-                }
-            } else {
-                snackbarHostState.showSnackbar(event.message)
+            val result = snackbarHostState.showSnackbar(
+                message = event.message,
+                actionLabel = "Go to Library"
+            )
+            if (result == SnackbarResult.ActionPerformed) {
+                onNavigateToLibrary()
             }
         }
     }
