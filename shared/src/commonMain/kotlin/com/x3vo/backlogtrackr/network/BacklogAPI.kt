@@ -4,6 +4,7 @@ import com.x3vo.backlogtrackr.SharedBuildConfig
 import com.x3vo.backlogtrackr.auth.AuthRepository
 import com.x3vo.backlogtrackr.network.igdb_model.Game
 import com.x3vo.backlogtrackr.network.igdb_model.GameTimeToBeat
+import com.x3vo.backlogtrackr.network.igdb_model.Search
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.headers
@@ -28,16 +29,22 @@ class BacklogApi(private val httpClient: HttpClient, private val authRepository:
     suspend fun gameSearchByName(gameName: String): List<Game> {
         val result = httpClient.post(IGDB_ENDPOINT) {
             url{
-                appendPathSegments("games")
+                appendPathSegments("search")
             }
             headers{
                 append("Client-ID", SharedBuildConfig.CLIENT_ID)
             }
 
-            setBody("search \"$gameName\";where game_type = 0;fields name, summary, id, cover.id, cover.width, cover.height, cover.url ;limit 10;")
-        }.body() as List<Game>
+            val searchQuery = """
+                search "${gameName}";
+                fields game.name, game.summary, game.id, game.cover.id, game.cover.width, game.cover.height, game.cover.url ;
+                where game != null & game.game_type = 0;
+                limit 10;
+                """.trimIndent()
+            setBody(searchQuery)
+        }.body() as List<Search>
         println("BacklogApi: Received ${result.size} games")
-        return result
+        return result.mapNotNull { it.game }
     }
 
     suspend fun gameSearchById(gameId: String): List<Game> {
