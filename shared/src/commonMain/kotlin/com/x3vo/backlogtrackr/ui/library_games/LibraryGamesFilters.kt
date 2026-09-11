@@ -27,7 +27,6 @@ import com.x3vo.backlogtrackr.utils.AppDimensions
 
 @Composable
 fun LibraryGamesFilters(
-    filtersAreVisible: Boolean = true,
     availablePlatforms: List<GameAttribute.PlatformModel> = listOf(),
     availablePcStores: List<GameAttribute.PCStoreModel> = listOf(),
     availableProgressStates: List<GameAttribute.GameProgressModel> = listOf(),
@@ -40,130 +39,132 @@ fun LibraryGamesFilters(
     modifier: Modifier = Modifier
 ) {
 
-    if(filtersAreVisible) {
-        Column {
-            LazyRow(
-                verticalAlignment = Alignment.CenterVertically,
-                contentPadding = PaddingValues(horizontal = AppDimensions.paddingSmall),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                item {
-                    Text(
-                        text = "Platforms",
-                        style = MaterialTheme.typography.titleMedium,
+
+    Column(modifier = modifier) {
+        LazyRow(
+            verticalAlignment = Alignment.CenterVertically,
+            contentPadding = PaddingValues(horizontal = AppDimensions.paddingSmall),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            item {
+                Text(
+                    text = "Platforms",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(end = AppDimensions.paddingSmall)
+                )
+            }
+
+            availablePlatforms.forEach { platform ->
+                item(key = platform.platformName) {
+                    FilterChip(
+                        selected = selectedPlatformFilters.contains(platform.platformName),
+                        onClick = {
+                            handlePlatformFilterSelection(platform.platformName)
+                        },
+                        label = {
+                            Text(text = platform.platformName)
+                        },
                         modifier = Modifier.padding(end = AppDimensions.paddingSmall)
                     )
                 }
 
-                availablePlatforms.forEach { platform ->
-                    item(key = platform.platformName) {
-                        FilterChip(
-                            selected = selectedPlatformFilters.contains(platform.platformName),
-                            onClick = {
-                                handlePlatformFilterSelection(platform.platformName)
-                            },
-                            label = {
-                                Text(text = platform.platformName)
-                            },
-                            modifier = Modifier.padding(end = AppDimensions.paddingSmall)
-                        )
-                    }
+                val pcStoresAvailable =
+                    platform.platformName == DefaultPlatforms.PC.platformName && availablePcStores.isNotEmpty()
 
-                    val pcStoresAvailable = platform.platformName == DefaultPlatforms.PC.platformName && availablePcStores.isNotEmpty()
+                if (pcStoresAvailable) {
 
-                    if (pcStoresAvailable) {
+                    val isPcSelected = selectedPlatformFilters.contains(
+                        DefaultPlatforms.PC.platformName
+                    )
 
-                        val isPcSelected = selectedPlatformFilters.contains(
-                            DefaultPlatforms.PC.platformName)
-
-                        item(key = "PCDividerStart") {
-                            AnimatedVisibility(
-                                visible = isPcSelected,
-                                enter = expandHorizontally(expandFrom = Alignment.Start) + fadeIn(),
-                                exit = shrinkHorizontally(shrinkTowards = Alignment.Start) + fadeOut()
-                            ) {
-                                VerticalDivider(
-                                    modifier = Modifier
-                                        .height(20.dp)
-                                        .padding(end = 8.dp),
-                                    thickness = 1.dp
-                                )
-                            }
-                        }
-
-                        items(
-                            items = availablePcStores,
-                            key = { pcStore -> "store.${pcStore.pcStoreName}" }
-                        ) { pcStore ->
-                            AnimatedVisibility(
-                                visible = isPcSelected,
-                                enter = expandHorizontally(expandFrom = Alignment.Start) + fadeIn(),
-                                exit = shrinkHorizontally(shrinkTowards = Alignment.Start) + fadeOut()
-                            ) {
-                                FilterChip(
-                                    selected = selectedPcStoreFilters.contains(pcStore.pcStoreName),
-                                    onClick = {
-                                        handlePCStoreFilterSelection(pcStore.pcStoreName)
-                                    },
-                                    label = {
-                                        Text(text = pcStore.pcStoreName)
-                                    },
-                                    modifier = Modifier.padding(end = AppDimensions.paddingSmall)
-
-                                )
-                            }
-                        }
-
-                        item(key = "PCDividerEnd") {
-                            AnimatedVisibility(
-                                visible = isPcSelected,
-                                enter = expandHorizontally(expandFrom = Alignment.Start) + fadeIn(),
-                                exit = shrinkHorizontally(shrinkTowards = Alignment.Start) + fadeOut()
-                            ) {
-                                VerticalDivider(
-                                    modifier = Modifier
-                                        .height(20.dp)
-                                        .padding(end = 8.dp),
-                                    thickness = 1.dp
-                                )
-                            }
+                    item(key = "PCDividerStart") {
+                        AnimatedVisibility(
+                            visible = isPcSelected,
+                            enter = expandHorizontally(expandFrom = Alignment.Start) + fadeIn(),
+                            exit = shrinkHorizontally(shrinkTowards = Alignment.Start) + fadeOut()
+                        ) {
+                            VerticalDivider(
+                                modifier = Modifier
+                                    .height(20.dp)
+                                    .padding(end = 8.dp),
+                                thickness = 1.dp
+                            )
                         }
                     }
 
+                    items(
+                        items = availablePcStores,
+                        key = { pcStore -> "store.${pcStore.pcStoreName}" }
+                    ) { pcStore ->
+                        AnimatedVisibility(
+                            visible = isPcSelected,
+                            enter = expandHorizontally(expandFrom = Alignment.Start) + fadeIn(),
+                            exit = shrinkHorizontally(shrinkTowards = Alignment.Start) + fadeOut()
+                        ) {
+                            FilterChip(
+                                selected = selectedPcStoreFilters.contains(pcStore.pcStoreName),
+                                onClick = {
+                                    handlePCStoreFilterSelection(pcStore.pcStoreName)
+                                },
+                                label = {
+                                    Text(text = pcStore.pcStoreName)
+                                },
+                                modifier = Modifier.padding(end = AppDimensions.paddingSmall)
+
+                            )
+                        }
+                    }
+
+                    item(key = "PCDividerEnd") {
+                        AnimatedVisibility(
+                            visible = isPcSelected,
+                            enter = expandHorizontally(expandFrom = Alignment.Start) + fadeIn(),
+                            exit = shrinkHorizontally(shrinkTowards = Alignment.Start) + fadeOut()
+                        ) {
+                            VerticalDivider(
+                                modifier = Modifier
+                                    .height(20.dp)
+                                    .padding(end = 8.dp),
+                                thickness = 1.dp
+                            )
+                        }
+                    }
                 }
 
             }
-            LazyRow(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(AppDimensions.paddingSmall),
-                contentPadding = PaddingValues(horizontal = AppDimensions.paddingSmall),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                item {
-                    Text(
-                        text = "Progress",
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                }
-                items(
-                    items = availableProgressStates,
-                    key = { progress ->
-                        progress.progressName
-                    }
-                ) { progress ->
-                    FilterChip(
-                        selected = selectedProgressFilters.contains(progress.progressName),
-                        onClick = {
-                            handleProgressFilterSelection(progress.progressName)
-                        },
-                        label = {
-                            Text(text = progress.progressName)
-                        }
-                    )
-                }
 
-            }
         }
+        LazyRow(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AppDimensions.paddingSmall),
+            contentPadding = PaddingValues(horizontal = AppDimensions.paddingSmall),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            item {
+                Text(
+                    text = "Progress",
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
+            items(
+                items = availableProgressStates,
+                key = { progress ->
+                    progress.progressName
+                }
+            ) { progress ->
+                FilterChip(
+                    selected = selectedProgressFilters.contains(progress.progressName),
+                    onClick = {
+                        handleProgressFilterSelection(progress.progressName)
+                    },
+                    label = {
+                        Text(text = progress.progressName)
+                    }
+                )
+            }
+
+        }
+
     }
 
 }

@@ -16,9 +16,12 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -69,6 +72,7 @@ fun LibraryGamesScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LibraryGamesScreenContent(
     searchKeyword: String = "",
@@ -83,9 +87,12 @@ private fun LibraryGamesScreenContent(
     modifier: Modifier = Modifier
 ) {
 
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet by rememberSaveable{ mutableStateOf(false) }
+
     val focusManager = LocalFocusManager.current
 
-    var filtersAreShowing by rememberSaveable{ mutableStateOf(false) }
+
 
     val isFilterActive = filterUiState.selectedPlatformFilters.isNotEmpty() ||
             filterUiState.selectedProgressStateFilters.isNotEmpty() ||
@@ -94,7 +101,7 @@ private fun LibraryGamesScreenContent(
     ScreenWithOptionsAndSettings(
         title = "Your Games",
         isFilterActive = isFilterActive,
-        onFilterButtonClicked = { filtersAreShowing = !filtersAreShowing },
+        onFilterButtonClicked = { showBottomSheet = !showBottomSheet },
         onSettingsButtonClicked = handleNavToSettingsScreen,
         modifier = modifier
     ) {
@@ -116,19 +123,6 @@ private fun LibraryGamesScreenContent(
                         })
                     }
             ) {
-                LibraryGamesFilters(
-                    filtersAreVisible = filtersAreShowing,
-                    availablePlatforms = filterUiState.availablePlatforms,
-                    availablePcStores = filterUiState.availablePcStores,
-                    availableProgressStates = filterUiState.availableProgressStates,
-                    selectedPlatformFilters = filterUiState.selectedPlatformFilters,
-                    selectedPcStoreFilters = filterUiState.selectedPcStoreFilters,
-                    selectedProgressFilters = filterUiState.selectedProgressStateFilters,
-                    handlePlatformFilterSelection = handlePlatformFilterSelection,
-                    handleProgressFilterSelection = handleProgressFilterSelection,
-                    handlePCStoreFilterSelection = handlePCStoreFilterSelection
-                )
-
                 TextField(
                     value = searchKeyword,
                     onValueChange = onSearchKeywordUpdate,
@@ -182,6 +176,26 @@ private fun LibraryGamesScreenContent(
 
                     }
                 }
+            }
+        }
+
+        if (showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showBottomSheet = false },
+                sheetState = sheetState
+            ) {
+                LibraryGamesFilters(
+                    availablePlatforms = filterUiState.availablePlatforms,
+                    availablePcStores = filterUiState.availablePcStores,
+                    availableProgressStates = filterUiState.availableProgressStates,
+                    selectedPlatformFilters = filterUiState.selectedPlatformFilters,
+                    selectedPcStoreFilters = filterUiState.selectedPcStoreFilters,
+                    selectedProgressFilters = filterUiState.selectedProgressStateFilters,
+                    handlePlatformFilterSelection = handlePlatformFilterSelection,
+                    handleProgressFilterSelection = handleProgressFilterSelection,
+                    handlePCStoreFilterSelection = handlePCStoreFilterSelection,
+                    modifier = Modifier.padding(vertical = AppDimensions.paddingSmall)
+                )
             }
         }
 
