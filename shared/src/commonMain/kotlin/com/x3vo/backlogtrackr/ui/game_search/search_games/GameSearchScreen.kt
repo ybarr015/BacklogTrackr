@@ -150,7 +150,8 @@ private fun GameSearchScreenContent(
                         onClick = {
                             handleSearchButtonRequest()
                             focusManager.clearFocus()
-                        }
+                        },
+                        enabled = !uiState.isLoading
                     ) {
                         Icon(
                             painter = painterResource(Res.drawable.search_24px),
