@@ -1,18 +1,24 @@
 package com.x3vo.backlogtrackr.ui.library_games
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +26,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -43,9 +52,12 @@ fun LibraryGamesScreen(
     viewModel: LibraryGamesViewModel = koinViewModel(),
     modifier: Modifier = Modifier
 ) {
+    val searchKeyword by viewModel.searchKeyword.collectAsStateWithLifecycle()
     val libraryGames by viewModel.filteredLibraryGames.collectAsStateWithLifecycle()
     val filterUiState by viewModel.filterUiState.collectAsStateWithLifecycle()
     LibraryGamesScreenContent(
+        searchKeyword = searchKeyword,
+        onSearchKeywordUpdate = { viewModel.updateSearchKeyword(it) },
         libraryGames = libraryGames,
         filterUiState = filterUiState,
         handlePlatformFilterSelection = { viewModel.onPlatformFilterSelected(filterName = it) },
@@ -59,6 +71,8 @@ fun LibraryGamesScreen(
 
 @Composable
 private fun LibraryGamesScreenContent(
+    searchKeyword: String = "",
+    onSearchKeywordUpdate: (String) -> Unit = {},
     libraryGames: List<LibraryGameDetailModel>,
     filterUiState: FilterUiState = FilterUiState(),
     handlePlatformFilterSelection: (String) -> Unit = {},
@@ -68,6 +82,8 @@ private fun LibraryGamesScreenContent(
     handleNavToSettingsScreen: ()-> Unit = {},
     modifier: Modifier = Modifier
 ) {
+
+    val focusManager = LocalFocusManager.current
 
     var filtersAreShowing by rememberSaveable{ mutableStateOf(false) }
 
@@ -92,7 +108,13 @@ private fun LibraryGamesScreenContent(
             }
         } else {
             Column(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(Unit) {
+                        detectTapGestures(onTap = {
+                            focusManager.clearFocus()
+                        })
+                    }
             ) {
                 LibraryGamesFilters(
                     filtersAreVisible = filtersAreShowing,
@@ -107,8 +129,24 @@ private fun LibraryGamesScreenContent(
                     handlePCStoreFilterSelection = handlePCStoreFilterSelection
                 )
 
-                if (libraryGames.isEmpty()) {
+                TextField(
+                    value = searchKeyword,
+                    onValueChange = onSearchKeywordUpdate,
+                    singleLine = true,
+                    label = {
+                        Text("Search your library games")
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(horizontal = AppDimensions.paddingSmall),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                    keyboardActions = KeyboardActions(
+                        onSearch = {
+                            focusManager.clearFocus()
+                        }
+                    )
+                )
 
+                if (libraryGames.isEmpty()) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center

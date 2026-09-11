@@ -9,6 +9,7 @@ import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -17,6 +18,15 @@ class LibraryGamesViewModel(
     private val repository: BacklogTrackrDBRepository
 ) : ViewModel() {
 
+
+    private val _searchKeyword = MutableStateFlow("")
+    val searchKeyword = _searchKeyword.asStateFlow()
+
+    fun updateSearchKeyword(newSearchTerm: String) {
+        _searchKeyword.update {
+            newSearchTerm
+        }
+    }
 
     private val _filterUiState = MutableStateFlow(FilterUiState())
 
@@ -38,17 +48,22 @@ class LibraryGamesViewModel(
 
     val filteredLibraryGames: StateFlow<List<LibraryGameDetailModel>> = combine(
         repository.allLibraryGamesFlow,
-        _filterUiState
-    ) { allGames, filterUiState ->
+        _filterUiState,
+        _searchKeyword
+    ) { allGames, filterUiState, searchKeyword ->
         val platformFilters = filterUiState.selectedPlatformFilters
         val pcStoreFilters = filterUiState.selectedPcStoreFilters
         val progressFilters = filterUiState.selectedProgressStateFilters
 
-        if (platformFilters.isEmpty() && progressFilters.isEmpty()) { // if nothing is selected then show all games
-            allGames
-        } else {
-            var filteredGames = allGames // store all games before making changes
+        var filteredGames = allGames // store all games before making changes
+        //apply search text filter first
+        filteredGames = filteredGames.filter { game ->
+            game.name.contains(searchKeyword, ignoreCase = true)
+        }
 
+        if (platformFilters.isEmpty() && progressFilters.isEmpty()) { // if nothing is selected then show all games
+            filteredGames
+        } else {
             if(platformFilters.isNotEmpty()) { // if there are platform filters
                 filteredGames = filteredGames.filter { game ->
                     game.platforms.any { platform -> // check all the platforms of the game
