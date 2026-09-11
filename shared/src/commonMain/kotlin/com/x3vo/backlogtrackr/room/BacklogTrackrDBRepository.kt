@@ -174,7 +174,7 @@ class BacklogTrackrDBRepository (
                     timeToBeat = gameEntity.timeToBeat,
                     summary = gameEntity.summary,
                     isOwned = gameEntity.isOwned,
-                    progressOption = GameAttribute.GameProgressModel(game.progressOption.progressOption),
+                    progressOption = GameAttribute.GameProgressModel(game.progressOption?.progressOption ?: gameEntity.gameProgress),
                     platforms = game.platforms.map { GameAttribute.PlatformModel(it.platformName) },
                     pcStores = game.pcStores.map { GameAttribute.PCStoreModel(it.pcStoreName) }
                 )

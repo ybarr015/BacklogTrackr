@@ -13,15 +13,6 @@ import com.x3vo.backlogtrackr.room.game_attribute_settings.platforms.PlatformEnt
 
 @Entity(
     tableName = "LibraryGames",
-    foreignKeys = [
-        ForeignKey(
-            entity = GameProgressOptionEntity::class,
-            parentColumns = ["progressOption"],
-            childColumns = ["gameProgress"],
-            onDelete = ForeignKey.CASCADE
-        )
-    ],
-
     indices = [Index(value = ["gameProgress"])]
 )
 data class LibraryGameEntity(
@@ -89,7 +80,7 @@ data class GameWithDetails(
         parentColumns = ["gameProgress"],
         entityColumns = ["progressOption"]
     )
-    val progressOption: GameProgressOptionEntity,
+    val progressOption: GameProgressOptionEntity?,
 
     @Relation(
         parentColumns = ["gameId"],
