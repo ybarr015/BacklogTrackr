@@ -48,7 +48,9 @@ import com.x3vo.backlogtrackr.domain.model.DefaultGameProgressSet
 import com.x3vo.backlogtrackr.domain.model.DefaultPCStoresSet
 import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
 import com.x3vo.backlogtrackr.domain.model.DefaultPlatformsSet
+import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.domain.model.GameSearchObject
+import com.x3vo.backlogtrackr.domain.model.toPlatformModel
 import com.x3vo.backlogtrackr.ui.common.components.BasicDataUiState
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithBackNav
 import com.x3vo.backlogtrackr.ui.common.screen.StatefulContent
@@ -105,9 +107,9 @@ private fun GameSearchDetailContent(
     gameDetailsState: BasicDataUiState<GameSearchObject>,
     userSelectionsState: UserSelectionsState,
     onOwnershipUpdate: (Boolean) -> Unit = {},
-    onPlatformSelection: (String, Boolean) -> Unit = { _, _ -> },
-    onPcStoreSelection: (String, Boolean) -> Unit = { _,_ -> },
-    onProgressSelection: (String) -> Unit = {},
+    onPlatformSelection: (GameAttribute.PlatformModel, Boolean) -> Unit = { _, _ -> },
+    onPcStoreSelection: (GameAttribute.PCStoreModel, Boolean) -> Unit = { _, _ -> },
+    onProgressSelection: (GameAttribute.GameProgressModel) -> Unit = {},
     handleBackNavigation: () -> Unit = {},
     addGameHandler: () -> Unit = {},
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
@@ -213,17 +215,17 @@ private fun GameSearchDetailContent(
                                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
                                     userSelectionsState.availablePlatforms.forEach { platform ->
-                                        val isSelected = userSelectionsState.selectedPlatforms.contains(platform.platformName)
+                                        val isSelected = userSelectionsState.selectedPlatforms.contains(platform)
                                         FilterChip(
                                             selected = isSelected,
-                                            onClick = { onPlatformSelection(platform.platformName, !isSelected) },
+                                            onClick = { onPlatformSelection(platform, !isSelected) },
                                             label = { Text(platform.platformName) }
                                         )
                                     }
                                 }
                             }
 
-                            if (userSelectionsState.selectedPlatforms.contains(DefaultPlatforms.PC.platformName) && userSelectionsState.availablePcStores.isNotEmpty()) {
+                            if (userSelectionsState.selectedPlatforms.contains(DefaultPlatforms.PC.toPlatformModel()) && userSelectionsState.availablePcStores.isNotEmpty()) {
                                 Text(
                                     text = "Which PC stores?",
                                     style = MaterialTheme.typography.bodyMedium,
@@ -234,10 +236,10 @@ private fun GameSearchDetailContent(
                                     modifier = Modifier.padding(start = 16.dp)
                                 ) {
                                     userSelectionsState.availablePcStores.forEach { store ->
-                                        val isSelected = userSelectionsState.selectedStores.contains(store.pcStoreName)
+                                        val isSelected = userSelectionsState.selectedStores.contains(store)
                                         FilterChip(
                                             selected = isSelected,
-                                            onClick = { onPcStoreSelection(store.pcStoreName, !isSelected) },
+                                            onClick = { onPcStoreSelection(store, !isSelected) },
                                             label = { Text(store.pcStoreName) }
                                         )
                                     }
@@ -255,7 +257,7 @@ private fun GameSearchDetailContent(
                                     onExpandedChange = { expanded = it }
                                 ) {
                                     TextField(
-                                        value = userSelectionsState.selectedProgressOption,
+                                        value = userSelectionsState.selectedProgressOption.progressName,
                                         onValueChange = {},
                                         readOnly = true,
                                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -270,7 +272,7 @@ private fun GameSearchDetailContent(
                                             DropdownMenuItem(
                                                 text = { Text(selectionOption.progressName) },
                                                 onClick = {
-                                                    onProgressSelection(selectionOption.progressName)
+                                                    onProgressSelection(selectionOption)
                                                     expanded = false
                                                 }
                                             )
@@ -309,7 +311,7 @@ private fun GameSearchDetailScreenPreview() {
             availablePlatforms = DefaultPlatformsSet,
             availablePcStores = DefaultPCStoresSet,
             availableProgressOptions = DefaultGameProgressSet,
-            selectedPlatforms = setOf(DefaultPlatforms.PC.platformName),
+            selectedPlatforms = setOf(DefaultPlatforms.PC.toPlatformModel()),
             isOwned = true
         )
     )

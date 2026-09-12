@@ -8,6 +8,11 @@ enum class DefaultPlatforms(val platformName: String) {
     SWITCH("Switch 1/2"),
     MOBILE("Mobile")
 }
+
+fun DefaultPlatforms.toPlatformModel(): GameAttribute.PlatformModel {
+    return GameAttribute.PlatformModel(this.platformName)
+}
+
 enum class DefaultPCStores(val storeName: String) {
     STEAM("Steam"),
     EPIC("Epic Games"),
@@ -15,18 +20,24 @@ enum class DefaultPCStores(val storeName: String) {
     UBISOFT("Ubisoft"),
     EA("EA")
 }
+fun DefaultPCStores.toPcStoreModel(): GameAttribute.PCStoreModel {
+    return GameAttribute.PCStoreModel(this.storeName)
+}
+
 enum class DefaultGameProgress(val progressName: String){
     NOT_STARTED("Not Started"),
     STARTED("Started"),
     IN_PROGRESS("In Progress"),
     FINISHED("Finished"),
     DROPPED("Dropped")
-
+}
+fun DefaultGameProgress.toGameProgressModel(): GameAttribute.GameProgressModel {
+    return GameAttribute.GameProgressModel(this.progressName)
 }
 
-val DefaultPlatformsSet = DefaultPlatforms.entries.map { GameAttribute.PlatformModel(it.platformName) }.toSet()
-val DefaultPCStoresSet = DefaultPCStores.entries.map { GameAttribute.PCStoreModel(it.storeName) }.toSet()
-val DefaultGameProgressSet = DefaultGameProgress.entries.map { GameAttribute.GameProgressModel(it.progressName) }.toSet()
+val DefaultPlatformsSet = DefaultPlatforms.entries.map { it.toPlatformModel() }.toSet()
+val DefaultPCStoresSet = DefaultPCStores.entries.map { it.toPcStoreModel() }.toSet()
+val DefaultGameProgressSet = DefaultGameProgress.entries.map { it.toGameProgressModel() }.toSet()
 
 sealed interface GameAttribute{
     val attributeName: String

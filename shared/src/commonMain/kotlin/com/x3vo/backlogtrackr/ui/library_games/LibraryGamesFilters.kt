@@ -23,6 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
 import com.x3vo.backlogtrackr.domain.model.GameAttribute
+import com.x3vo.backlogtrackr.domain.model.toPlatformModel
+import com.x3vo.backlogtrackr.network.igdb_model.Game
 import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
 import com.x3vo.backlogtrackr.utils.AppDimensions
 
@@ -31,12 +33,12 @@ fun LibraryGamesFilters(
     availablePlatforms: Set<GameAttribute.PlatformModel> = setOf(),
     availablePcStores: Set<GameAttribute.PCStoreModel> = setOf(),
     availableProgressStates: Set<GameAttribute.GameProgressModel> = setOf(),
-    selectedPlatformFilters: Set<String> = setOf<String>(),
-    selectedPcStoreFilters: Set<String> = setOf<String>(),
-    selectedProgressFilters: Set<String> = setOf<String>(),
-    handlePlatformFilterSelection: (String) -> Unit = {},
-    handlePCStoreFilterSelection: (String) -> Unit = {},
-    handleProgressFilterSelection: (String) -> Unit = {},
+    selectedPlatformFilters: Set<GameAttribute.PlatformModel> = setOf(),
+    selectedPcStoreFilters: Set<GameAttribute.PCStoreModel> = setOf(),
+    selectedProgressFilters: Set<GameAttribute.GameProgressModel> = setOf(),
+    handlePlatformFilterSelection: (GameAttribute.PlatformModel) -> Unit = {},
+    handlePCStoreFilterSelection: (GameAttribute.PCStoreModel) -> Unit = {},
+    handleProgressFilterSelection: (GameAttribute.GameProgressModel) -> Unit = {},
     availableSortOptions: Set<BacklogTrackrDBRepository.SortOptions> = setOf(),
     selectedSortOption: BacklogTrackrDBRepository.SortOptions = BacklogTrackrDBRepository.SortOptions.NAME,
     availableOrderOptions: Set<BacklogTrackrDBRepository.OrderOptions> = setOf(),
@@ -64,9 +66,9 @@ fun LibraryGamesFilters(
             availablePlatforms.forEach { platform ->
                 item(key = platform.platformName) {
                     FilterChip(
-                        selected = selectedPlatformFilters.contains(platform.platformName),
+                        selected = selectedPlatformFilters.contains(platform),
                         onClick = {
-                            handlePlatformFilterSelection(platform.platformName)
+                            handlePlatformFilterSelection(platform)
                         },
                         label = {
                             Text(text = platform.platformName)
@@ -76,12 +78,12 @@ fun LibraryGamesFilters(
                 }
 
                 val pcStoresAvailable =
-                    platform.platformName == DefaultPlatforms.PC.platformName && availablePcStores.isNotEmpty()
+                    platform == DefaultPlatforms.PC.toPlatformModel() && availablePcStores.isNotEmpty()
 
                 if (pcStoresAvailable) {
 
                     val isPcSelected = selectedPlatformFilters.contains(
-                        DefaultPlatforms.PC.platformName
+                        DefaultPlatforms.PC.toPlatformModel()
                     )
 
                     item(key = "PCDividerStart") {
@@ -109,9 +111,9 @@ fun LibraryGamesFilters(
                             exit = shrinkHorizontally(shrinkTowards = Alignment.Start) + fadeOut()
                         ) {
                             FilterChip(
-                                selected = selectedPcStoreFilters.contains(pcStore.pcStoreName),
+                                selected = selectedPcStoreFilters.contains(pcStore),
                                 onClick = {
-                                    handlePCStoreFilterSelection(pcStore.pcStoreName)
+                                    handlePCStoreFilterSelection(pcStore)
                                 },
                                 label = {
                                     Text(text = pcStore.pcStoreName)
@@ -160,9 +162,9 @@ fun LibraryGamesFilters(
                 }
             ) { progress ->
                 FilterChip(
-                    selected = selectedProgressFilters.contains(progress.progressName),
+                    selected = selectedProgressFilters.contains(progress),
                     onClick = {
-                        handleProgressFilterSelection(progress.progressName)
+                        handleProgressFilterSelection(progress)
                     },
                     label = {
                         Text(text = progress.progressName)

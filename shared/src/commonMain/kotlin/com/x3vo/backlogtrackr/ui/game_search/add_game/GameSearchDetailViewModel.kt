@@ -2,9 +2,12 @@ package com.x3vo.backlogtrackr.ui.game_search.add_game
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.x3vo.backlogtrackr.domain.model.DefaultGameProgress
 import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
 import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.domain.model.GameSearchObject
+import com.x3vo.backlogtrackr.domain.model.toGameProgressModel
+import com.x3vo.backlogtrackr.domain.model.toPlatformModel
 import com.x3vo.backlogtrackr.network.BacklogAPIRepository
 import com.x3vo.backlogtrackr.network.utils.Resource
 import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
@@ -103,11 +106,7 @@ class GameSearchDetailViewModel(
                     state.copy(
                         availableProgressOptions = progressOptions,
                         // If nothing is selected yet, pick the first available option
-                        selectedProgressOption = if (state.selectedProgressOption.isBlank() && progressOptions.isNotEmpty()) {
-                            progressOptions.first().progressName
-                        } else {
-                            state.selectedProgressOption
-                        }
+                        selectedProgressOption = state.selectedProgressOption
                     )
                 }
             }
@@ -118,21 +117,21 @@ class GameSearchDetailViewModel(
         _selectionsState.update { it.copy(isOwned = owned) }
     }
 
-    fun updatePlatformSelections(platform: String, selected: Boolean) {
+    fun updatePlatformSelections(platform: GameAttribute.PlatformModel, selected: Boolean) {
         _selectionsState.update { state ->
-            val updatedPlatformSelections:Set<String> = if (selected) {
+            val updatedPlatformSelections:Set<GameAttribute.PlatformModel> = if (selected) {
                 state.selectedPlatforms + platform
             } else {
                 state.selectedPlatforms - platform
             }
             // If PC is not selected, then the pc stores list should be empty
-            val pcStores = if (updatedPlatformSelections.contains(DefaultPlatforms.PC.platformName))
+            val pcStores = if (updatedPlatformSelections.contains(DefaultPlatforms.PC.toPlatformModel()))
                 state.selectedStores else emptySet()
             state.copy(selectedPlatforms = updatedPlatformSelections, selectedStores = pcStores)
         }
     }
 
-    fun updatePcStoreSelections(store: String, selected: Boolean) {
+    fun updatePcStoreSelections(store: GameAttribute.PCStoreModel, selected: Boolean) {
         _selectionsState.update { state ->
             val updatedStoreSelections = if (selected) {
                 state.selectedStores + store
@@ -143,7 +142,7 @@ class GameSearchDetailViewModel(
         }
     }
 
-    fun updateProgressSelection(progress: String) {
+    fun updateProgressSelection(progress: GameAttribute.GameProgressModel) {
         _selectionsState.update { state ->
             state.copy(selectedProgressOption = progress)
         }
@@ -164,19 +163,19 @@ class GameSearchDetailViewModel(
                 summary = gameSearchVal.summary,
                 coverUrl = gameSearchVal.coverURL,
                 isOwned = userSelections.isOwned,
-                gameProgress = userSelections.selectedProgressOption,
+                gameProgress = userSelections.selectedProgressOption.toString(),
                 addedAt = currentTime.toEpochMilliseconds()
             )
 
             val platformsList = userSelections.selectedPlatforms.toList()
-            val storesList = if(userSelections.selectedPlatforms.contains(DefaultPlatforms.PC.platformName)) userSelections.selectedStores.toList() else emptyList()
+            val storesList = if(userSelections.selectedPlatforms.contains(DefaultPlatforms.PC.toPlatformModel())) userSelections.selectedStores.toList() else emptyList()
             if (backlogTrackrDBRepository.checkIfGameExistsInLibrary(gameEntity.gameId)) {
                 _gameAddEvent.emit(GameAddEvent(message = "Game already exists in library"))
             } else {
                 backlogTrackrDBRepository.addLibraryGame(
                     game = gameEntity,
-                    platforms = platformsList,
-                    stores = storesList
+                    platforms = platformsList.map { it.platformName },
+                    stores = storesList.map { it.pcStoreName }
                 )
                 _gameAddEvent.emit(GameAddEvent(message = "Game added to library"))
             }
@@ -189,9 +188,9 @@ data class UserSelectionsState(
     val availablePcStores: Set<GameAttribute.PCStoreModel> = emptySet(),
     val availableProgressOptions: Set<GameAttribute.GameProgressModel> = emptySet(),
     val isOwned: Boolean = true,
-    val selectedPlatforms: Set<String> = emptySet(),
-    val selectedStores: Set<String> = emptySet(),
-    val selectedProgressOption: String = ""
+    val selectedPlatforms: Set<GameAttribute.PlatformModel> = emptySet(),
+    val selectedStores: Set<GameAttribute.PCStoreModel> = emptySet(),
+    val selectedProgressOption: GameAttribute.GameProgressModel = DefaultGameProgress.NOT_STARTED.toGameProgressModel()
 )
 
 data class GameAddEvent (

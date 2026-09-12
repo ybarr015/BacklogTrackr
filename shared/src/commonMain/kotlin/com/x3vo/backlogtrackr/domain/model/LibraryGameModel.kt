@@ -7,9 +7,7 @@ data class LibraryGameDetailModel (
     val timeToBeat: String = "",
     val summary: String = "",
     val isOwned: Boolean = false,
-    val progressOption: GameAttribute.GameProgressModel = GameAttribute.GameProgressModel(
-        DefaultGameProgress.NOT_STARTED.progressName
-    ),
+    val progressOption: GameAttribute.GameProgressModel = DefaultGameProgress.NOT_STARTED.toGameProgressModel(),
     val platforms: Set<GameAttribute.PlatformModel> = setOf(),
     val pcStores: Set<GameAttribute.PCStoreModel> = setOf(),
     val addedAt: Long = 0L

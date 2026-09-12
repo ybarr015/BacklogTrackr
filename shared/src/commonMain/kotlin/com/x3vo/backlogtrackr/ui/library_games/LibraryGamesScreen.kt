@@ -38,12 +38,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import backlogtrackr.shared.generated.resources.Res
 import backlogtrackr.shared.generated.resources.search_24px
+import com.x3vo.backlogtrackr.domain.model.DefaultGameProgress
 import com.x3vo.backlogtrackr.domain.model.DefaultGameProgressSet
 import com.x3vo.backlogtrackr.domain.model.DefaultPCStoresSet
 import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
 import com.x3vo.backlogtrackr.domain.model.DefaultPlatformsSet
 import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.domain.model.LibraryGameDetailModel
+import com.x3vo.backlogtrackr.domain.model.toGameProgressModel
+import com.x3vo.backlogtrackr.domain.model.toPlatformModel
 import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
 import com.x3vo.backlogtrackr.ui.common.components.LibraryGameCard
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithOptionsAndSettings
@@ -67,9 +70,9 @@ fun LibraryGamesScreen(
         onSearchKeywordUpdate = { viewModel.updateSearchKeyword(it) },
         libraryGames = libraryGames,
         filterUiState = filterUiState,
-        handlePlatformFilterSelection = { viewModel.onPlatformFilterSelected(filterName = it) },
-        handleProgressFilterSelection = { viewModel.onProgressFilterSelected(filterName = it) },
-        handlePCStoreFilterSelection = { viewModel.onPcStoreFilterSelected(filterName = it)},
+        handlePlatformFilterSelection = { viewModel.onPlatformFilterSelected(it) },
+        handleProgressFilterSelection = { viewModel.onProgressFilterSelected(it) },
+        handlePCStoreFilterSelection = { viewModel.onPcStoreFilterSelected(it)},
         handleSortOptionSelection = { viewModel.onSortOptionSelected(sortOption = it) },
         handleOrderOptionSelection = { viewModel.onOrderOptionSelected(orderOption = it) },
         handleNavToSearchScreen = handleNavToSearchScreen,
@@ -86,9 +89,9 @@ private fun LibraryGamesScreenContent(
     onSearchKeywordUpdate: (String) -> Unit = {},
     libraryGames: List<LibraryGameDetailModel>,
     filterUiState: FilterUiState = FilterUiState(),
-    handlePlatformFilterSelection: (String) -> Unit = {},
-    handleProgressFilterSelection: (String) -> Unit = {},
-    handlePCStoreFilterSelection: (String) -> Unit = {},
+    handlePlatformFilterSelection: (GameAttribute.PlatformModel) -> Unit = {},
+    handleProgressFilterSelection: (GameAttribute.GameProgressModel) -> Unit = {},
+    handlePCStoreFilterSelection: (GameAttribute.PCStoreModel) -> Unit = {},
     handleSortOptionSelection: (BacklogTrackrDBRepository.SortOptions) -> Unit = {},
     handleOrderOptionSelection: (BacklogTrackrDBRepository.OrderOptions) -> Unit = {},
     handleNavToSearchScreen: () -> Unit = {},
@@ -240,9 +243,7 @@ private fun LibraryGamesScreenPreview() {
                 summary = "gameSummary",
                 isOwned = true,
                 coverUrl = "",
-                progressOption = GameAttribute.GameProgressModel(
-                    progressName = "Started"
-                ),
+                progressOption = DefaultGameProgress.IN_PROGRESS.toGameProgressModel(),
                 platforms = DefaultPlatformsSet,
                 pcStores = DefaultPCStoresSet,
                 addedAt = 0
@@ -252,7 +253,7 @@ private fun LibraryGamesScreenPreview() {
             availablePlatforms = DefaultPlatformsSet,
             availablePcStores = DefaultPCStoresSet,
             availableProgressStates = DefaultGameProgressSet,
-            selectedPlatformFilters = setOf(DefaultPlatforms.PC.platformName)
+            selectedPlatformFilters = setOf(DefaultPlatforms.PC.toPlatformModel())
         )
     )
 }

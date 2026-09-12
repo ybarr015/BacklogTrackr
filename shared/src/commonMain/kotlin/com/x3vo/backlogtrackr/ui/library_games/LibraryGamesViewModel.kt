@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
 import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.domain.model.LibraryGameDetailModel
+import com.x3vo.backlogtrackr.domain.model.toPlatformModel
 import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -72,11 +73,11 @@ class LibraryGamesViewModel(
                 game.platforms.any { platform -> // check all the platforms of the game
 
                     //if a platform of a game is inside the platform filters set then it should be shown, more complex for pc case
-                    if (platformFilters.contains(platform.platformName)) {
+                    if (platformFilters.contains(platform)) {
                         //if the current platform is pc and there are pc store filters, then also filter by those
-                        if(platform.platformName == DefaultPlatforms.PC.platformName && pcStoreFilters.isNotEmpty()) {
+                        if(platform == DefaultPlatforms.PC.toPlatformModel() && pcStoreFilters.isNotEmpty()) {
                             game.pcStores.any { pcStore ->
-                                pcStoreFilters.contains(pcStore.pcStoreName)
+                                pcStoreFilters.contains(pcStore)
                             }
                         } else // if the game is not pc , then we return true because we already checked that the game has a platform that was selected
                             true
@@ -90,7 +91,7 @@ class LibraryGamesViewModel(
         //then by progress state
         if (progressFilters.isNotEmpty()) {
             filteredGames = filteredGames.filter { game ->
-                progressFilters.contains(game.progressOption.progressName)
+                progressFilters.contains(game.progressOption)
             }
         }
 
@@ -127,15 +128,15 @@ class LibraryGamesViewModel(
 
 
 
-    fun onPlatformFilterSelected(filterName: String) {
+    fun onPlatformFilterSelected(platformFilter: GameAttribute.PlatformModel) {
         _filterUiState.update { currentUiState ->
-            val updatedPlatformFilter = if (currentUiState.selectedPlatformFilters.contains(filterName)) { // if filter is already in the set remove it, otherwise add it
-                currentUiState.selectedPlatformFilters - filterName
+            val updatedPlatformFilter = if (currentUiState.selectedPlatformFilters.contains(platformFilter)) { // if filter is already in the set remove it, otherwise add it
+                currentUiState.selectedPlatformFilters - platformFilter
             } else {
-                currentUiState.selectedPlatformFilters + filterName
+                currentUiState.selectedPlatformFilters + platformFilter
             }
 
-            val updatedPcStoreFilter = if(filterName == DefaultPlatforms.PC.platformName && currentUiState.selectedPlatformFilters.contains(filterName)) {
+            val updatedPcStoreFilter = if(platformFilter == DefaultPlatforms.PC.toPlatformModel() && currentUiState.selectedPlatformFilters.contains(platformFilter)) {
                 emptySet()
             } else {
                 currentUiState.selectedPcStoreFilters
@@ -145,23 +146,23 @@ class LibraryGamesViewModel(
 
     }
 
-    fun onProgressFilterSelected(filterName: String) {
+    fun onProgressFilterSelected(progressFilter: GameAttribute.GameProgressModel) {
         _filterUiState.update { currentUiState ->
-            val updatedProgressFilter  = if (currentUiState.selectedProgressStateFilters.contains(filterName)) { // if filter is already in the set remove it, otherwise add it
-                currentUiState.selectedProgressStateFilters - filterName
+            val updatedProgressFilter  = if (currentUiState.selectedProgressStateFilters.contains(progressFilter)) { // if filter is already in the set remove it, otherwise add it
+                currentUiState.selectedProgressStateFilters - progressFilter
             } else {
-                currentUiState.selectedProgressStateFilters + filterName
+                currentUiState.selectedProgressStateFilters + progressFilter
             }
             currentUiState.copy(selectedProgressStateFilters = updatedProgressFilter)
         }
     }
 
-    fun onPcStoreFilterSelected(filterName: String) {
+    fun onPcStoreFilterSelected(pcStoreFilter: GameAttribute.PCStoreModel) {
         _filterUiState.update { currentUiState ->
-            val updatedPcStoreFilter = if(currentUiState.selectedPcStoreFilters.contains(filterName)) {
-                currentUiState.selectedPcStoreFilters - filterName
+            val updatedPcStoreFilter = if(currentUiState.selectedPcStoreFilters.contains(pcStoreFilter)) {
+                currentUiState.selectedPcStoreFilters - pcStoreFilter
             } else {
-                currentUiState.selectedPcStoreFilters + filterName
+                currentUiState.selectedPcStoreFilters + pcStoreFilter
             }
             currentUiState.copy(selectedPcStoreFilters = updatedPcStoreFilter)
 
@@ -189,11 +190,11 @@ class LibraryGamesViewModel(
 
 data class FilterUiState(
     val availablePlatforms: Set<GameAttribute.PlatformModel> = emptySet(),
-    val selectedPlatformFilters: Set<String> = emptySet(),
+    val selectedPlatformFilters: Set<GameAttribute.PlatformModel> = emptySet(),
     val availableProgressStates: Set<GameAttribute.GameProgressModel> = emptySet(),
-    val selectedProgressStateFilters: Set<String> = emptySet(),
+    val selectedProgressStateFilters: Set<GameAttribute.GameProgressModel> = emptySet(),
     val availablePcStores: Set<GameAttribute.PCStoreModel> = emptySet(),
-    val selectedPcStoreFilters: Set<String> = emptySet(),
+    val selectedPcStoreFilters: Set<GameAttribute.PCStoreModel> = emptySet(),
     val availableSortOptions: Set<BacklogTrackrDBRepository.SortOptions> = emptySet(),
     val selectedSortOption: BacklogTrackrDBRepository.SortOptions = BacklogTrackrDBRepository.SortOptions.NAME,
     val availableOrderOptions: Set<BacklogTrackrDBRepository.OrderOptions> = emptySet(),

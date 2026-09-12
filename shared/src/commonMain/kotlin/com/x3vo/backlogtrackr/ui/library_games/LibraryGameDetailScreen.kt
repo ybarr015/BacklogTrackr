@@ -45,6 +45,9 @@ import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
 import com.x3vo.backlogtrackr.domain.model.DefaultPlatformsSet
 import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.domain.model.LibraryGameDetailModel
+import com.x3vo.backlogtrackr.domain.model.toGameProgressModel
+import com.x3vo.backlogtrackr.domain.model.toPcStoreModel
+import com.x3vo.backlogtrackr.domain.model.toPlatformModel
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithBackNav
 import com.x3vo.backlogtrackr.utils.AppDimensions
 import kotlinx.datetime.TimeZone
@@ -82,9 +85,9 @@ private fun LibraryGameDetailScreenContent(
     libraryGame: LibraryGameDetailModel = LibraryGameDetailModel(),
     libraryGameOptions: LibraryGameDetailOptions = LibraryGameDetailOptions(),
     onOwnershipUpdate: (Boolean) -> Unit = {},
-    onPlatformSelection: (String, Boolean) -> Unit = { _, _ -> },
-    onPcStoreSelection: (String, Boolean) -> Unit = { _,_ -> },
-    onProgressSelection: (String) -> Unit = {},
+    onPlatformSelection: (GameAttribute.PlatformModel, Boolean) -> Unit = { _, _ -> },
+    onPcStoreSelection: (GameAttribute.PCStoreModel, Boolean) -> Unit = { _, _ -> },
+    onProgressSelection: (GameAttribute.GameProgressModel) -> Unit = {},
     handleBackNav: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -271,9 +274,9 @@ fun LibraryGameDetailScreenPreview() {
             timeToBeat = "10h",
             summary = "test summary",
             isOwned = true,
-            progressOption = GameAttribute.GameProgressModel(DefaultGameProgress.NOT_STARTED.progressName),
-            platforms = setOf(GameAttribute.PlatformModel(DefaultPlatforms.PC.platformName)),
-            pcStores = setOf(GameAttribute.PCStoreModel(DefaultPCStores.STEAM.storeName)),
+            progressOption = DefaultGameProgress.NOT_STARTED.toGameProgressModel(),
+            platforms = setOf(DefaultPlatforms.PC.toPlatformModel()),
+            pcStores = setOf(DefaultPCStores.STEAM.toPcStoreModel()),
             addedAt = 1789186669L
         ),
         libraryGameOptions = LibraryGameDetailOptions(
@@ -281,9 +284,9 @@ fun LibraryGameDetailScreenPreview() {
             availablePcStores = DefaultPCStoresSet,
             availableProgressOptions = DefaultGameProgressSet,
             isOwned = true,
-            selectedPlatforms = setOf(GameAttribute.PlatformModel(DefaultPlatforms.PC.platformName)),
-            selectedStores = setOf(GameAttribute.PCStoreModel(DefaultPCStores.STEAM.storeName)),
-            selectedProgressOption = GameAttribute.GameProgressModel(DefaultGameProgress.IN_PROGRESS.progressName)
+            selectedPlatforms = setOf(DefaultPlatforms.PC.toPlatformModel()),
+            selectedStores = setOf(DefaultPCStores.STEAM.toPcStoreModel()),
+            selectedProgressOption = DefaultGameProgress.IN_PROGRESS.toGameProgressModel()
         )
     )
 }

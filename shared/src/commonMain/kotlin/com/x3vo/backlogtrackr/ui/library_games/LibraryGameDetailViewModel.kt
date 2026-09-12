@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.x3vo.backlogtrackr.domain.model.DefaultGameProgress
 import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.domain.model.LibraryGameDetailModel
+import com.x3vo.backlogtrackr.domain.model.toGameProgressModel
 import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -78,7 +79,5 @@ data class LibraryGameDetailOptions(
     val isOwned: Boolean = true,
     val selectedPlatforms: Set<GameAttribute.PlatformModel> = emptySet(),
     val selectedStores: Set<GameAttribute.PCStoreModel> = emptySet(),
-    val selectedProgressOption: GameAttribute.GameProgressModel = GameAttribute.GameProgressModel(
-        DefaultGameProgress.IN_PROGRESS.progressName
-    )
+    val selectedProgressOption: GameAttribute.GameProgressModel = DefaultGameProgress.IN_PROGRESS.toGameProgressModel()
 )
