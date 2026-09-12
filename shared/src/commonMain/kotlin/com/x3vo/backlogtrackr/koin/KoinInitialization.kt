@@ -12,6 +12,7 @@ import com.x3vo.backlogtrackr.ui.settings.auth.AuthViewModel
 import com.x3vo.backlogtrackr.ui.settings.gameprogressoptions.GameProgressSettingsViewModel
 import com.x3vo.backlogtrackr.ui.game_search.add_game.GameSearchDetailViewModel
 import com.x3vo.backlogtrackr.ui.game_search.search_games.GameSearchViewModel
+import com.x3vo.backlogtrackr.ui.library_games.LibraryGameDetailViewModel
 import com.x3vo.backlogtrackr.ui.library_games.LibraryGamesViewModel
 import com.x3vo.backlogtrackr.ui.settings.platforms.PlatformViewModel
 import com.x3vo.backlogtrackr.ui.settings.stores.StoresSettingsViewModel
@@ -144,6 +145,7 @@ val appModule = module{
     viewModelOf(::StoresSettingsViewModel)
     viewModelOf(::GameProgressSettingsViewModel)
     viewModelOf(::LibraryGamesViewModel)
+    viewModelOf(::LibraryGameDetailViewModel)
 }
 
 expect val platformModule: Module

@@ -1,5 +1,6 @@
 package com.x3vo.backlogtrackr.ui.library_games
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -53,6 +54,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun LibraryGamesScreen(
     handleNavToSearchScreen: () -> Unit = {},
     handleNavToSettingsScreen: () -> Unit = {},
+    handleNavToLibraryGameDetailScreen: (Long) -> Unit = {},
     viewModel: LibraryGamesViewModel = koinViewModel(),
     modifier: Modifier = Modifier
 ) {
@@ -71,6 +73,7 @@ fun LibraryGamesScreen(
         handleOrderOptionSelection = { viewModel.onOrderOptionSelected(orderOption = it) },
         handleNavToSearchScreen = handleNavToSearchScreen,
         handleNavToSettingsScreen = handleNavToSettingsScreen,
+        handleNavToLibraryGameDetailScreen = handleNavToLibraryGameDetailScreen,
         modifier = modifier
     )
 }
@@ -88,7 +91,8 @@ private fun LibraryGamesScreenContent(
     handleSortOptionSelection: (BacklogTrackrDBRepository.SortOptions) -> Unit = {},
     handleOrderOptionSelection: (BacklogTrackrDBRepository.OrderOptions) -> Unit = {},
     handleNavToSearchScreen: () -> Unit = {},
-    handleNavToSettingsScreen: ()-> Unit = {},
+    handleNavToSettingsScreen: () -> Unit = {},
+    handleNavToLibraryGameDetailScreen: (gameId: Long) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
 
@@ -175,7 +179,12 @@ private fun LibraryGamesScreenContent(
                         }) { game ->
                             LibraryGameCard(
                                 coverURL = game.coverUrl,
-                                name = game.name
+                                name = game.name,
+                                modifier = Modifier.clickable(
+                                    onClick = {
+                                        handleNavToLibraryGameDetailScreen(game.gameId)
+                                    }
+                                )
                             )
                         }
 

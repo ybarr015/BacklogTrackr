@@ -174,7 +174,21 @@ class BacklogTrackrDBRepository (
     }
 
     //library game dao
-    suspend fun getLibraryGame(id: Long) = libraryGameDao.getLibraryGameDetails(id)
+    suspend fun getLibraryGame(id: Long): LibraryGameDetailModel =
+        libraryGameDao.getLibraryGameDetails(id).let {
+            LibraryGameDetailModel(
+                gameId = it.gameData.gameId,
+                name = it.gameData.name,
+                coverUrl = it.gameData.coverUrl,
+                timeToBeat = it.gameData.timeToBeat,
+                summary = it.gameData.summary,
+                isOwned = it.gameData.isOwned,
+                progressOption = GameAttribute.GameProgressModel(it.progressOption?.progressOption ?: it.gameData.gameProgress),
+                platforms = it.platforms.map { GameAttribute.PlatformModel(it.platformName) },
+                pcStores = it.pcStores.map { GameAttribute.PCStoreModel(it.pcStoreName) },
+                addedAt = it.gameData.addedAt
+            )
+        }
 
     val  allLibraryGamesFlow:Flow<List<LibraryGameDetailModel>> = libraryGameDao.getAllLibraryGameDetails()
         .map { gamesList ->

@@ -24,6 +24,7 @@ import com.x3vo.backlogtrackr.ui.settings.gameprogressoptions.GameProgressSettin
 import com.x3vo.backlogtrackr.ui.game_search.add_game.GameSearchDetailScreen
 import com.x3vo.backlogtrackr.ui.game_search.search_games.GameSearchScreen
 import com.x3vo.backlogtrackr.ui.home.HomeScreen
+import com.x3vo.backlogtrackr.ui.library_games.LibraryGameDetailScreen
 import com.x3vo.backlogtrackr.ui.library_games.LibraryGamesScreen
 import com.x3vo.backlogtrackr.ui.settings.platforms.PlatformSettingsScreen
 import com.x3vo.backlogtrackr.ui.settings.SettingsScreen
@@ -67,6 +68,9 @@ sealed interface NavigationScreen {
     object LIBRARYGAMES : NavigationScreen {
         val cardName = "View Library"
     }
+
+    @Serializable
+    data class LIBRARY_GAME_DETAIL(val gameId: Long): NavigationScreen
 
     companion object {
         val homeScreenCards = listOf<HomeScreenCard>(
@@ -177,7 +181,19 @@ fun BackLogTrackrNavHost(
                     handleNavToSearchScreen = { handleNavBarNavigation(NavigationScreen.GAMESEARCH, navController) },
                     handleNavToSettingsScreen = {
                         handleNavigation(NavigationScreen.SETTINGS, navController)
+                    },
+                    handleNavToLibraryGameDetailScreen = {
+                        handleNavigation(NavigationScreen.LIBRARY_GAME_DETAIL(it), navController)
                     }
+                )
+            }
+
+            composable<NavigationScreen.LIBRARY_GAME_DETAIL> { backstackEntry ->
+                val route: NavigationScreen.LIBRARY_GAME_DETAIL = backstackEntry.toRoute()
+                LibraryGameDetailScreen(
+                    gameId = route.gameId,
+                    handleBackNav = { navController.navigateUp() },
+
                 )
             }
 

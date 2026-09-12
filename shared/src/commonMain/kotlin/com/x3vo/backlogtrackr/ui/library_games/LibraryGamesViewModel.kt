@@ -67,34 +67,30 @@ class LibraryGamesViewModel(
             game.name.contains(searchKeyword, ignoreCase = true)
         }
 
-        if (platformFilters.isEmpty() && progressFilters.isEmpty()) { // if nothing is selected then show all games
-            filteredGames
-        } else {
-            if(platformFilters.isNotEmpty()) { // if there are platform filters
-                filteredGames = filteredGames.filter { game ->
-                    game.platforms.any { platform -> // check all the platforms of the game
+        if(platformFilters.isNotEmpty()) { // if there are platform filters
+            filteredGames = filteredGames.filter { game ->
+                game.platforms.any { platform -> // check all the platforms of the game
 
-                        //if a platform of a game is inside the platform filters set then it should be shown, more complex for pc case
-                        if (platformFilters.contains(platform.platformName)) {
-                            //if the current platform is pc and there are pc store filters, then also filter by those
-                            if(platform.platformName == DefaultPlatforms.PC.platformName && pcStoreFilters.isNotEmpty()) {
-                                game.pcStores.any { pcStore ->
-                                    pcStoreFilters.contains(pcStore.pcStoreName)
-                                }
-                            } else // if the game is not pc , then we return true because we already checked that the game has a platform that was selected
-                                true
-                        } else { // if the game had no platforms that were selected return false
-                            false
-                        }
+                    //if a platform of a game is inside the platform filters set then it should be shown, more complex for pc case
+                    if (platformFilters.contains(platform.platformName)) {
+                        //if the current platform is pc and there are pc store filters, then also filter by those
+                        if(platform.platformName == DefaultPlatforms.PC.platformName && pcStoreFilters.isNotEmpty()) {
+                            game.pcStores.any { pcStore ->
+                                pcStoreFilters.contains(pcStore.pcStoreName)
+                            }
+                        } else // if the game is not pc , then we return true because we already checked that the game has a platform that was selected
+                            true
+                    } else { // if the game had no platforms that were selected return false
+                        false
                     }
                 }
             }
+        }
 
-            //then by progress state
-            if (progressFilters.isNotEmpty()) {
-                filteredGames = filteredGames.filter { game ->
-                    progressFilters.contains(game.progressOption.progressName)
-                }
+        //then by progress state
+        if (progressFilters.isNotEmpty()) {
+            filteredGames = filteredGames.filter { game ->
+                progressFilters.contains(game.progressOption.progressName)
             }
         }
 
