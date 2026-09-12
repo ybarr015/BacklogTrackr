@@ -203,12 +203,12 @@ private fun GameSearchDetailContent(
                         }
 
                         if(userSelectionsState.isOwned) {
-                            Text(
-                                text = "What Platforms do you own it on?",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-
                             if (userSelectionsState.availablePlatforms.isNotEmpty()) {
+                                Text(
+                                    text = "What Platforms do you own it on?",
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+
                                 FlowRow(
                                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
@@ -221,10 +221,6 @@ private fun GameSearchDetailContent(
                                         )
                                     }
                                 }
-                            } else {
-                                Text (
-                                    text = "No Available Platforms Defined, please define some"
-                                )
                             }
 
                             if (userSelectionsState.selectedPlatforms.contains(DefaultPlatforms.PC.platformName) && userSelectionsState.availablePcStores.isNotEmpty()) {
