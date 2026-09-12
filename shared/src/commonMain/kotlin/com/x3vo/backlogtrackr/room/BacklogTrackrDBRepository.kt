@@ -38,10 +38,23 @@ class BacklogTrackrDBRepository (
 
     private val INITIALIZED_KEY = booleanPreferencesKey("platforms_initialized")
 
+    //default
     private val defaultPlatforms = DefaultPlatforms.entries.map { PlatformEntity(platformName = it.platformName) }
     private val defaultPCStores = DefaultPCStores.entries.map { PCStoreEntity(pcStoreName = it.storeName) }
     private val defaultGameProgressOptions = DefaultGameProgress.entries.map { GameProgressOptionEntity(progressOption = it.progressName) }
 
+    //sort options
+    enum class SortOptions(val sortName: String) {
+        NAME("Name"),
+        TIME_TO_BEAT("Time to beat")
+    }
+    val defaultSortOptions = SortOptions.entries.toList()
+
+    enum class OrderOptions {
+        ASC,
+        DESC
+    }
+    val defaultOrderOptions = OrderOptions.entries.toList()
 
     //todo check if this can be done inside an init block here
     //this initializes the default options if app is first installed

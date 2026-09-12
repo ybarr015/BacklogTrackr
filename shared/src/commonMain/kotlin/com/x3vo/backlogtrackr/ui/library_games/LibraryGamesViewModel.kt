@@ -37,7 +37,13 @@ class LibraryGamesViewModel(
         repository.allPCStoresFlow,
         _filterUiState
     ) { allPlatforms, allProgressStates, allPcStores, filterUiState ->
-        filterUiState.copy(availablePlatforms = allPlatforms, availableProgressStates = allProgressStates, availablePcStores = allPcStores)
+        filterUiState.copy(
+            availablePlatforms = allPlatforms,
+            availableProgressStates = allProgressStates,
+            availablePcStores = allPcStores,
+            availableSortOptions = repository.defaultSortOptions,
+            availableOrderOptions = repository.defaultOrderOptions
+        )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
@@ -90,9 +96,28 @@ class LibraryGamesViewModel(
                     progressFilters.contains(game.progressOption.progressName)
                 }
             }
-
-            filteredGames
         }
+
+        filteredGames = when (filterUiState.selectedSortOption){
+            BacklogTrackrDBRepository.SortOptions.NAME -> {
+                if(filterUiState.selectedOrderOption == BacklogTrackrDBRepository.OrderOptions.ASC) {
+                    filteredGames.sortedBy { it.name }
+                } else {
+                    filteredGames.sortedByDescending { it.name }
+                }
+            }
+            BacklogTrackrDBRepository.SortOptions.TIME_TO_BEAT -> {
+                if(filterUiState.selectedOrderOption == BacklogTrackrDBRepository.OrderOptions.ASC) {
+                    filteredGames.sortedBy { it.timeToBeat.filter { char -> char.isDigit() }.toIntOrNull() ?: 0 }
+                } else {
+                    filteredGames.sortedByDescending { it.timeToBeat.filter { char -> char.isDigit() }.toIntOrNull() ?: 0 }
+                }
+            }
+            else ->
+                filteredGames.sortedBy { it.name }
+        }
+
+        filteredGames
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
@@ -141,6 +166,24 @@ class LibraryGamesViewModel(
 
         }
     }
+
+    fun onSortOptionSelected(sortOption: BacklogTrackrDBRepository.SortOptions) {
+        _filterUiState.update { currentUiState ->
+            currentUiState.copy(
+                selectedSortOption = sortOption
+            )
+        }
+    }
+
+    fun onOrderOptionSelected(orderOption: BacklogTrackrDBRepository.OrderOptions) {
+        _filterUiState.update { currentUiState ->
+            currentUiState.copy(
+                selectedOrderOption = orderOption
+            )
+        }
+    }
+
+
 }
 
 data class FilterUiState(
@@ -149,5 +192,9 @@ data class FilterUiState(
     val availableProgressStates: List<GameAttribute.GameProgressModel> = emptyList(),
     val selectedProgressStateFilters: Set<String> = emptySet(),
     val availablePcStores: List<GameAttribute.PCStoreModel> = emptyList(),
-    val selectedPcStoreFilters: Set<String> = emptySet()
+    val selectedPcStoreFilters: Set<String> = emptySet(),
+    val availableSortOptions: List<BacklogTrackrDBRepository.SortOptions> = emptyList(),
+    val selectedSortOption: BacklogTrackrDBRepository.SortOptions = BacklogTrackrDBRepository.SortOptions.NAME,
+    val availableOrderOptions: List<BacklogTrackrDBRepository.OrderOptions> = emptyList(),
+    val selectedOrderOption: BacklogTrackrDBRepository.OrderOptions = BacklogTrackrDBRepository.OrderOptions.ASC
 )

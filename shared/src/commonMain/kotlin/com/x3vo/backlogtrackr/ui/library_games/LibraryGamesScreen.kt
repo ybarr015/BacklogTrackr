@@ -42,6 +42,7 @@ import com.x3vo.backlogtrackr.domain.model.DefaultPCStores
 import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
 import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.domain.model.LibraryGameDetailModel
+import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
 import com.x3vo.backlogtrackr.ui.common.components.LibraryGameCard
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithOptionsAndSettings
 import com.x3vo.backlogtrackr.utils.AppDimensions
@@ -66,6 +67,8 @@ fun LibraryGamesScreen(
         handlePlatformFilterSelection = { viewModel.onPlatformFilterSelected(filterName = it) },
         handleProgressFilterSelection = { viewModel.onProgressFilterSelected(filterName = it) },
         handlePCStoreFilterSelection = { viewModel.onPcStoreFilterSelected(filterName = it)},
+        handleSortOptionSelection = { viewModel.onSortOptionSelected(sortOption = it) },
+        handleOrderOptionSelection = { viewModel.onOrderOptionSelected(orderOption = it) },
         handleNavToSearchScreen = handleNavToSearchScreen,
         handleNavToSettingsScreen = handleNavToSettingsScreen,
         modifier = modifier
@@ -82,6 +85,8 @@ private fun LibraryGamesScreenContent(
     handlePlatformFilterSelection: (String) -> Unit = {},
     handleProgressFilterSelection: (String) -> Unit = {},
     handlePCStoreFilterSelection: (String) -> Unit = {},
+    handleSortOptionSelection: (BacklogTrackrDBRepository.SortOptions) -> Unit = {},
+    handleOrderOptionSelection: (BacklogTrackrDBRepository.OrderOptions) -> Unit = {},
     handleNavToSearchScreen: () -> Unit = {},
     handleNavToSettingsScreen: ()-> Unit = {},
     modifier: Modifier = Modifier
@@ -182,7 +187,8 @@ private fun LibraryGamesScreenContent(
         if (showBottomSheet) {
             ModalBottomSheet(
                 onDismissRequest = { showBottomSheet = false },
-                sheetState = sheetState
+                sheetState = sheetState,
+                modifier = Modifier.fillMaxWidth()
             ) {
                 LibraryGamesFilters(
                     availablePlatforms = filterUiState.availablePlatforms,
@@ -194,6 +200,12 @@ private fun LibraryGamesScreenContent(
                     handlePlatformFilterSelection = handlePlatformFilterSelection,
                     handleProgressFilterSelection = handleProgressFilterSelection,
                     handlePCStoreFilterSelection = handlePCStoreFilterSelection,
+                    availableSortOptions = filterUiState.availableSortOptions,
+                    availableOrderOptions = filterUiState.availableOrderOptions,
+                    selectedSortOption = filterUiState.selectedSortOption,
+                    selectedOrderOption = filterUiState.selectedOrderOption,
+                    handleSortOptionSelection = handleSortOptionSelection,
+                    handleOrderOptionSelection = handleOrderOptionSelection,
                     modifier = Modifier.padding(vertical = AppDimensions.paddingSmall)
                 )
             }

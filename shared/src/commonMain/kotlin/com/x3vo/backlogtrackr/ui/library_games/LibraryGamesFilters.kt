@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
 import com.x3vo.backlogtrackr.domain.model.GameAttribute
+import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
 import com.x3vo.backlogtrackr.utils.AppDimensions
 
 @Composable
@@ -36,6 +37,12 @@ fun LibraryGamesFilters(
     handlePlatformFilterSelection: (String) -> Unit = {},
     handlePCStoreFilterSelection: (String) -> Unit = {},
     handleProgressFilterSelection: (String) -> Unit = {},
+    availableSortOptions: List<BacklogTrackrDBRepository.SortOptions> = listOf(),
+    selectedSortOption: BacklogTrackrDBRepository.SortOptions = BacklogTrackrDBRepository.SortOptions.NAME,
+    availableOrderOptions: List<BacklogTrackrDBRepository.OrderOptions> = listOf(),
+    selectedOrderOption: BacklogTrackrDBRepository.OrderOptions = BacklogTrackrDBRepository.OrderOptions.ASC,
+    handleSortOptionSelection: (BacklogTrackrDBRepository.SortOptions) -> Unit = {},
+    handleOrderOptionSelection: (BacklogTrackrDBRepository.OrderOptions) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
 
@@ -160,6 +167,50 @@ fun LibraryGamesFilters(
                     label = {
                         Text(text = progress.progressName)
                     }
+                )
+            }
+
+        }
+        LazyRow(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AppDimensions.paddingSmall),
+            contentPadding = PaddingValues(horizontal = AppDimensions.paddingSmall),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            item {
+                Text(
+                    text = "Sort By",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+
+            items(
+                items = availableSortOptions,
+                key = { test -> test.name}
+            ) { sortOption ->
+                FilterChip(
+                    selected = sortOption == selectedSortOption,
+                    onClick = { handleSortOptionSelection(sortOption) },
+                    label = { Text(sortOption.sortName) }
+                )
+            }
+            item(key = "SortDivider") {
+                VerticalDivider(
+                    modifier = Modifier
+                        .height(20.dp)
+                        .padding(end = 8.dp),
+                    thickness = 1.dp
+                )
+            }
+
+            items(
+                items = availableOrderOptions,
+                key = { order -> order.name}
+            ) { orderOption ->
+                FilterChip(
+                    selected = orderOption == selectedOrderOption,
+                    onClick = { handleOrderOptionSelection(orderOption) },
+                    label = { Text(orderOption.name) }
                 )
             }
 
