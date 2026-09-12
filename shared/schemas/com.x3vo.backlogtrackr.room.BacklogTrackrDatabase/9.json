@@ -1,0 +1,291 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 9,
+    "identityHash": "d13102296b4023968e03c9b9de641db9",
+    "entities": [
+      {
+        "tableName": "platforms",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`platformName` TEXT NOT NULL, PRIMARY KEY(`platformName`))",
+        "fields": [
+          {
+            "fieldPath": "platformName",
+            "columnName": "platformName",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "platformName"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_platforms_platformName",
+            "unique": true,
+            "columnNames": [
+              "platformName"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_platforms_platformName` ON `${TABLE_NAME}` (`platformName`)"
+          }
+        ]
+      },
+      {
+        "tableName": "PCStores",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pcStoreName` TEXT NOT NULL, PRIMARY KEY(`pcStoreName`))",
+        "fields": [
+          {
+            "fieldPath": "pcStoreName",
+            "columnName": "pcStoreName",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "pcStoreName"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_PCStores_pcStoreName",
+            "unique": true,
+            "columnNames": [
+              "pcStoreName"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_PCStores_pcStoreName` ON `${TABLE_NAME}` (`pcStoreName`)"
+          }
+        ]
+      },
+      {
+        "tableName": "GameProgressOptions",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`progressOption` TEXT NOT NULL, PRIMARY KEY(`progressOption`))",
+        "fields": [
+          {
+            "fieldPath": "progressOption",
+            "columnName": "progressOption",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "progressOption"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_GameProgressOptions_progressOption",
+            "unique": true,
+            "columnNames": [
+              "progressOption"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_GameProgressOptions_progressOption` ON `${TABLE_NAME}` (`progressOption`)"
+          }
+        ]
+      },
+      {
+        "tableName": "LibraryGames",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`gameId` INTEGER NOT NULL, `name` TEXT NOT NULL, `coverUrl` TEXT NOT NULL, `timeToBeat` TEXT NOT NULL, `summary` TEXT NOT NULL, `isOwned` INTEGER NOT NULL, `gameProgress` TEXT NOT NULL, `addedAt` INTEGER NOT NULL, PRIMARY KEY(`gameId`))",
+        "fields": [
+          {
+            "fieldPath": "gameId",
+            "columnName": "gameId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "coverUrl",
+            "columnName": "coverUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timeToBeat",
+            "columnName": "timeToBeat",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "summary",
+            "columnName": "summary",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isOwned",
+            "columnName": "isOwned",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gameProgress",
+            "columnName": "gameProgress",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "addedAt",
+            "columnName": "addedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "gameId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_LibraryGames_gameProgress",
+            "unique": false,
+            "columnNames": [
+              "gameProgress"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_LibraryGames_gameProgress` ON `${TABLE_NAME}` (`gameProgress`)"
+          }
+        ]
+      },
+      {
+        "tableName": "game_platform_cross_ref",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`gameId` INTEGER NOT NULL, `platformName` TEXT NOT NULL, PRIMARY KEY(`gameId`, `platformName`), FOREIGN KEY(`gameId`) REFERENCES `LibraryGames`(`gameId`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`platformName`) REFERENCES `platforms`(`platformName`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "gameId",
+            "columnName": "gameId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "platformName",
+            "columnName": "platformName",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "gameId",
+            "platformName"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_game_platform_cross_ref_platformName",
+            "unique": false,
+            "columnNames": [
+              "platformName"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_game_platform_cross_ref_platformName` ON `${TABLE_NAME}` (`platformName`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "LibraryGames",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "gameId"
+            ],
+            "referencedColumns": [
+              "gameId"
+            ]
+          },
+          {
+            "table": "platforms",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "platformName"
+            ],
+            "referencedColumns": [
+              "platformName"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "game_pc_store_cross_ref",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`gameId` INTEGER NOT NULL, `pcStoreName` TEXT NOT NULL, PRIMARY KEY(`gameId`, `pcStoreName`), FOREIGN KEY(`gameId`) REFERENCES `LibraryGames`(`gameId`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`pcStoreName`) REFERENCES `PCStores`(`pcStoreName`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "gameId",
+            "columnName": "gameId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pcStoreName",
+            "columnName": "pcStoreName",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "gameId",
+            "pcStoreName"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_game_pc_store_cross_ref_pcStoreName",
+            "unique": false,
+            "columnNames": [
+              "pcStoreName"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_game_pc_store_cross_ref_pcStoreName` ON `${TABLE_NAME}` (`pcStoreName`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "LibraryGames",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "gameId"
+            ],
+            "referencedColumns": [
+              "gameId"
+            ]
+          },
+          {
+            "table": "PCStores",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "pcStoreName"
+            ],
+            "referencedColumns": [
+              "pcStoreName"
+            ]
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd13102296b4023968e03c9b9de641db9')"
+    ]
+  }
+}

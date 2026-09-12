@@ -113,6 +113,13 @@ class LibraryGamesViewModel(
                     filteredGames.sortedByDescending { it.timeToBeat.filter { char -> char.isDigit() }.toIntOrNull() ?: 0 }
                 }
             }
+            BacklogTrackrDBRepository.SortOptions.ADDED_AT -> {
+                if(filterUiState.selectedOrderOption == BacklogTrackrDBRepository.OrderOptions.ASC) {
+                    filteredGames.sortedBy { it.addedAt }
+                } else {
+                    filteredGames.sortedByDescending { it.addedAt }
+                }
+            }
             else ->
                 filteredGames.sortedBy { it.name }
         }

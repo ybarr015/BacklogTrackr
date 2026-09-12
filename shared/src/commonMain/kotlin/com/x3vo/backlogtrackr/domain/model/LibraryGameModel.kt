@@ -9,5 +9,6 @@ data class LibraryGameDetailModel (
     val isOwned: Boolean,
     val progressOption: GameAttribute.GameProgressModel,
     val platforms: List<GameAttribute.PlatformModel>,
-    val pcStores: List<GameAttribute.PCStoreModel>
+    val pcStores: List<GameAttribute.PCStoreModel>,
+    val addedAt: Long
 )

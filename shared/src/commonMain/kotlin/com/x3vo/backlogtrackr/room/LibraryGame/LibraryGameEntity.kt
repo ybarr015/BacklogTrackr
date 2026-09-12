@@ -22,7 +22,8 @@ data class LibraryGameEntity(
     val timeToBeat: String,
     val summary: String,
     val isOwned: Boolean,
-    val gameProgress: String
+    val gameProgress: String,
+    val addedAt: Long
 )
 
 @Entity(

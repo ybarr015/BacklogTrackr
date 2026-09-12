@@ -46,7 +46,8 @@ class BacklogTrackrDBRepository (
     //sort options
     enum class SortOptions(val sortName: String) {
         NAME("Name"),
-        TIME_TO_BEAT("Time to beat")
+        TIME_TO_BEAT("Time to beat"),
+        ADDED_AT("Added At")
     }
     val defaultSortOptions = SortOptions.entries.toList()
 
@@ -189,7 +190,8 @@ class BacklogTrackrDBRepository (
                     isOwned = gameEntity.isOwned,
                     progressOption = GameAttribute.GameProgressModel(game.progressOption?.progressOption ?: gameEntity.gameProgress),
                     platforms = game.platforms.map { GameAttribute.PlatformModel(it.platformName) },
-                    pcStores = game.pcStores.map { GameAttribute.PCStoreModel(it.pcStoreName) }
+                    pcStores = game.pcStores.map { GameAttribute.PCStoreModel(it.pcStoreName) },
+                    addedAt = gameEntity.addedAt
                 )
 
             }

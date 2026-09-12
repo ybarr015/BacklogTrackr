@@ -234,7 +234,8 @@ private fun LibraryGamesScreenPreview() {
                     progressName = "Started"
                 ),
                 platforms = DefaultPlatforms.entries.map { GameAttribute.PlatformModel(it.platformName) },
-                pcStores = DefaultPCStores.entries.map { GameAttribute.PCStoreModel(it.storeName) }
+                pcStores = DefaultPCStores.entries.map { GameAttribute.PCStoreModel(it.storeName) },
+                addedAt = 0
             )
         ),
         filterUiState = FilterUiState(

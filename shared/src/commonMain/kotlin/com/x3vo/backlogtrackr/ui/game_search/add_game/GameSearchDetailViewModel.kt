@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.collections.emptySet
+import kotlin.time.Clock
 
 class GameSearchDetailViewModel(
     private val gameId: String,
@@ -155,6 +156,8 @@ class GameSearchDetailViewModel(
 
             val userSelections = _selectionsState.value
 
+            val currentTime = Clock.System.now()
+
             val gameEntity: LibraryGameEntity = LibraryGameEntity(
                 gameId = gameSearchVal.id.toLong(),
                 name = gameSearchVal.name,
@@ -162,7 +165,8 @@ class GameSearchDetailViewModel(
                 summary = gameSearchVal.summary,
                 coverUrl = gameSearchVal.coverURL,
                 isOwned = userSelections.isOwned,
-                gameProgress = userSelections.selectedProgressOption
+                gameProgress = userSelections.selectedProgressOption,
+                addedAt = currentTime.toEpochMilliseconds()
             )
 
             val platformsList = userSelections.selectedPlatforms.toList()
