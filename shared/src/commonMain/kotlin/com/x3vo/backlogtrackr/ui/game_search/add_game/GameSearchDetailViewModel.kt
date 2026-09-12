@@ -103,7 +103,7 @@ class GameSearchDetailViewModel(
                     state.copy(
                         availableProgressOptions = progressOptions,
                         // If nothing is selected yet, pick the first available option
-                        selectedProgressOption = if (state.selectedProgressOption.isEmpty() && progressOptions.isNotEmpty()) {
+                        selectedProgressOption = if (state.selectedProgressOption.isBlank() && progressOptions.isNotEmpty()) {
                             progressOptions.first().progressName
                         } else {
                             state.selectedProgressOption
