@@ -163,7 +163,7 @@ class GameSearchDetailViewModel(
                 summary = gameSearchVal.summary,
                 coverUrl = gameSearchVal.coverURL,
                 isOwned = userSelections.isOwned,
-                gameProgress = userSelections.selectedProgressOption.toString(),
+                gameProgress = userSelections.selectedProgressOption.progressName,
                 addedAt = currentTime.toEpochMilliseconds()
             )
 
