@@ -8,7 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
+import com.x3vo.backlogtrackr.domain.model.DefaultPlatformsSet
 import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.ui.common.screen.GameAttributesSettingsScreen
 import org.koin.compose.viewmodel.koinViewModel
@@ -35,7 +35,7 @@ fun PlatformSettingsScreen(
 
 @Composable
 private fun PlatformSettingsScreenContent(
-    platforms: List<GameAttribute.PlatformModel>,
+    platforms: Set<GameAttribute.PlatformModel>,
     handleBackNavigation: () -> Unit = {},
     addPlatformHandler: (String) -> Unit = {},
     deletePlatformHandler: (String) -> Unit = {},
@@ -64,6 +64,6 @@ private fun PlatformSettingsScreenContent(
 @PreviewScreenSizes
 private fun PlatformSettingsScreenPreview() {
     PlatformSettingsScreenContent(
-        platforms = DefaultPlatforms.entries.map { GameAttribute.PlatformModel(it.platformName) }
+        platforms = DefaultPlatformsSet
     )
 }

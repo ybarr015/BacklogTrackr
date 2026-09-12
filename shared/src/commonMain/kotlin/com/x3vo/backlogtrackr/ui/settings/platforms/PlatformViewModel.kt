@@ -13,11 +13,11 @@ class PlatformViewModel(
     private val repository: BacklogTrackrDBRepository
 ) : ViewModel() {
 
-    val platforms: StateFlow<List<GameAttribute.PlatformModel>> = repository.allPlatformsFlow
+    val platforms: StateFlow<Set<GameAttribute.PlatformModel>> = repository.allPlatformsFlow
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
+            initialValue = setOf()
         )
 
     fun addPlatform(name: String) {

@@ -4,12 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
 import com.x3vo.backlogtrackr.domain.model.GameAttribute
+import com.x3vo.backlogtrackr.domain.model.GameSearchObject
 import com.x3vo.backlogtrackr.network.BacklogAPIRepository
 import com.x3vo.backlogtrackr.network.utils.Resource
 import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
 import com.x3vo.backlogtrackr.room.LibraryGame.LibraryGameEntity
 import com.x3vo.backlogtrackr.ui.common.components.BasicDataUiState
-import com.x3vo.backlogtrackr.domain.model.GameSearchObject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.collections.emptySet
 import kotlin.time.Clock
 
 class GameSearchDetailViewModel(
@@ -105,7 +104,7 @@ class GameSearchDetailViewModel(
                         availableProgressOptions = progressOptions,
                         // If nothing is selected yet, pick the first available option
                         selectedProgressOption = if (state.selectedProgressOption.isEmpty() && progressOptions.isNotEmpty()) {
-                            progressOptions[0].progressName
+                            progressOptions.first().progressName
                         } else {
                             state.selectedProgressOption
                         }
@@ -186,9 +185,9 @@ class GameSearchDetailViewModel(
 }
 
 data class UserSelectionsState(
-    val availablePlatforms: List<GameAttribute.PlatformModel> = emptyList(),
-    val availablePcStores: List<GameAttribute.PCStoreModel> = emptyList(),
-    val availableProgressOptions: List<GameAttribute.GameProgressModel> = emptyList(),
+    val availablePlatforms: Set<GameAttribute.PlatformModel> = emptySet(),
+    val availablePcStores: Set<GameAttribute.PCStoreModel> = emptySet(),
+    val availableProgressOptions: Set<GameAttribute.GameProgressModel> = emptySet(),
     val isOwned: Boolean = true,
     val selectedPlatforms: Set<String> = emptySet(),
     val selectedStores: Set<String> = emptySet(),

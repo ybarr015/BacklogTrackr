@@ -28,18 +28,18 @@ import com.x3vo.backlogtrackr.utils.AppDimensions
 
 @Composable
 fun LibraryGamesFilters(
-    availablePlatforms: List<GameAttribute.PlatformModel> = listOf(),
-    availablePcStores: List<GameAttribute.PCStoreModel> = listOf(),
-    availableProgressStates: List<GameAttribute.GameProgressModel> = listOf(),
+    availablePlatforms: Set<GameAttribute.PlatformModel> = setOf(),
+    availablePcStores: Set<GameAttribute.PCStoreModel> = setOf(),
+    availableProgressStates: Set<GameAttribute.GameProgressModel> = setOf(),
     selectedPlatformFilters: Set<String> = setOf<String>(),
     selectedPcStoreFilters: Set<String> = setOf<String>(),
     selectedProgressFilters: Set<String> = setOf<String>(),
     handlePlatformFilterSelection: (String) -> Unit = {},
     handlePCStoreFilterSelection: (String) -> Unit = {},
     handleProgressFilterSelection: (String) -> Unit = {},
-    availableSortOptions: List<BacklogTrackrDBRepository.SortOptions> = listOf(),
+    availableSortOptions: Set<BacklogTrackrDBRepository.SortOptions> = setOf(),
     selectedSortOption: BacklogTrackrDBRepository.SortOptions = BacklogTrackrDBRepository.SortOptions.NAME,
-    availableOrderOptions: List<BacklogTrackrDBRepository.OrderOptions> = listOf(),
+    availableOrderOptions: Set<BacklogTrackrDBRepository.OrderOptions> = setOf(),
     selectedOrderOption: BacklogTrackrDBRepository.OrderOptions = BacklogTrackrDBRepository.OrderOptions.ASC,
     handleSortOptionSelection: (BacklogTrackrDBRepository.SortOptions) -> Unit = {},
     handleOrderOptionSelection: (BacklogTrackrDBRepository.OrderOptions) -> Unit = {},
@@ -100,7 +100,7 @@ fun LibraryGamesFilters(
                     }
 
                     items(
-                        items = availablePcStores,
+                        items = availablePcStores.toList(),
                         key = { pcStore -> "store.${pcStore.pcStoreName}" }
                     ) { pcStore ->
                         AnimatedVisibility(
@@ -154,7 +154,7 @@ fun LibraryGamesFilters(
                 )
             }
             items(
-                items = availableProgressStates,
+                items = availableProgressStates.toList(),
                 key = { progress ->
                     progress.progressName
                 }
@@ -185,7 +185,7 @@ fun LibraryGamesFilters(
             }
 
             items(
-                items = availableSortOptions,
+                items = availableSortOptions.toList(),
                 key = { test -> test.name}
             ) { sortOption ->
                 FilterChip(
@@ -204,7 +204,7 @@ fun LibraryGamesFilters(
             }
 
             items(
-                items = availableOrderOptions,
+                items = availableOrderOptions.toList(),
                 key = { order -> order.name}
             ) { orderOption ->
                 FilterChip(

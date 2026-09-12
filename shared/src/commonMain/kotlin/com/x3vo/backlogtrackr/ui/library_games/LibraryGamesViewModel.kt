@@ -116,8 +116,6 @@ class LibraryGamesViewModel(
                     filteredGames.sortedByDescending { it.addedAt }
                 }
             }
-            else ->
-                filteredGames.sortedBy { it.name }
         }
 
         filteredGames
@@ -190,14 +188,14 @@ class LibraryGamesViewModel(
 }
 
 data class FilterUiState(
-    val availablePlatforms: List<GameAttribute.PlatformModel> = emptyList(),
+    val availablePlatforms: Set<GameAttribute.PlatformModel> = emptySet(),
     val selectedPlatformFilters: Set<String> = emptySet(),
-    val availableProgressStates: List<GameAttribute.GameProgressModel> = emptyList(),
+    val availableProgressStates: Set<GameAttribute.GameProgressModel> = emptySet(),
     val selectedProgressStateFilters: Set<String> = emptySet(),
-    val availablePcStores: List<GameAttribute.PCStoreModel> = emptyList(),
+    val availablePcStores: Set<GameAttribute.PCStoreModel> = emptySet(),
     val selectedPcStoreFilters: Set<String> = emptySet(),
-    val availableSortOptions: List<BacklogTrackrDBRepository.SortOptions> = emptyList(),
+    val availableSortOptions: Set<BacklogTrackrDBRepository.SortOptions> = emptySet(),
     val selectedSortOption: BacklogTrackrDBRepository.SortOptions = BacklogTrackrDBRepository.SortOptions.NAME,
-    val availableOrderOptions: List<BacklogTrackrDBRepository.OrderOptions> = emptyList(),
+    val availableOrderOptions: Set<BacklogTrackrDBRepository.OrderOptions> = emptySet(),
     val selectedOrderOption: BacklogTrackrDBRepository.OrderOptions = BacklogTrackrDBRepository.OrderOptions.ASC
 )

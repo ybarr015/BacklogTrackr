@@ -47,7 +47,7 @@ fun GameAttributesSettingsScreen(
     userInput: String = "",
     handleUserInputChange: (String) -> Unit = {},
     userInputHint: String = "",
-    attributesList: List<GameAttribute> = emptyList(),
+    attributesList: Set<GameAttribute> = emptySet(),
     addAttributeHandler: (String) -> Unit = {},
     deleteAttributeHandler: (String) -> Unit = {},
     resetAttributesHandler: () -> Unit = {},
@@ -118,12 +118,12 @@ fun GameAttributesSettingsScreen(
                     .nestedScroll(nestedScrollConnection),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(attributesList) { attribute ->
+                items(attributesList.toList()) { attribute ->
                     var isDeleteEnabled = true
 
-                    if ( attribute is GameAttribute.PlatformModel && attribute.attributeName in DefaultPlatformsSet  ||
-                        attribute is GameAttribute.PCStoreModel && attribute.attributeName in DefaultPCStoresSet ||
-                        attribute is GameAttribute.GameProgressModel && attribute.attributeName in DefaultGameProgressSet
+                    if ( attribute is GameAttribute.PlatformModel && attribute in DefaultPlatformsSet  ||
+                        attribute is GameAttribute.PCStoreModel && attribute in DefaultPCStoresSet ||
+                        attribute is GameAttribute.GameProgressModel && attribute in DefaultGameProgressSet
                         ) {
                         isDeleteEnabled = false
                     }

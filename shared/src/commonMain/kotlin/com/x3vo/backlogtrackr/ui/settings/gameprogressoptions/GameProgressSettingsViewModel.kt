@@ -13,11 +13,11 @@ import kotlinx.coroutines.launch
 class GameProgressSettingsViewModel (
     private val repository: BacklogTrackrDBRepository
 ) : ViewModel() {
-    val gameProgressOptions: StateFlow<List<GameAttribute.GameProgressModel>> = repository.allGameProgressOptionsFlow
+    val gameProgressOptions: StateFlow<Set<GameAttribute.GameProgressModel>> = repository.allGameProgressOptionsFlow
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
+            initialValue = emptySet()
         )
 
     fun addGameProgressOption(progressOption: String) {

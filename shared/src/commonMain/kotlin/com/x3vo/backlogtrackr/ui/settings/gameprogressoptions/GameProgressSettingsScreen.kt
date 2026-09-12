@@ -8,7 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.x3vo.backlogtrackr.domain.model.DefaultGameProgress
+import com.x3vo.backlogtrackr.domain.model.DefaultGameProgressSet
 import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.ui.common.screen.GameAttributesSettingsScreen
 import org.koin.compose.viewmodel.koinViewModel
@@ -33,7 +33,7 @@ fun GameProgressSettingsScreen(
 
 @Composable
 private fun GameProgressOptionsScreenContent(
-    gameProgressOptions: List<GameAttribute.GameProgressModel>,
+    gameProgressOptions: Set<GameAttribute.GameProgressModel>,
     handleBackNavigation: () -> Unit = {},
     addGameProgressOptionHandler: (String) -> Unit = {},
     deleteGameProgressOptionHandler: (String) -> Unit = {},
@@ -60,6 +60,6 @@ private fun GameProgressOptionsScreenContent(
 @PreviewScreenSizes
 private fun GameProgressOptionsScreenPreview() {
     GameProgressOptionsScreenContent(
-        gameProgressOptions = DefaultGameProgress.entries.map { GameAttribute.GameProgressModel(it.progressName) }
+        gameProgressOptions = DefaultGameProgressSet
     )
 }

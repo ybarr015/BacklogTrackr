@@ -8,7 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.x3vo.backlogtrackr.domain.model.DefaultPCStores
+import com.x3vo.backlogtrackr.domain.model.DefaultPCStoresSet
 import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.ui.common.screen.GameAttributesSettingsScreen
 import org.koin.compose.viewmodel.koinViewModel
@@ -39,7 +39,7 @@ fun StoresSettingsScreen(
 
 @Composable
 private fun StoresSettingsScreenContent(
-    stores: List<GameAttribute.PCStoreModel>,
+    stores: Set<GameAttribute.PCStoreModel>,
     handleBackNavigation: () -> Unit = {},
     addStoreHandler: (String) -> Unit = {},
     deleteStoreHandler: (String) -> Unit = {},
@@ -66,6 +66,6 @@ private fun StoresSettingsScreenContent(
 @PreviewScreenSizes
 private fun StoresSettingsScreenPreview(){
     StoresSettingsScreenContent(
-        stores = DefaultPCStores.entries.map { GameAttribute.PCStoreModel(it.storeName) }
+        stores = DefaultPCStoresSet
     )
 }

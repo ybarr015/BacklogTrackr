@@ -10,7 +10,7 @@ data class LibraryGameDetailModel (
     val progressOption: GameAttribute.GameProgressModel = GameAttribute.GameProgressModel(
         DefaultGameProgress.NOT_STARTED.progressName
     ),
-    val platforms: List<GameAttribute.PlatformModel> = listOf(),
-    val pcStores: List<GameAttribute.PCStoreModel> = listOf(),
+    val platforms: Set<GameAttribute.PlatformModel> = setOf(),
+    val pcStores: Set<GameAttribute.PCStoreModel> = setOf(),
     val addedAt: Long = 0L
 )

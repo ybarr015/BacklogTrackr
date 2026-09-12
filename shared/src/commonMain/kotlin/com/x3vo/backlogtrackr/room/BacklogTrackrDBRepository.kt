@@ -49,13 +49,13 @@ class BacklogTrackrDBRepository (
         TIME_TO_BEAT("Time to beat"),
         ADDED_AT("Added At")
     }
-    val defaultSortOptions = SortOptions.entries.toList()
+    val defaultSortOptions = SortOptions.entries.toSet()
 
     enum class OrderOptions {
         ASC,
         DESC
     }
-    val defaultOrderOptions = OrderOptions.entries.toList()
+    val defaultOrderOptions = OrderOptions.entries.toSet()
 
     //todo check if this can be done inside an init block here
     //this initializes the default options if app is first installed
@@ -78,13 +78,13 @@ class BacklogTrackrDBRepository (
     }
 
     //platforms
-    val allPlatformsFlow: Flow<List<GameAttribute.PlatformModel>> = platformDao.getAllPlatformsFlow()
+    val allPlatformsFlow: Flow<Set<GameAttribute.PlatformModel>> = platformDao.getAllPlatformsFlow()
         .map { entities ->
             entities.map {
                 GameAttribute.PlatformModel(
                     platformName = it.platformName
                 )
-            }
+            }.toSet()
         }
         .onStart {
             ensureInitialized()
@@ -110,13 +110,13 @@ class BacklogTrackrDBRepository (
     }
 
     //stores
-    val allPCStoresFlow: Flow<List<GameAttribute.PCStoreModel>> = pcStoreDAO.getAllPCStoresFlow()
+    val allPCStoresFlow: Flow<Set<GameAttribute.PCStoreModel>> = pcStoreDAO.getAllPCStoresFlow()
         .map { entities ->
             entities.map {
                 GameAttribute.PCStoreModel(
                     pcStoreName = it.pcStoreName
                 )
-            }
+            }.toSet()
         }
         .onStart {
             ensureInitialized()
@@ -142,13 +142,13 @@ class BacklogTrackrDBRepository (
     }
 
     //gameprogress
-    val allGameProgressOptionsFlow: Flow<List<GameAttribute.GameProgressModel>> = gameProgressOptionsDao.getallGameProgressOptionsFlow()
+    val allGameProgressOptionsFlow: Flow<Set<GameAttribute.GameProgressModel>> = gameProgressOptionsDao.getallGameProgressOptionsFlow()
         .map { entities ->
             entities.map {
                 GameAttribute.GameProgressModel(
                     progressName = it.progressOption
                 )
-            }
+            }.toSet()
         }
         .onStart {
             ensureInitialized()
@@ -184,8 +184,8 @@ class BacklogTrackrDBRepository (
                 summary = it.gameData.summary,
                 isOwned = it.gameData.isOwned,
                 progressOption = GameAttribute.GameProgressModel(it.progressOption?.progressOption ?: it.gameData.gameProgress),
-                platforms = it.platforms.map { GameAttribute.PlatformModel(it.platformName) },
-                pcStores = it.pcStores.map { GameAttribute.PCStoreModel(it.pcStoreName) },
+                platforms = it.platforms.map { GameAttribute.PlatformModel(it.platformName) }.toSet(),
+                pcStores = it.pcStores.map { GameAttribute.PCStoreModel(it.pcStoreName) }.toSet(),
                 addedAt = it.gameData.addedAt
             )
         }
@@ -203,8 +203,8 @@ class BacklogTrackrDBRepository (
                     summary = gameEntity.summary,
                     isOwned = gameEntity.isOwned,
                     progressOption = GameAttribute.GameProgressModel(game.progressOption?.progressOption ?: gameEntity.gameProgress),
-                    platforms = game.platforms.map { GameAttribute.PlatformModel(it.platformName) },
-                    pcStores = game.pcStores.map { GameAttribute.PCStoreModel(it.pcStoreName) },
+                    platforms = game.platforms.map { GameAttribute.PlatformModel(it.platformName) }.toSet(),
+                    pcStores = game.pcStores.map { GameAttribute.PCStoreModel(it.pcStoreName) }.toSet(),
                     addedAt = gameEntity.addedAt
                 )
 

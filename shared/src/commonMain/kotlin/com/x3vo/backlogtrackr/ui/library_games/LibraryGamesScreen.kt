@@ -38,9 +38,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import backlogtrackr.shared.generated.resources.Res
 import backlogtrackr.shared.generated.resources.search_24px
-import com.x3vo.backlogtrackr.domain.model.DefaultGameProgress
-import com.x3vo.backlogtrackr.domain.model.DefaultPCStores
+import com.x3vo.backlogtrackr.domain.model.DefaultGameProgressSet
+import com.x3vo.backlogtrackr.domain.model.DefaultPCStoresSet
 import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
+import com.x3vo.backlogtrackr.domain.model.DefaultPlatformsSet
 import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.domain.model.LibraryGameDetailModel
 import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
@@ -242,15 +243,15 @@ private fun LibraryGamesScreenPreview() {
                 progressOption = GameAttribute.GameProgressModel(
                     progressName = "Started"
                 ),
-                platforms = DefaultPlatforms.entries.map { GameAttribute.PlatformModel(it.platformName) },
-                pcStores = DefaultPCStores.entries.map { GameAttribute.PCStoreModel(it.storeName) },
+                platforms = DefaultPlatformsSet,
+                pcStores = DefaultPCStoresSet,
                 addedAt = 0
             )
         ),
         filterUiState = FilterUiState(
-            availablePlatforms = DefaultPlatforms.entries.map { GameAttribute.PlatformModel(it.platformName) },
-            availablePcStores = DefaultPCStores.entries.map { GameAttribute.PCStoreModel(it.storeName) },
-            availableProgressStates = DefaultGameProgress.entries.map { GameAttribute.GameProgressModel(it.progressName) },
+            availablePlatforms = DefaultPlatformsSet,
+            availablePcStores = DefaultPCStoresSet,
+            availableProgressStates = DefaultGameProgressSet,
             selectedPlatformFilters = setOf(DefaultPlatforms.PC.platformName)
         )
     )

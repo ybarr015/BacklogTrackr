@@ -44,14 +44,14 @@ import backlogtrackr.shared.generated.resources.Res
 import backlogtrackr.shared.generated.resources.ic_broken_image
 import backlogtrackr.shared.generated.resources.loading_img
 import coil3.compose.AsyncImage
-import com.x3vo.backlogtrackr.domain.model.DefaultGameProgress
-import com.x3vo.backlogtrackr.domain.model.DefaultPCStores
+import com.x3vo.backlogtrackr.domain.model.DefaultGameProgressSet
+import com.x3vo.backlogtrackr.domain.model.DefaultPCStoresSet
 import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
-import com.x3vo.backlogtrackr.domain.model.GameAttribute
+import com.x3vo.backlogtrackr.domain.model.DefaultPlatformsSet
+import com.x3vo.backlogtrackr.domain.model.GameSearchObject
 import com.x3vo.backlogtrackr.ui.common.components.BasicDataUiState
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithBackNav
 import com.x3vo.backlogtrackr.ui.common.screen.StatefulContent
-import com.x3vo.backlogtrackr.domain.model.GameSearchObject
 import com.x3vo.backlogtrackr.utils.AppDimensions
 import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.resources.painterResource
@@ -310,9 +310,9 @@ private fun GameSearchDetailScreenPreview() {
             )
         ),
         userSelectionsState = UserSelectionsState(
-            availablePlatforms = DefaultPlatforms.entries.map { GameAttribute.PlatformModel(it.platformName) },
-            availablePcStores = DefaultPCStores.entries.map { GameAttribute.PCStoreModel(it.storeName) },
-            availableProgressOptions = DefaultGameProgress.entries.map { GameAttribute.GameProgressModel(it.progressName) },
+            availablePlatforms = DefaultPlatformsSet,
+            availablePcStores = DefaultPCStoresSet,
+            availableProgressOptions = DefaultGameProgressSet,
             selectedPlatforms = setOf(DefaultPlatforms.PC.platformName),
             isOwned = true
         )

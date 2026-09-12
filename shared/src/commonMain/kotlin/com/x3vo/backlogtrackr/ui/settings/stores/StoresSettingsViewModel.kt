@@ -12,11 +12,11 @@ import kotlinx.coroutines.launch
 class StoresSettingsViewModel(
     private val repository: BacklogTrackrDBRepository
 ): ViewModel() {
-    val stores: StateFlow<List<GameAttribute.PCStoreModel>> = repository.allPCStoresFlow
+    val stores: StateFlow<Set<GameAttribute.PCStoreModel>> = repository.allPCStoresFlow
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = listOf()
+            initialValue = setOf()
         )
 
     fun addStore(name: String) {
