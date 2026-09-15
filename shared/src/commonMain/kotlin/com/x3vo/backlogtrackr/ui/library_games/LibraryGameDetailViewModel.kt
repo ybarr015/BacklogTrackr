@@ -3,15 +3,20 @@ package com.x3vo.backlogtrackr.ui.library_games
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.x3vo.backlogtrackr.domain.model.DefaultGameProgress
+import com.x3vo.backlogtrackr.domain.model.DefaultPlatforms
 import com.x3vo.backlogtrackr.domain.model.GameAttribute
 import com.x3vo.backlogtrackr.domain.model.LibraryGameDetailModel
 import com.x3vo.backlogtrackr.domain.model.toGameProgressModel
+import com.x3vo.backlogtrackr.domain.model.toPlatformModel
 import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.collections.plus
 
 class LibraryGameDetailViewModel (
     private val gameId: Long,
@@ -23,6 +28,9 @@ class LibraryGameDetailViewModel (
 
     private val _libraryGameOptions = MutableStateFlow(LibraryGameDetailOptions())
     val libraryGameOptions: StateFlow<LibraryGameDetailOptions> = _libraryGameOptions.asStateFlow()
+
+    private val _editGameEvent = MutableSharedFlow<String>()
+    val editGameEvent = _editGameEvent.asSharedFlow()
 
     init {
         loadGameDetails()
@@ -70,9 +78,53 @@ class LibraryGameDetailViewModel (
         }
     }
 
+    fun updateOwnershipSelection(owned: Boolean) {
+        _libraryGameOptions.update { current ->
+            current.copy(isOwned = owned)
+        }
+    }
+
+    fun updatePlatformSelection(platform: GameAttribute.PlatformModel, selected: Boolean) {
+        _libraryGameOptions.update { state ->
+            val updatedPlatformSelections = if(selected) {
+                state.selectedPlatforms + platform
+            } else {
+                state.selectedPlatforms - platform
+            }
+            val pcStores = if (updatedPlatformSelections.contains(DefaultPlatforms.PC.toPlatformModel()))
+                state.selectedStores else emptySet()
+            state.copy(selectedPlatforms = updatedPlatformSelections, selectedStores = pcStores)
+        }
+    }
+
+    fun updatePcStoreSelection(store: GameAttribute.PCStoreModel, selected: Boolean) {
+        _libraryGameOptions.update { state ->
+            val updatedStoreSelections = if (selected) {
+                state.selectedStores + store
+            } else {
+                state.selectedStores - store
+            }
+            state.copy(selectedStores = updatedStoreSelections)
+        }
+    }
+
+    fun updateProgressSelection(progress: GameAttribute.GameProgressModel) {
+        _libraryGameOptions.update { state ->
+            state.copy(selectedProgressOption = progress)
+        }
+    }
+
+
+
     fun deleteGame(gameId: Long) {
         viewModelScope.launch {
             backlogTrackrDBRepository.deleteLibraryGame(gameId)
+        }
+    }
+
+    fun updateGameDetails() {
+        viewModelScope.launch {
+            _editGameEvent.emit("Game Updated")
         }
     }
 

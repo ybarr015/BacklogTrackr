@@ -21,11 +21,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -53,6 +56,7 @@ import com.x3vo.backlogtrackr.domain.model.toPcStoreModel
 import com.x3vo.backlogtrackr.domain.model.toPlatformModel
 import com.x3vo.backlogtrackr.ui.common.screen.ScreenWithBackNav
 import com.x3vo.backlogtrackr.utils.AppDimensions
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
@@ -72,15 +76,30 @@ fun LibraryGameDetailScreen(
 ) {
     val libraryGame: LibraryGameDetailModel by viewModel.libraryGame.collectAsStateWithLifecycle()
     val gameOptions: LibraryGameDetailOptions by viewModel.libraryGameOptions.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        viewModel.editGameEvent.collectLatest { event ->
+            snackbarHostState.showSnackbar(
+                message = event
+            )
+        }
+    }
 
     LibraryGameDetailScreenContent(
         libraryGame = libraryGame,
         libraryGameOptions = gameOptions,
+        onOwnershipUpdate = viewModel::updateOwnershipSelection,
+        onPlatformSelection = viewModel::updatePlatformSelection,
+        onPcStoreSelection = viewModel::updatePcStoreSelection,
+        onProgressSelection = viewModel::updateProgressSelection,
         onGameDelete = {
             viewModel.deleteGame(it)
             handleBackNav()
-                       },
+        },
+        onGameEdit = viewModel::updateGameDetails,
         handleBackNav = handleBackNav,
+        snackbarHostState = snackbarHostState,
         modifier = modifier
     )
 
@@ -96,7 +115,9 @@ private fun LibraryGameDetailScreenContent(
     onPcStoreSelection: (GameAttribute.PCStoreModel, Boolean) -> Unit = { _, _ -> },
     onProgressSelection: (GameAttribute.GameProgressModel) -> Unit = {},
     onGameDelete: (Long) -> Unit = {},
+    onGameEdit: () -> Unit = {},
     handleBackNav: () -> Unit = {},
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     modifier: Modifier = Modifier
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
@@ -106,6 +127,7 @@ private fun LibraryGameDetailScreenContent(
         canNavBack = true,
         onNavigateBack = handleBackNav,
         navButtonEnabled = true,
+        snackBarHostState = snackbarHostState,
         modifier = modifier
     ) {
         LazyColumn(
@@ -129,7 +151,8 @@ private fun LibraryGameDetailScreenContent(
                     )
 
                     val timeInstant = Instant.fromEpochMilliseconds(libraryGame.addedAt)
-                    val localTime = timeInstant.toLocalDateTime(TimeZone.currentSystemDefault()).date
+                    val localTime =
+                        timeInstant.toLocalDateTime(TimeZone.currentSystemDefault()).date
 
                     Column(Modifier.padding(AppDimensions.paddingSmall)) {
                         Text(
@@ -171,14 +194,14 @@ private fun LibraryGameDetailScreenContent(
                     ) {
                         SegmentedButton(
                             selected = libraryGameOptions.isOwned,
-                            onClick = {  },
+                            onClick = { onOwnershipUpdate(true) },
                             shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2)
                         ) {
                             Text("Own it")
                         }
                         SegmentedButton(
                             selected = !libraryGameOptions.isOwned,
-                            onClick = {  },
+                            onClick = { onOwnershipUpdate(false) },
                             shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2)
                         ) {
                             Text("Wishlist")
@@ -198,10 +221,11 @@ private fun LibraryGameDetailScreenContent(
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             libraryGameOptions.availablePlatforms.forEach { platform ->
-                                val isSelected = libraryGameOptions.selectedPlatforms.contains(platform)
+                                val isSelected =
+                                    libraryGameOptions.selectedPlatforms.contains(platform)
                                 FilterChip(
                                     selected = isSelected,
-                                    onClick = {  },
+                                    onClick = { onPlatformSelection(platform, !isSelected) },
                                     label = { Text(platform.platformName) }
                                 )
                             }
@@ -209,7 +233,7 @@ private fun LibraryGameDetailScreenContent(
                     }
                 }
 
-                if(libraryGameOptions.availablePcStores.isNotEmpty()) {
+                if (libraryGameOptions.availablePcStores.isNotEmpty()) {
                     item {
                         Text(
                             text = "PC stores owned on:",
@@ -222,7 +246,7 @@ private fun LibraryGameDetailScreenContent(
                                 val isSelected = libraryGameOptions.selectedStores.contains(store)
                                 FilterChip(
                                     selected = isSelected,
-                                    onClick = { },
+                                    onClick = { onPcStoreSelection(store, !isSelected) },
                                     label = { Text(store.pcStoreName) }
                                 )
                             }
@@ -245,7 +269,10 @@ private fun LibraryGameDetailScreenContent(
                             onValueChange = {},
                             readOnly = true,
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                            modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true).fillMaxWidth(),
+                            modifier = Modifier.menuAnchor(
+                                ExposedDropdownMenuAnchorType.PrimaryNotEditable,
+                                true
+                            ).fillMaxWidth(),
                             colors = ExposedDropdownMenuDefaults.textFieldColors()
                         )
                         ExposedDropdownMenu(
@@ -256,6 +283,7 @@ private fun LibraryGameDetailScreenContent(
                                 DropdownMenuItem(
                                     text = { Text(selectionOption.progressName) },
                                     onClick = {
+                                        onProgressSelection(selectionOption)
                                         expanded = false
                                     }
                                 )
@@ -263,34 +291,31 @@ private fun LibraryGameDetailScreenContent(
                         }
                     }
                 }
-
-                item {
-                    Row (
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-
-                        Button(
-                            onClick = {}
-                        ) {
-                            Text("Save Changes")
-                        }
-                        Spacer(
-                            modifier = Modifier.width(AppDimensions.paddingSmall)
-                        )
-                        Button(
-                            onClick = { onGameDelete(libraryGame.gameId) }
-                        ) {
-                            Text("Delete Game")
-                        }
-
-                    }
-                }
-
             }
 
+            item {
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
 
+                    Button(
+                        onClick = { onGameEdit() }
+                    ) {
+                        Text("Save Changes")
+                    }
+                    Spacer(
+                        modifier = Modifier.width(AppDimensions.paddingSmall)
+                    )
+                    Button(
+                        onClick = { onGameDelete(libraryGame.gameId) }
+                    ) {
+                        Text("Delete Game")
+                    }
+
+                }
+            }
         }
     }
 }
