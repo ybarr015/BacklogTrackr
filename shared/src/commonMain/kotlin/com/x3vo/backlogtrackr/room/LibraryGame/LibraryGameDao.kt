@@ -33,6 +33,37 @@ interface LibraryGameDao {
 
     }
 
+    @Transaction
+    suspend fun editLibraryGame(
+        gameId: Long,
+        newOwnershipState: Boolean,
+        newProgressState: String,
+        newPlatforms: List<GamePlatformCrossRef>,
+        newStores: List<GamePcStoreCrossRef>
+    ) {
+
+        deletePlatforms(gameId)
+        deletePcStores(gameId)
+
+        editOwnership(newOwnershipState,gameId)
+        editProgressState(newProgressState,gameId)
+
+        insertPlatformsForGame(newPlatforms)
+        insertStoresForGame(newStores)
+    }
+
+    @Query("UPDATE LibraryGames set isOwned = :updatedValue WHERE gameId = :gameId ")
+    suspend fun editOwnership(updatedValue: Boolean, gameId: Long)
+
+    @Query("UPDATE LibraryGames set gameProgress = :updatedValue WHERE gameId = :gameId ")
+    suspend fun editProgressState(updatedValue: String, gameId: Long)
+
+    @Query("DELETE FROM game_platform_cross_ref WHERE gameId = :gameId ")
+    suspend fun deletePlatforms(gameId: Long)
+
+    @Query("DELETE FROM game_pc_store_cross_ref WHERE gameId = :gameId ")
+    suspend fun deletePcStores(gameId: Long)
+
     @Upsert
     suspend fun insertLibraryGame(game: LibraryGameEntity)
 

@@ -233,7 +233,8 @@ private fun LibraryGameDetailScreenContent(
                     }
                 }
 
-                if (libraryGameOptions.availablePcStores.isNotEmpty()) {
+                if (libraryGameOptions.availablePcStores.isNotEmpty() && libraryGameOptions.selectedPlatforms.contains(
+                        DefaultPlatforms.PC.toPlatformModel())) {
                     item {
                         Text(
                             text = "PC stores owned on:",

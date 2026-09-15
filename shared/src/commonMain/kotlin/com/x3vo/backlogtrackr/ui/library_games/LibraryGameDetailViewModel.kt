@@ -9,6 +9,7 @@ import com.x3vo.backlogtrackr.domain.model.LibraryGameDetailModel
 import com.x3vo.backlogtrackr.domain.model.toGameProgressModel
 import com.x3vo.backlogtrackr.domain.model.toPlatformModel
 import com.x3vo.backlogtrackr.room.BacklogTrackrDBRepository
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.collections.plus
 
 class LibraryGameDetailViewModel (
@@ -124,7 +126,26 @@ class LibraryGameDetailViewModel (
 
     fun updateGameDetails() {
         viewModelScope.launch {
-            _editGameEvent.emit("Game Updated")
+            withContext(NonCancellable) {
+                val gameData = _libraryGame.value
+                val newGameSelections = _libraryGameOptions.value
+                if (backlogTrackrDBRepository.checkIfGameExistsInLibrary(gameData.gameId)) {
+                    backlogTrackrDBRepository.editLibraryGame(
+                        gameId = gameData.gameId,
+                        newOwnershipState = newGameSelections.isOwned,
+                        newProgressState = newGameSelections.selectedProgressOption,
+                        newPlatforms = newGameSelections.selectedPlatforms.toList(),
+                        newStores = newGameSelections.selectedStores.toList()
+                    )
+                    loadGameDetails()
+                    _editGameEvent.emit("Game Updated")
+                } else {
+                    _editGameEvent.emit("Error in database, game not updated")
+                }
+            }
+
+
+
         }
     }
 

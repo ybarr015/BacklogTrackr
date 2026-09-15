@@ -223,6 +223,16 @@ class BacklogTrackrDBRepository (
         libraryGameDao.addLibraryGame(game, platformLinks, storeLinks)
     }
 
+    suspend fun editLibraryGame(gameId: Long, newOwnershipState: Boolean, newProgressState: GameAttribute.GameProgressModel, newPlatforms: List<GameAttribute.PlatformModel>, newStores: List<GameAttribute.PCStoreModel> ) {
+        libraryGameDao.editLibraryGame(
+            gameId = gameId,
+            newOwnershipState = newOwnershipState,
+            newProgressState = newProgressState.progressName,
+            newPlatforms = newPlatforms.map { GamePlatformCrossRef(gameId, platformName = it.platformName) },
+            newStores = newStores.map { GamePcStoreCrossRef(gameId, pcStoreName = it.pcStoreName) }
+        )
+    }
+
     suspend fun deleteLibraryGame(gameId: Long) = libraryGameDao.deleteLibraryGame(id = gameId)
 
     suspend fun checkIfGameExistsInLibrary(gameId: Long) = libraryGameDao.checkIfGameExistsInLibrary(gameId)
