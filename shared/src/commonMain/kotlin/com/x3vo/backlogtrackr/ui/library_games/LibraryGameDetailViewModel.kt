@@ -70,6 +70,12 @@ class LibraryGameDetailViewModel (
         }
     }
 
+    fun deleteGame(gameId: Long) {
+        viewModelScope.launch {
+            backlogTrackrDBRepository.deleteLibraryGame(gameId)
+        }
+    }
+
 }
 
 data class LibraryGameDetailOptions(

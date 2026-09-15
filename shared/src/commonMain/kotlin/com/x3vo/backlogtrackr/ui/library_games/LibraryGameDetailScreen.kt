@@ -4,10 +4,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
@@ -73,6 +76,10 @@ fun LibraryGameDetailScreen(
     LibraryGameDetailScreenContent(
         libraryGame = libraryGame,
         libraryGameOptions = gameOptions,
+        onGameDelete = {
+            viewModel.deleteGame(it)
+            handleBackNav()
+                       },
         handleBackNav = handleBackNav,
         modifier = modifier
     )
@@ -88,6 +95,7 @@ private fun LibraryGameDetailScreenContent(
     onPlatformSelection: (GameAttribute.PlatformModel, Boolean) -> Unit = { _, _ -> },
     onPcStoreSelection: (GameAttribute.PCStoreModel, Boolean) -> Unit = { _, _ -> },
     onProgressSelection: (GameAttribute.GameProgressModel) -> Unit = {},
+    onGameDelete: (Long) -> Unit = {},
     handleBackNav: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -253,6 +261,30 @@ private fun LibraryGameDetailScreenContent(
                                 )
                             }
                         }
+                    }
+                }
+
+                item {
+                    Row (
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+
+                        Button(
+                            onClick = {}
+                        ) {
+                            Text("Save Changes")
+                        }
+                        Spacer(
+                            modifier = Modifier.width(AppDimensions.paddingSmall)
+                        )
+                        Button(
+                            onClick = { onGameDelete(libraryGame.gameId) }
+                        ) {
+                            Text("Delete Game")
+                        }
+
                     }
                 }
 
