@@ -260,9 +260,15 @@ private fun GameSearchDetailContent(
                                         value = userSelectionsState.selectedProgressOption.progressName,
                                         onValueChange = {},
                                         readOnly = true,
+                                        enabled = false,
                                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                                         modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true).fillMaxWidth(),
-                                        colors = ExposedDropdownMenuDefaults.textFieldColors()
+                                        colors = ExposedDropdownMenuDefaults.textFieldColors(
+                                            disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                                            disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                                            disabledIndicatorColor = MaterialTheme.colorScheme.onSurface,
+                                            disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
                                     )
                                     ExposedDropdownMenu(
                                         expanded = expanded,
